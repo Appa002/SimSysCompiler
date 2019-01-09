@@ -27,6 +27,12 @@ namespace ACC{
         IoError(std::string msg) : std::runtime_error( ("A file couldn't be opened: " + msg).c_str()) {};
     };
 
+    using lexical_error_t = class LexicalError : public std::runtime_error {
+    public:
+        LexicalError(const char* msg) : std::runtime_error( ("Error while lexically analysing input: " + std::string(msg)).c_str()) {};
+        LexicalError(std::string msg) : std::runtime_error( ("Error while lexically analysing input: " + msg).c_str()) {};
+    };
+
 }
 
 #endif //SIMSYSCOMPILER_ERROR_T_H

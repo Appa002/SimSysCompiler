@@ -19,7 +19,10 @@ namespace ACC {
         const std::vector<match> getLegals() override;
         Pattern escapeSequence() override;
 
-        static IToken* var_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
+        static IToken* id_eval(const std::string &, const std::string::iterator &, const std::string::iterator &);
+        static IToken* mathOperator_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
+        static IToken* bracket_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
+        static IToken* number_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
     };
 }
 

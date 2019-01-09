@@ -5,7 +5,7 @@
 #include "LexicalAnalysis.h"
 #include <fstream>
 #include <Lexical/IContext.h>
-#include <Lexical/Contexts/DeclarationContext.h>
+#include <Lexical/Contexts/GlobalContext.h>
 #include <iostream>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
@@ -14,7 +14,8 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
-    contextStack.push(new DeclarationContext());
+    contextStack.push(new GlobalContext());
+    preProcessDocument();
     process();
 }
 
@@ -26,19 +27,19 @@ ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
 
 
 void ACC::LexicalAnalysis::process() {
-    size_t range = 0;
+    size_t range = 1;
     IContext::match expr;
 
     for(auto itr = document.begin(); (itr+range) != document.end();){
         auto context = contextStack.peek();
         std::string debug(itr, itr + range);
-        if(debug != "\n" && debug != "\r")
-            std::cout << debug;
+        std::cout << debug;
+
         if(context->escapeSequence().matches(itr, range)){
             contextStack.pop();
             std::cout << "     ; Context pop" << std::endl;
             itr += range;
-            range = 0;
+            range = 1;
             continue;
         }
 
@@ -55,7 +56,6 @@ void ACC::LexicalAnalysis::process() {
         if(expr.second.id == InstructionId::NEW_TOKEN){
             auto func = *static_cast<Instruction::token_func*>(expr.second.func);
             auto token = func(document, itr, itr+range);
-            token->context = context;
             tokens.push_back(token);
             std::cout << "     ; Token" <<std::endl;
         }
@@ -64,7 +64,7 @@ void ACC::LexicalAnalysis::process() {
             std::cout << "     ; Context push" <<std::endl;
         }
         itr += range;
-        range = 0;
+        range = 1;
     }
 
 }
@@ -91,4 +91,20 @@ bool ACC::LexicalAnalysis::matches(ACC::IContext *context, const std::string::it
         }
     }
     return !(amount == 0 || amount > 1);
+}
+
+void ACC::LexicalAnalysis::preProcessDocument() {
+    for(int i = document.size() - 1; i >= 0; i--){
+        char cur = document.at(i);
+        if(cur == '\n' || cur == '\r')
+            document.erase(i, 1);
+        else if (i - 1 >= 0 && cur == ' ' && document[i - 1] == ' ')
+            document.erase(i, 1);
+    }
+}
+
+void ACC::LexicalAnalysis::printToken() {
+    for(const auto& token : tokens){
+        std::cout << (int)token->id << std::endl;
+    }
 }

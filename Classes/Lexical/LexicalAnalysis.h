@@ -16,12 +16,14 @@ namespace ACC {
         std::string document;
         int refCount = 0;
 
+        void preProcessDocument();
         bool matches(IContext* context, const std::string::iterator& itr, size_t range, IContext::match* legalExpr);
     public:
         explicit LexicalAnalysis(std::string path);
         LexicalAnalysis(const LexicalAnalysis& other);
         ~LexicalAnalysis();
         void process();
+        void printToken();
     };
 }
 

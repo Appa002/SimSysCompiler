@@ -17,6 +17,5 @@
 
 int main() {
     auto l = LexicalAnalysis("./test.txt");
-
     return 0;
  }

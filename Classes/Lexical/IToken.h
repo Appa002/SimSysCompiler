@@ -12,15 +12,17 @@ namespace ACC {
     enum class NewTokenId;
 
     class IToken {
-    protected:
-        NewTokenId id;
     public:
-        IContext* context;
-
+        NewTokenId id;
     };
 
     enum class NewTokenId{
-        VAR
+        VAR,
+        ID,
+        BRACKET,
+        MATH_OPERATOR,
+        PRINT,
+        LITERAL
     };
 }
 

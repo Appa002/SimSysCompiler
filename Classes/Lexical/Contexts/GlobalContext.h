@@ -8,19 +8,23 @@
 #include <Lexical/IContext.h>
 
 namespace ACC {
-    struct DeclarationContext : public IContext {
+    struct GlobalContext : public IContext {
     private:
         const std::vector<ACC::IContext::match> legals;
         int refCounter;
     public:
-        DeclarationContext();
-        DeclarationContext(const DeclarationContext& other);
-        ~DeclarationContext();
+        GlobalContext();
+        GlobalContext(const GlobalContext& other);
+        ~GlobalContext();
         const std::vector<match> getLegals() override;
         Pattern escapeSequence() override;
 
-        static IToken* var_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
-        static IToken* print_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
+        static IToken* id_eval(const std::string &, const std::string::iterator &,
+                               const std::string::iterator &);
+
+        static IToken* var_eval(const std::string &, const std::string::iterator &,
+                                const std::string::iterator &);
+
         static IContext* assignment_switch();
     };
 }

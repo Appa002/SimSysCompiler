@@ -1,6 +1,14 @@
 var abc = 1;
-var b = 2 + 2;
-var c = abc + (b - 1);
+var b = 2+2;
+var c = abc + (b -980 ) ;
 print c;
-var e = (1 + 4) - (b - 3);
-print e;
+var e = (1 + 4) - (b - 399);
+print                 AFf_F;
+
+
+         VAR,
+                ID,
+                BRACKET,
+                MATH_OPERATOR,
+                PRINT,
+                LITERAL
