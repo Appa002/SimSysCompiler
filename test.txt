@@ -1,0 +1,6 @@
+var abc = 1;
+var b = 2 + 2;
+var c = abc + (b - 1);
+print c;
+var e = (1 + 4) - (b - 3);
+print e;
