@@ -12,13 +12,6 @@ ACC::ParseTree::ParseTree(const ACC::LexicalAnalysis &in) {
 }
 
 ACC::TestNode * ACC::ParseTree::process(std::string input, char prodSym) {
-    std::string grammarDef = R"(
-  S > `E`;
-  E > n;
-  E > (`E`);
-  E > `E`-`E`;
-)";
-
     std::vector<assigment> grammar = interpretGrammar(grammarDef);
     auto iItr = input.begin();
     auto node = new TestNode(prodSym);
@@ -42,7 +35,7 @@ ACC::TestNode * ACC::ParseTree::process(std::string input, char prodSym) {
                     iItr++;
                 }
                 else{
-                    node->children.clear();
+                    killChildren(node);
                     iItr = old;
                     break;
                 }
@@ -53,12 +46,21 @@ ACC::TestNode * ACC::ParseTree::process(std::string input, char prodSym) {
                     sym += *pItr;
                     ++pItr;
                 }
+
                 ++pItr;
+                int depth = 0;
                 std::string subStr;
-                while(iItr != input.end() && *iItr != *pItr){
+                while(iItr != input.end()){
+                    if(*iItr == *pItr && depth == 0)
+                        break;
+                    if(*iItr == '(')
+                        depth++;
+                    else if (*iItr == ')')
+                        depth--;
                     subStr += *iItr;
                     iItr++;
                 }
+                std::cout << subStr << std::endl;
                 if(iItr == input.end() && *iItr != *pItr) {
                     iItr = old;
                     break;
@@ -68,53 +70,23 @@ ACC::TestNode * ACC::ParseTree::process(std::string input, char prodSym) {
                     node->children.push_back(newNode);
                     pItr--;
                 }
-                else
+                else{
+                    killChildren(node);
+                    iItr = old;
                     break;
+                }
             }
         }
     }
+    delete node;
    return nullptr;
 }
 
-ACC::TestNode * ACC::ParseTree::appendNodeFromProduction(ACC::ParseTree::assigment production, TestNode *parent) {
-    for(auto pItr = production.second.begin(); pItr != production.second.end(); ++pItr){
-        if(*pItr != '`'){
-            parent->children.push_back(new TestNode(*pItr));
-        }
-        else{
-            std::string sym;
-            pItr++;
-            while(*pItr != '`'){
-                sym += *pItr;
-                ++pItr;
-            }
-            parent->children.push_back(new TestNode(sym));
-        }
-    }
-    return parent;
-}
-
 void ACC::ParseTree::interactive() {
-    std::string grammarDef = R"(
-  S > `E`;
-  E > n;
-  E > (`E`);
-  E > `E`-`E`;
-)";
     std::vector<assigment> grammar = interpretGrammar(grammarDef);
-    std::string str;
-    while(true) {
-      /*  std::getline(std::cin, str);
-        std::cout << "> " << str << std::endl;
-        auto l = LexicalAnalysis(str);
-        l.printToken();
-*/
-      auto root = process("(n-n)", 'E');//
-      if(str == "EOF")
-            break;
-    }
+    auto root = process("(n-(n))", 'E');
+    delete root;
 }
-
 std::vector<ACC::ParseTree::assigment> ACC::ParseTree::interpretGrammar(std::string in) {
     std::vector<std::string> exprs;
     std::string cur;
@@ -156,4 +128,10 @@ void ACC::ParseTree::split(const std::string &input, std::string &lhs, std::stri
             itr+=3;
         }
     }
+}
+
+void ACC::ParseTree::killChildren(ACC::TestNode *node) {
+    for(auto const& child : node->children)
+        delete child;
+    node->children.clear();
 }

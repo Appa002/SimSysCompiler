@@ -16,6 +16,10 @@ namespace ACC {
             char str[] = {c, '\0'};
             value = std::string(str);
         };
+        ~TestNode(){
+            for(const auto& child : children)
+                delete child;
+        }
         std::string value;
         std::vector<TestNode*> children;
     };
@@ -24,11 +28,20 @@ namespace ACC {
     private:
         using assigment = std::pair<std::string, std::string>; // E > E + E ; first > second
 
-        ACC::TestNode *appendNodeFromProduction(ACC::ParseTree::assigment production, TestNode *parent);
+        void killChildren(TestNode* node);
+
         std::vector<ParseNode*> roots;
         TestNode * process(std::string input, char prodSym);
         std::vector<assigment> interpretGrammar(std::string in);
         void split(const std::string& input, std::string& lhs, std::string& rhs);
+
+        std::string grammarDef = R"(
+  S > `E`;
+  E > n;
+  E > (`E`);
+  E > `E`-`E`;
+  E > `E`/`E`;
+)";
     public:
         explicit ParseTree(const LexicalAnalysis& in);
         void interactive();
