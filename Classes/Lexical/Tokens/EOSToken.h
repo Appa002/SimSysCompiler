@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct EOSToken : public IToken{
-        EOSToken() : IToken() {id = NewTokenId::EOS;};
+        EOSToken() : IToken() {id = Symbol::EOS;};
     };
 }
 
