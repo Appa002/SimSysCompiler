@@ -22,7 +22,8 @@ namespace ACC {
         BRACKET,
         MATH_OPERATOR,
         PRINT,
-        LITERAL
+        LITERAL,
+        EOS
     };
 }
 

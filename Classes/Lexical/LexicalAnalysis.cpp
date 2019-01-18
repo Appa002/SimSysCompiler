@@ -7,12 +7,14 @@
 #include <Lexical/IContext.h>
 #include <Lexical/Contexts/GlobalContext.h>
 #include <iostream>
+#include <Lexical/Tokens/EOSToken.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
-    std::ifstream fs;
-    fs.open(path);
-    this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
+    ///std::ifstream fs;
+    //fs.open(path);
+    //this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
+    this->document  =path;
 
     contextStack.push(new GlobalContext());
     preProcessDocument();
@@ -33,18 +35,15 @@ void ACC::LexicalAnalysis::process() {
     for(auto itr = document.begin(); (itr+range) != document.end();){
         auto context = contextStack.peek();
         std::string debug(itr, itr + range);
-        std::cout << debug;
-
         if(context->escapeSequence().matches(itr, range)){
             contextStack.pop();
-            std::cout << "     ; Context pop" << std::endl;
+            tokens.push_back(new EOSToken());
             itr += range;
             range = 1;
             continue;
         }
 
         if(!matches(context, itr, range, &expr)){
-            std::cout << "     ; no match" << std::endl;
             range++;
             continue;
         }
@@ -57,11 +56,9 @@ void ACC::LexicalAnalysis::process() {
             auto func = *static_cast<Instruction::token_func*>(expr.second.func);
             auto token = func(document, itr, itr+range);
             tokens.push_back(token);
-            std::cout << "     ; Token" <<std::endl;
         }
         else if(expr.second.id == InstructionId::CHANGE_CONTEXT) {
             contextStack.push(static_cast<Instruction::context_func *>(expr.second.func)->operator()());
-            std::cout << "     ; Context push" <<std::endl;
         }
         itr += range;
         range = 1;
@@ -104,7 +101,16 @@ void ACC::LexicalAnalysis::preProcessDocument() {
 }
 
 void ACC::LexicalAnalysis::printToken() {
-    for(const auto& token : tokens){
-        std::cout << (int)token->id << std::endl;
+    for(auto const& token : tokens){
+        std::cout << (int)token->id << " ";
     }
+    std::cout << std::endl;
+}
+
+const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::LexicalAnalysis::begin() {
+    return tokens.begin();
+}
+
+const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::LexicalAnalysis::end() {
+    return tokens.begin();
 }

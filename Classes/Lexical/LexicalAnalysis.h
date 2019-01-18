@@ -24,6 +24,9 @@ namespace ACC {
         ~LexicalAnalysis();
         void process();
         void printToken();
+
+        const std::vector<IToken*>::iterator begin();
+        const std::vector<IToken*>::iterator end();
     };
 }
 
