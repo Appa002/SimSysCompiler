@@ -11,8 +11,8 @@
 
 namespace ACC{
     struct IdToken : public IToken{
-        IdToken() : IToken() {id = NewTokenId::ID;};
-        IdToken(std::string sym) : IToken(), sym(std::move(sym)) {id = NewTokenId::ID;};
+        IdToken() : IToken() {id = Symbol::ID;};
+        IdToken(std::string sym) : IToken(), sym(std::move(sym)) {id = Symbol::ID;};
         std::string sym;
     };
 }

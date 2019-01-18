@@ -5,7 +5,7 @@
 #include "LexicalAnalysis.h"
 #include <fstream>
 #include <Lexical/IContext.h>
-#include <Lexical/Contexts/GlobalContext.h>
+#include <Lexical/Contexts/AssignmentContext.h>
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
 
@@ -16,7 +16,7 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     //this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
     this->document  =path;
 
-    contextStack.push(new GlobalContext());
+    contextStack.push(new AssignmentContext());
     preProcessDocument();
     process();
 }
@@ -32,7 +32,7 @@ void ACC::LexicalAnalysis::process() {
     size_t range = 1;
     IContext::match expr;
 
-    for(auto itr = document.begin(); (itr+range) != document.end();){
+    for(auto itr = document.begin(); (itr+range-1) != document.end();){
         auto context = contextStack.peek();
         std::string debug(itr, itr + range);
         if(context->escapeSequence().matches(itr, range)){
@@ -113,4 +113,8 @@ const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::L
 
 const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::LexicalAnalysis::end() {
     return tokens.begin();
+}
+
+const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {
+    return tokens;
 }

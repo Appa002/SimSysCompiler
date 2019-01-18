@@ -8,69 +8,68 @@
 #include "ParseTree.h"
 
 ACC::ParseTree::ParseTree(const ACC::LexicalAnalysis &in) {
-  //  process(const_cast<LexicalAnalysis&>(in));
+    auto root = process(const_cast<LexicalAnalysis &>(in).data(), Symbol::expr);
+    root->print();
+    delete root;
 }
 
-ACC::TestNode * ACC::ParseTree::process(std::string input, char prodSym) {
-    std::vector<assigment> grammar = interpretGrammar(grammarDef);
+ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
     auto iItr = input.begin();
-    auto node = new TestNode(prodSym);
+    auto node = new ParseNode(prodSym);
 
-    for(auto const& production : grammar){
-        if(production.first[0] != prodSym)
+    for (auto const &production : data::getGrammar()) {
+        if (production.first != prodSym)
             continue;
         auto old = iItr;
-        for(auto pItr = production.second.begin();; ++pItr){
-            if(pItr == production.second.end()){
-                if(iItr == input.end())
+        for (auto pItr = production.second.begin();; ++pItr) {
+            if (pItr == production.second.end()) {
+                if (iItr == input.end())
                     return node;
                 iItr = old;
+                killChildren(node);
                 break;
             }
             auto expected = *pItr;
 
-            if(expected != '`'){
-                if(expected == *iItr){
-                    node->children.push_back(new TestNode(expected));
+            if (!isNoneterminal(expected)) {
+                if (expected == (*iItr)->id) {
+                    node->children.push_back(new ParseNode(expected));
                     iItr++;
-                }
-                else{
+                } else {
                     killChildren(node);
                     iItr = old;
                     break;
                 }
-            }else{
-                std::string sym;
-                pItr++;
-                while(*pItr != '`'){
-                    sym += *pItr;
-                    ++pItr;
-                }
-
+            } else {
                 ++pItr;
                 int depth = 0;
-                std::string subStr;
-                while(iItr != input.end()){
-                    if(*iItr == *pItr && depth == 0)
+                token_string subStr;
+                while (iItr != input.end()) {
+                    /*  if(pItr == production.second.end()){
+                          subStr.push_back(*iItr);
+                          break;
+                      }*/
+                    if ((*iItr)->id == *pItr && depth == 0)
                         break;
-                    if(*iItr == '(')
+                    if ((*iItr)->id == Symbol::BRACKET &&
+                        static_cast<BracketToken *>(*iItr)->kind == BracketKind::OPEN)
                         depth++;
-                    else if (*iItr == ')')
+                    if ((*iItr)->id == Symbol::BRACKET &&
+                        static_cast<BracketToken *>(*iItr)->kind == BracketKind::CLOSED)
                         depth--;
-                    subStr += *iItr;
+                    subStr.push_back(*iItr);
                     iItr++;
                 }
-                std::cout << subStr << std::endl;
-                if(iItr == input.end() && *iItr != *pItr) {
+
+                if (iItr == input.end() && pItr != production.second.end()) {
                     iItr = old;
                     break;
                 }
-                TestNode* newNode = process(subStr, production.first[0]);
-                if(newNode){
+                ParseNode *newNode = process(subStr, production.first);
+                if (newNode) {
                     node->children.push_back(newNode);
                     pItr--;
-                }
-                else{
+                } else {
                     killChildren(node);
                     iItr = old;
                     break;
@@ -79,14 +78,10 @@ ACC::TestNode * ACC::ParseTree::process(std::string input, char prodSym) {
         }
     }
     delete node;
-   return nullptr;
+    return nullptr;
 }
 
-void ACC::ParseTree::interactive() {
-    std::vector<assigment> grammar = interpretGrammar(grammarDef);
-    auto root = process("(n-(n))", 'E');
-    delete root;
-}
+/*
 std::vector<ACC::ParseTree::assigment> ACC::ParseTree::interpretGrammar(std::string in) {
     std::vector<std::string> exprs;
     std::string cur;
@@ -128,10 +123,10 @@ void ACC::ParseTree::split(const std::string &input, std::string &lhs, std::stri
             itr+=3;
         }
     }
-}
+}*/
 
-void ACC::ParseTree::killChildren(ACC::TestNode *node) {
-    for(auto const& child : node->children)
+void ACC::ParseTree::killChildren(ACC::ParseNode *node) {
+    for (auto const &child : node->children)
         delete child;
     node->children.clear();
 }

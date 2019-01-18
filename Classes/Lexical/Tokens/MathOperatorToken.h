@@ -12,7 +12,7 @@ namespace ACC{
         PLUS, MINUS
     };
     struct MathOperatorToken : public IToken{
-        MathOperatorToken(MathOperators k) : IToken(), kind(k) {id = NewTokenId::MATH_OPERATOR;};
+        MathOperatorToken(MathOperators k) : IToken(), kind(k) {id = Symbol::MATH_OPERATOR;};
         MathOperators kind;
     };
 }

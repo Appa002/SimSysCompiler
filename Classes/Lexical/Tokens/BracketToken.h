@@ -12,7 +12,7 @@ namespace ACC{
         OPEN, CLOSED
     };
     struct BracketToken : public IToken{
-        BracketToken(BracketKind k) : IToken(), kind(k) {id = NewTokenId::BRACKET;};
+        BracketToken(BracketKind k) : IToken(), kind(k) {id = Symbol::BRACKET;};
         BracketKind kind = BracketKind::OPEN;
     };
 }

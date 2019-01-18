@@ -6,14 +6,18 @@
 #define SIMSYSCOMPILER_PARSENODE_H
 
 #include <vector>
-#include <Lexical/IToken.h>
+#include <grammar.h>
+#include <iostream>
 
 namespace ACC {
-    class ParseNode {
-    public:
+    struct ParseNode{
+        ParseNode();
+        explicit ParseNode(Symbol s);
+        ~ParseNode();
+
+        void print(unsigned indent = 0);
+        Symbol value;
         std::vector<ParseNode*> children;
-        bool isTerminal = false;
-        IToken* token;
     };
 }
 

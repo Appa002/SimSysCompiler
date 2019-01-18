@@ -6,25 +6,18 @@
 #define SIMSYSCOMPILER_ITOKEN_H
 
 #include <string>
+#include <grammar.h>
 
 namespace ACC {
     class IContext;
-    enum class NewTokenId;
 
     class IToken {
     public:
-        NewTokenId id;
+        Symbol id;
     };
 
-    enum class NewTokenId{
-        VAR,
-        ID,
-        BRACKET,
-        MATH_OPERATOR,
-        PRINT,
-        LITERAL,
-        EOS
-    };
+    using token_string = std::vector<IToken*>;
+
 }
 
 #endif //SIMSYSCOMPILER_NEWTOKEN_H

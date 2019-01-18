@@ -27,6 +27,7 @@ namespace ACC {
 
         const std::vector<IToken*>::iterator begin();
         const std::vector<IToken*>::iterator end();
+        std::vector<IToken*> const & data();
     };
 }
 

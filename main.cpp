@@ -1,9 +1,5 @@
 #include <fstream>
-#include <TokenizedInput.h>
 #include <iostream>
-#include <DepthParsedInput.h>
-#include <OperandHandler.h>
-#include <Generator.h>
 #include <Lexical/LexicalAnalysis.h>
 #include <Parser/ParseTree.h>
 /*
@@ -17,8 +13,7 @@
 
 
 int main() {
-    auto l = LexicalAnalysis("./test.txt");
+    auto l = LexicalAnalysis("(1 - 3) + (2 + 3)");
     auto p = ParseTree(l);
-    p.interactive();
     return 0;
  }

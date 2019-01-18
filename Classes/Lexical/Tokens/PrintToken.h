@@ -11,7 +11,7 @@
 
 namespace ACC{
     struct PrintToken : public IToken{
-        PrintToken(std::string s) : IToken(), sym(std::move(s)) {this->id = NewTokenId::PRINT;}
+        PrintToken(std::string s) : IToken(), sym(std::move(s)) {this->id = Symbol::PRINT;}
         std::string sym;
     };
 }

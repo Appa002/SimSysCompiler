@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct VarToken : public IToken{
-        VarToken() : IToken() {id = NewTokenId::VAR;};
+        VarToken() : IToken() {id = Symbol::VAR;};
     };
 }
 
