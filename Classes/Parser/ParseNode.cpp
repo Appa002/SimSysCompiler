@@ -17,7 +17,7 @@ ACC::ParseNode::~ParseNode(){
         delete child;
 }
 
-void ACC::ParseNode::print(unsigned int indent){
+void ACC::ParseNode::print(unsigned int indent) const{
     std::cout << std::string(indent, ' ') << (int)value << std::endl;
     for(auto const& child : children)
         child->print(indent+2);

@@ -6,7 +6,7 @@ enable_testing()
 include(GoogleTest)
 
 file(GLOB Test "./*.cpp")
-file(GLOB Classes "../Classes/*")
+file(GLOB_RECURSE Classes "../Classes/*")
 file(GLOB Standalones "../Standalone/*")
 
 

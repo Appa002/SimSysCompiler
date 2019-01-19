@@ -22,7 +22,6 @@ ACC::GlobalContext::GlobalContext()
         }
 )
 {
-    refCounter++;
 }
 
 ACC::GlobalContext::GlobalContext(const ACC::GlobalContext &other) :

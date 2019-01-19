@@ -11,7 +11,7 @@ namespace ACC {
     class KeywordContext : public IContext{
     private:
         const std::vector<ACC::IContext::match> legals;
-        int refCounter;
+        int refCounter = 1;
     public:
         KeywordContext();
         KeywordContext(const KeywordContext& other);

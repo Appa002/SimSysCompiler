@@ -14,6 +14,9 @@ namespace ACC{
     struct MathOperatorToken : public IToken{
         MathOperatorToken(MathOperators k) : IToken(), kind(k) {id = Symbol::MATH_OPERATOR;};
         MathOperators kind;
+        friend inline bool operator==(MathOperatorToken const & lhs, MathOperatorToken const & rhs){
+                return lhs.kind == rhs.kind;
+        }
     };
 }
 

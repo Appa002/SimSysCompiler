@@ -5,30 +5,34 @@
 #include "LexicalAnalysis.h"
 #include <fstream>
 #include <Lexical/IContext.h>
-#include <Lexical/Contexts/AssignmentContext.h>
+#include <Lexical/Contexts/GlobalContext.h>
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
+#include <errors.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
-    ///std::ifstream fs;
-    //fs.open(path);
-    //this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
-    this->document  =path;
+    std::ifstream fs;
+    fs.open(path);
+    this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
-    contextStack.push(new AssignmentContext());
+    contextStack.push(new GlobalContext());
     preProcessDocument();
     process();
 }
 
 ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
-        : contextStack(other.contextStack), tokens(other.tokens), document(other.document), refCount(other.refCount)
+        : contextStack(other.contextStack), tokens(other.tokens), document(other.document), refCount(other.refCount),
+        processed(other.processed)
 {
     refCount++;
 }
 
 
 void ACC::LexicalAnalysis::process() {
+    if(processed)
+        throw repeated_step_error_t("The file has already been analysed!");
+    processed = true;
     size_t range = 1;
     IContext::match expr;
 
@@ -112,7 +116,7 @@ const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::L
 }
 
 const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::LexicalAnalysis::end() {
-    return tokens.begin();
+    return tokens.end();
 }
 
 const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {

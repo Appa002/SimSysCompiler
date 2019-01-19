@@ -10,6 +10,9 @@
 namespace ACC{
     struct VarToken : public IToken{
         VarToken() : IToken() {id = Symbol::VAR;};
+        friend inline bool operator==(const VarToken&, const VarToken&){
+            return true;
+        }
     };
 }
 

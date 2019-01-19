@@ -10,6 +10,9 @@
 namespace ACC{
     struct EOSToken : public IToken{
         EOSToken() : IToken() {id = Symbol::EOS;};
+        friend inline bool operator==(EOSToken const&, EOSToken const&){
+            return true;
+        }
     };
 }
 

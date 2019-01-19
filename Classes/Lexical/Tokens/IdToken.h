@@ -14,6 +14,9 @@ namespace ACC{
         IdToken() : IToken() {id = Symbol::ID;};
         IdToken(std::string sym) : IToken(), sym(std::move(sym)) {id = Symbol::ID;};
         std::string sym;
+        friend inline bool operator==(IdToken const & lhs, IdToken const & rhs){
+            return lhs.sym == rhs.sym;
+        }
     };
 }
 

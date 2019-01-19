@@ -24,7 +24,6 @@ ACC::AssignmentContext::AssignmentContext()
         }
 )
 {
-    refCounter++;
 }
 
 ACC::AssignmentContext::AssignmentContext(const ACC::AssignmentContext &other) :
@@ -57,14 +56,15 @@ ACC::Pattern ACC::AssignmentContext::escapeSequence() {
 
 ACC::IToken* ACC::AssignmentContext::id_eval(const std::string &input, const std::string::iterator &matchStart,
                                              const std::string::iterator &matchEnd) {
-    std::regex rgx("[a-zA-Z_]+| +[a-zA-Z_]+");
     const std::string document(matchStart, matchEnd);
 
+    std::regex rgx("([a-zA-Z_]+)| +([a-zA-Z_]+)");
     if(!std::regex_search(document, rgx))
-        throw lexical_error_t("Interpreted \""+document+"\" as an variable's symbol in an assignment context, yet it doesn't match patterns described.");
+        throw lexical_error_t("Interpreted \""+document+"\" as an id in an global context, yet it doesn't match patterns described.");
 
     std::smatch match(*std::regex_iterator(document.begin(), document.end(), rgx));
-    return new IdToken(match.str(0));
+    std::string str = match.str(1).empty() ? match.str(2) : match.str(1);
+    return new IdToken(str);
 }
 
 ACC::IToken *ACC::AssignmentContext::mathOperator_eval(const std::string  & input, const std::string::iterator & matchStart,

@@ -1,10 +1,7 @@
 //
 // Created by a_mod on 09.01.2019.
 //
-
-#ifndef SIMSYSCOMPILER_BRAKETTOKEN_H
-#define SIMSYSCOMPILER_BRAKETTOKEN_H
-
+#pragma once
 #include <Lexical/IToken.h>
 
 namespace ACC{
@@ -12,9 +9,10 @@ namespace ACC{
         OPEN, CLOSED
     };
     struct BracketToken : public IToken{
-        BracketToken(BracketKind k) : IToken(), kind(k) {id = Symbol::BRACKET;};
+        explicit BracketToken(BracketKind k) : IToken(), kind(k) {id = Symbol::BRACKET;};
         BracketKind kind = BracketKind::OPEN;
+        friend inline bool operator==(BracketToken const & lhs, BracketToken const & rhs){
+            return lhs.kind == rhs.kind;
+        }
     };
 }
-
-#endif //SIMSYSCOMPILER_BRAKETTOKEN_H

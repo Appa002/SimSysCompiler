@@ -15,6 +15,7 @@ namespace ACC {
         std::vector<IToken*> tokens;
         std::string document;
         int refCount = 0;
+        bool processed = false;
 
         void preProcessDocument();
         bool matches(IContext* context, const std::string::iterator& itr, size_t range, IContext::match* legalExpr);

@@ -13,7 +13,7 @@
 
 
 int main() {
-    auto l = LexicalAnalysis("(1 - (1 + 3))");
+    auto l = LexicalAnalysis("./test.txt");
     auto p = ParseTree(l);
     return 0;
  }

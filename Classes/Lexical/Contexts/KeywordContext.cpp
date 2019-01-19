@@ -18,7 +18,6 @@ ACC::KeywordContext::KeywordContext()
         }
 )
 {
-    refCounter++;
 }
 
 ACC::KeywordContext::KeywordContext(const ACC::KeywordContext &other) :
