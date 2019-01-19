@@ -7,7 +7,7 @@ include(GoogleTest)
 
 file(GLOB Test "./*.cpp")
 file(GLOB_RECURSE Classes "../Source/*")
-file(GLOB Standalones "../Standalone/*")
+file(GLOB Standalones "../Data/*")
 
 
 # Add test cpp file
