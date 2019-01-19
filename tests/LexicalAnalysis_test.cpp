@@ -81,4 +81,7 @@ TEST(ExpressionizedInputSuit, Parsing) {
         ++idx;
     }
 
+    for(auto const& token : truth)
+        delete token;
+
 }
