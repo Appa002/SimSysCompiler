@@ -18,14 +18,6 @@ namespace ACC {
         ~GlobalContext();
         const std::vector<match> getLegals() override;
         Pattern escapeSequence() override;
-
-        static IToken* id_eval(const std::string &, const std::string::iterator &,
-                               const std::string::iterator &);
-
-        static IToken* var_eval(const std::string &, const std::string::iterator &,
-                                const std::string::iterator &);
-
-        static IContext* assignment_switch();
     };
 }
 

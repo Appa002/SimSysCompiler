@@ -2,8 +2,7 @@
 // Created by a_mod on 10.01.2019.
 //
 
-#ifndef SIMSYSCOMPILER_PARSTREE_H
-#define SIMSYSCOMPILER_PARSTREE_H
+#pragma once
 
 #include <Lexical/LexicalAnalysis.h>
 #include "ParseNode.h"
@@ -32,5 +31,3 @@ namespace ACC {
         void generate(const LexicalAnalysis& in);
     };
 }
-
-#endif //SIMSYSCOMPILER_PARSTREE_H

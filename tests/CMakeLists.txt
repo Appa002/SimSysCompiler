@@ -4,7 +4,6 @@ project(basic_test)
 # Setup testing
 enable_testing()
 include(GoogleTest)
-
 file(GLOB Test "./*.cpp")
 file(GLOB_RECURSE Classes "../Source/*")
 file(GLOB Standalones "../Data/*")

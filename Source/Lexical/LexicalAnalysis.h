@@ -2,8 +2,7 @@
 // Created by a_mod on 06.01.2019.
 //
 
-#ifndef SIMSYSCOMPILER_LEXICALANALYSIS_H
-#define SIMSYSCOMPILER_LEXICALANALYSIS_H
+#pragma once
 
 #include <Stack.h>
 #include <Lexical/IContext.h>
@@ -31,5 +30,3 @@ namespace ACC {
         std::vector<IToken*> const & data();
     };
 }
-
-#endif //SIMSYSCOMPILER_LEXICALANALYSIS_H

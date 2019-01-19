@@ -18,8 +18,6 @@ namespace ACC {
         ~KeywordContext();
         const std::vector<match> getLegals() override;
         Pattern escapeSequence() override;
-
-        static IToken* print_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
     };
 }
 
