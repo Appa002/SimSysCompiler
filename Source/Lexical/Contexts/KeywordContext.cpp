@@ -10,11 +10,12 @@
 #include <iostream>
 #include <Lexical/Tokens/PrintToken.h>
 #include <evaluators.h>
+#include <patterns.h>
 // var [a-zA-Z]+
 ACC::KeywordContext::KeywordContext()
         : legals(
         {
-                {Pattern({"[a-zA-Z_]+| +[a-zA-Z_]+"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::print_eval))}
+                {data::id_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::print_eval))}
         }
 )
 {

@@ -11,17 +11,18 @@
 #include <iostream>
 #include <errors.h>
 #include <evaluators.h>
+#include <patterns.h>
 
 // var [a-zA-Z]+
 ACC::AssignmentContext::AssignmentContext()
         : legals(
         {
-                {Pattern({" +[0-9]+|[0-9]+"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::number_eval))},
-                {Pattern({"\\+| +\\+"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::mathOperator_eval))},
-                {Pattern({"-| +-"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::mathOperator_eval))},
-                {Pattern({"\\(| +\\("}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::bracket_eval))},
-                {Pattern({"\\)| +\\)"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::bracket_eval))},
-                {Pattern({"[a-zA-Z_]+| +[a-zA-Z_]+"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::id_eval))},
+                {data::numberLiteral_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::number_eval))},
+                {data::plus_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::mathOperator_eval))},
+                {data::minus_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::mathOperator_eval))},
+                {data::openBracket_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::bracket_eval))},
+                {data::closedBracket_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::bracket_eval))},
+                {data::id_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::id_eval))},
         }
 )
 {

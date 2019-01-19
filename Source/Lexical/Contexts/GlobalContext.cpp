@@ -10,16 +10,17 @@
 #include <errors.h>
 #include <Lexical/Tokens/VarToken.h>
 #include <evaluators.h>
+#include <patterns.h>
 
 // var [a-zA-Z]+
 ACC::GlobalContext::GlobalContext()
         : legals(
         {
-                {Pattern({"[a-zA-Z_]+ | +[a-zA-Z_]+ "}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::id_eval))},
-                {Pattern({"var| +var"}), Instruction(InstructionId::NEW_TOKEN, new evaluator(data::var_eval))},
+                {data::id_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::id_eval))},
+                {data::var_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::var_eval))},
 
-                {Pattern({"print"}), Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::keyword_switch))},
-                {Pattern({"="}), Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::assignment_switch))},
+                {data::printKeyword_pattern, Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::keyword_switch))},
+                {data::assigment_pattern, Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::assignment_switch))},
         }
 )
 {
