@@ -37,7 +37,7 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
 
             if (!isNoneterminal(expected)) {
                 if (expected == (*iItr)->id) {
-                    node->children.push_back(new ParseNode(expected));
+                    node->children.push_back(new ParseNode((*iItr)->id, *iItr));
                     iItr++;
                 } else {
                     killChildren(node);

@@ -23,5 +23,9 @@ void ACC::ParseNode::print(unsigned int indent) const{
         child->print(indent+2);
 }
 
+ACC::ParseNode::ParseNode(ACC::Symbol s, ACC::IToken *t): token(t), value(s) {
+
+}
+
 
 
