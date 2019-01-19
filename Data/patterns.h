@@ -9,7 +9,6 @@
 
 namespace ACC{
     namespace data{
-        const auto print_pattern = Pattern({"[a-zA-Z_]+| +[a-zA-Z_]+"});
         const auto id_pattern = Pattern({"[a-zA-Z_]+ | +[a-zA-Z_]+ "});
         const auto var_pattern = Pattern({"var| +var"});
         const auto printKeyword_pattern = Pattern({"print"});
