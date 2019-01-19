@@ -45,18 +45,18 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
                 int depth = 0;
                 token_string subStr;
                 while (iItr != input.end()) {
-                    /*  if(pItr == production.second.end()){
-                          subStr.push_back(*iItr);
-                          break;
-                      }*/
+                    if ((*iItr)->id == Symbol::BRACKET &&
+                        static_cast<BracketToken *>(*iItr)->kind == BracketKind::OPEN){
+                        depth++;
+                    }
+
                     if ((*iItr)->id == *pItr && depth == 0)
                         break;
+
                     if ((*iItr)->id == Symbol::BRACKET &&
-                        static_cast<BracketToken *>(*iItr)->kind == BracketKind::OPEN)
-                        depth++;
-                    if ((*iItr)->id == Symbol::BRACKET &&
-                        static_cast<BracketToken *>(*iItr)->kind == BracketKind::CLOSED)
+                        static_cast<BracketToken *>(*iItr)->kind == BracketKind::CLOSED){
                         depth--;
+                    }
                     subStr.push_back(*iItr);
                     iItr++;
                 }
