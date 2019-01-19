@@ -10,6 +10,11 @@
 namespace ACC{
     struct EOSToken : public IToken{
         EOSToken() : IToken() {id = Symbol::EOS;};
+
+        std::string getIdentifier() override{
+            return "EndOfStatement";
+        }
+
         friend inline bool operator==(EOSToken const&, EOSToken const&){
             return true;
         }

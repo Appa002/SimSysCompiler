@@ -6,6 +6,7 @@
 #include <fstream>
 #include <Lexical/IContext.h>
 #include <Lexical/Contexts/GlobalContext.h>
+#include <Lexical/Contexts/AssignmentContext.h>
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
 #include <errors.h>
@@ -16,7 +17,7 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
-    contextStack.push(new GlobalContext());
+    contextStack.push(new AssignmentContext());
     preProcessDocument();
     process();
 }

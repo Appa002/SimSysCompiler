@@ -6,6 +6,7 @@
 #define SIMSYSCOMPILER_GRAMMAR_H
 
 #include <vector>
+#include <string>
 
 namespace ACC {
     enum class Symbol {
@@ -30,6 +31,7 @@ namespace ACC {
 
     namespace data {
         std::vector<definition> getGrammar();
+        std::string symbolToString(Symbol s);
     }
 }
 #endif //SIMSYSCOMPILER_GRAMMAR_H

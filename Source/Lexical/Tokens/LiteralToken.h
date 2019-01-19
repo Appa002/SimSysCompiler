@@ -13,6 +13,11 @@ namespace ACC{
     struct LiteralToken : public IToken{
         LiteralToken(std::string literal) : IToken(), literal(std::move(literal)) {id = Symbol::LITERAL;};
         std::string literal;
+
+        std::string getIdentifier() override {
+            return "Literal (" + literal + ")";
+        }
+
         friend inline bool operator==(LiteralToken const & lhs, LiteralToken const & rhs){
             return lhs.literal == rhs.literal;
         }

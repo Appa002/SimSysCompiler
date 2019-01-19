@@ -14,6 +14,7 @@ namespace ACC {
     class IToken {
     public:
         Symbol id;
+        virtual std::string getIdentifier() = 0;
     };
 
     using token_string = std::vector<IToken*>;

@@ -15,5 +15,6 @@
 int main() {
     auto l = LexicalAnalysis("./test.txt");
     auto p = ParseTree(l);
+    p.data()->print();
     return 0;
  }

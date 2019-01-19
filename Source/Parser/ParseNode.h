@@ -17,7 +17,7 @@ namespace ACC {
         ParseNode(Symbol s, IToken* t);
         ~ParseNode();
 
-        void print(unsigned indent = 0) const;
+        void print(std::string indent = "", bool isLast = false) const;
         Symbol value;
         IToken* token = nullptr;
         std::vector<ParseNode*> children;
