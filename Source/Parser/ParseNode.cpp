@@ -3,12 +3,8 @@
 //
 
 #include "ParseNode.h"
-
-namespace ANSI_CODES{
-    const std::string NONE_TERMINAL = "\033[34;1m";
-    const std::string TERMINAL = "\033[35;1m";
-    const std::string CLEAR = "\033[0m";
-};
+#include <Logger/Logger.h>
+#include <iomanip>
 
 ACC::ParseNode::ParseNode() : value(Symbol::expr) {
 
@@ -27,23 +23,31 @@ ACC::ParseNode::~ParseNode() {
         delete child;
 }
 
-void ACC::ParseNode::print(std::string indent, bool isLast) const {
+void ACC::ParseNode::_print(std::string indent, bool isLast) const {
     std::string representation = token == nullptr ? (data::symbolToString(value)) : (token->getIdentifier());
-    std::string colour = token == nullptr ? (ANSI_CODES::TERMINAL) : (ANSI_CODES::NONE_TERMINAL);
+    auto colour = token == nullptr ? (Log::Colour::Magenta) : (Log::Colour::Blue);
 
-    std::cout << indent;
+    LOG() << indent;
     if(isLast){
-        std::cout << "\\-";
+        LOG() << "\\-";
         indent += "     ";
     }else{
-        std::cout << "|-";
+        LOG() << "|-";
         indent += "|    ";
     }
-    std::cout << colour << "[" << representation << "]" <<  ANSI_CODES::CLEAR << std::endl;
+   // std::cout
+    LOG() << colour << "[" << representation << "]" << std::endl;
 
     for (int i = 0; i < children.size(); i++) {
-        children[i]->print(indent, i == children.size() - 1);
+        children[i]->_print(indent, i == children.size() - 1);
     }
+}
+
+void ACC::ParseNode::print() const {
+    std::stringstream ss;
+    ss << "Parse Tree Generated. (Node at:" << std::hex << this <<" used as root)";
+    Log::Logger::get()->createHeading(ss.str());
+    _print("", false);
 }
 
 

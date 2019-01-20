@@ -12,12 +12,16 @@
 
 namespace ACC {
     struct ParseNode{
+    private:
+        void _print(std::string indent = "", bool isLast = false) const;
+
+    public:
         ParseNode();
         explicit ParseNode(Symbol s);
         ParseNode(Symbol s, IToken* t);
         ~ParseNode();
+        void print() const;
 
-        void print(std::string indent = "", bool isLast = false) const;
         Symbol value;
         IToken* token = nullptr;
         std::vector<ParseNode*> children;
