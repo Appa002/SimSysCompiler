@@ -22,7 +22,7 @@ namespace ACC {
         ~ParseNode();
         void print() const;
 
-        Symbol value;
+        Symbol symbol;
         IToken* token = nullptr;
         std::vector<ParseNode*> children;
     };

@@ -97,7 +97,7 @@ ACC::ParseTree::createString(token_string::iterator& inputItr, production::itera
     return subStr;
 }
 
-const ACC::ParseNode *ACC::ParseTree::data() {
+const ACC::ParseNode *ACC::ParseTree::getRoot() {
     return root;
 }
 

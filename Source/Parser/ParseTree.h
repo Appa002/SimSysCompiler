@@ -27,7 +27,7 @@ namespace ACC {
         ParseTree(ParseTree const & other);
         ~ParseTree();
 
-        ParseNode const* data();
+        ParseNode const* getRoot();
         void generate(const LexicalAnalysis& in);
     };
 }

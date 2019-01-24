@@ -6,15 +6,15 @@
 #include <Logger/Logger.h>
 #include <iomanip>
 
-ACC::ParseNode::ParseNode() : value(Symbol::expr) {
+ACC::ParseNode::ParseNode() : symbol(Symbol::expr) {
 
 }
 
-ACC::ParseNode::ParseNode(ACC::Symbol s, ACC::IToken *t) : token(t), value(s) {
+ACC::ParseNode::ParseNode(ACC::Symbol s, ACC::IToken *t) : token(t), symbol(s) {
 
 }
 
-ACC::ParseNode::ParseNode(ACC::Symbol s) : value(s) {
+ACC::ParseNode::ParseNode(ACC::Symbol s) : symbol(s) {
 
 }
 
@@ -24,7 +24,7 @@ ACC::ParseNode::~ParseNode() {
 }
 
 void ACC::ParseNode::_print(std::string indent, bool isLast) const {
-    std::string representation = token == nullptr ? (data::symbolToString(value)) : (token->getIdentifier());
+    std::string representation = token == nullptr ? (data::symbolToString(symbol)) : (token->getIdentifier());
     auto colour = token == nullptr ? (Log::Colour::Magenta) : (Log::Colour::Blue);
 
     LOG() << indent;
