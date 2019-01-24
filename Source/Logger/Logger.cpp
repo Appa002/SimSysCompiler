@@ -13,7 +13,7 @@ const std::string htmlPreamble = R"(<!DOCTYPE html>
 	<style type="text/css">
 		#running{
 			white-space: pre-wrap;
-			width: 99vh;
+			width: 99vw;
 			color: white;
 			background-color: black;
 			margin: 0 auto;
@@ -22,7 +22,7 @@ const std::string htmlPreamble = R"(<!DOCTYPE html>
 		#heading{
 			white-space: pre-wrap;
 			background: #4c4c4c;
-			width: 99vh;
+			width: 99vw;
 			color: #3dff00;
 			margin: 0 auto;
 			text-align: center;
@@ -37,8 +37,8 @@ const std::string htmlPreamble = R"(<!DOCTYPE html>
 const std::string htmlEnd = R"(</div></body></html>)";
 
 namespace ANSI_CODES{
-    const std::string magenta = "\033[34;1m";
-    const std::string blue = "\033[35;1m";
+    const std::string blue = "\033[34;1m";
+    const std::string magenta = "\033[35;1m";
     const std::string clear = "\033[0m";
     const std::string heading = "\033[32;1m";
 };
@@ -109,7 +109,7 @@ void ACC::Log::Logger::logToFile(ACC::Log::LogLevel level, std::string str) {
 
     switch (colour){
         case Colour::Blue:
-            str = R"(<b style="color: lightblue;">)" + str;
+            str = R"(<b style="color: #253df7;">)" + str;
             str += R"(</b>)";
             break;
         case Colour::Magenta:

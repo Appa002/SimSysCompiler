@@ -17,7 +17,12 @@ namespace ACC {
         virtual std::string getIdentifier() = 0;
     };
 
-    using token_string = std::vector<IToken*>;
+    struct token_string : public std::vector<IToken*>{
+        token_string();
+        token_string(std::vector<IToken*> other);
+        std::string createStdString();
+        std::vector<IToken*> operator() (const token_string& other);
+    };
 
 }
 

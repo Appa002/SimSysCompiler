@@ -17,7 +17,7 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
-    contextStack.push(new AssignmentContext());
+    contextStack.push(new GlobalContext());
     preProcessDocument();
     process();
 }

@@ -7,6 +7,9 @@
 #include <iostream>
 #include "ParseTree.h"
 #include <errors.h>
+#include <Logger/Logger.h>
+
+size_t gap = 0;
 
 ACC::ParseTree::ParseTree(const ACC::LexicalAnalysis &in) {
     generate(in);
@@ -20,15 +23,24 @@ ACC::ParseTree::ParseTree(const ACC::ParseTree &other) : refCount(other.refCount
 ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
     auto iItr = input.begin();
     auto node = new ParseNode(prodSym);
+    gap += 4;
 
     for (auto production : data::getGrammar()) {
         if (production.first != prodSym)
             continue;
+        LOG() <<  Log::Colour::Blue << std::string(gap, ' ') << "Selected: " << data::symbolToString(production.first) << std::endl;
         auto old = iItr;
         for (auto pItr = production.second.begin();; ++pItr) {
             if (pItr == production.second.end()) {
-                if (iItr == input.end())
+                if (iItr == input.end()){
+                    gap -= 4;
                     return node;
+                }
+                LOG() << std::string(gap, ' ') <<"-----" << std::endl;
+                LOG() << std::string(gap, ' ') <<"Symbol: " << (*iItr)->getIdentifier() << std::endl;
+                LOG() << std::string(gap, ' ') <<"Input: " << input.createStdString() << std::endl;
+                LOG() << std::string(gap, ' ') <<"Production: " << data::productionToString(production) << std::endl;
+                LOG() << Log::Colour::Magenta << std::string(gap, ' ') <<"  --- FAILED -- (reached end of production without reaching end of input)" << std::endl;
                 iItr = old;
                 killChildren(node);
                 break;
@@ -38,33 +50,50 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
             if (!isNoneterminal(expected)) {
                 if (expected == (*iItr)->id) {
                     node->children.push_back(new ParseNode((*iItr)->id, *iItr));
+                    LOG() << std::string(gap, ' ') << "Matched noneterminal: " << (*iItr)->getIdentifier() << std::endl;
                     iItr++;
                 } else {
                     killChildren(node);
                     iItr = old;
+                    LOG() << std::string(gap, ' ') << "-----" << std::endl;
+                    LOG() << std::string(gap, ' ') << "Noneterminal: " << (*iItr)->getIdentifier() << std::endl;
+                    LOG() << std::string(gap, ' ') << "Input: " << input.createStdString() << std::endl;
+                    LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
+                    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (noneterminal wasn't the same in the production and the input)" << std::endl;
                     break;
                 }
             } else {
+                auto terminal = *pItr;
+                LOG() << std::string(gap, ' ') << "Terminal in production: " << data::symbolToString(terminal) << std::endl;
                 ++pItr;
                 token_string subStr = createString(iItr, pItr, input);
                 if (iItr == input.end() && pItr != production.second.end()) {
                     iItr = old;
+                    LOG() << std::string(gap, ' ') << "-----" << std::endl;
+                    LOG() << std::string(gap, ' ') << "Substring: " << subStr.createStdString() << std::endl;
+                    LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
+                    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (reached end of input while not reaching the end of production.)" << std::endl;
                     break;
                 }
+                LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
+                LOG() << std::string(gap, ' ') << "Substring: " << subStr.createStdString() << std::endl;
 
-                ParseNode *newNode = process(subStr, production.first);
+                ParseNode *newNode = process(subStr, terminal);
                 if (newNode) {
                     node->children.push_back(newNode);
                     pItr--;
                 } else {
                     killChildren(node);
                     iItr = old;
+                    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (couldn't satisfy terminal; see above)" << std::endl;
                     break;
                 }
             }
         }
     }
+    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  :-: Couldn't satisfy overall expression: " << input.createStdString() << std::endl;
     delete node;
+    gap -= 4;
     return nullptr;
 }
 
@@ -75,7 +104,7 @@ void ACC::ParseTree::killChildren(ACC::ParseNode *node) {
 }
 
 ACC::token_string
-ACC::ParseTree::createString(token_string::iterator& inputItr, production::iterator& productionItr, token_string const& input){
+ACC::ParseTree::createString(token_string::iterator& inputItr, prodRhs::iterator& productionItr, token_string const& input){
     int depth = 0;
     token_string subStr;
     while (inputItr != input.end()) {
@@ -105,7 +134,8 @@ void ACC::ParseTree::generate(const ACC::LexicalAnalysis &in) {
     if(generated)
         throw repeated_step_error_t("The parse tree has already been generated.");
     generated = true;
-    root = process(const_cast<LexicalAnalysis &>(in).data(), Symbol::expr);
+    LOG.createHeading("Generating Parse Tree...");
+    root = process(const_cast<LexicalAnalysis &>(in).data(), Symbol::start);
 }
 
 ACC::ParseTree::~ParseTree() {
