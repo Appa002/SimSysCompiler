@@ -10,7 +10,7 @@
 #include <functional>
 #include <AbstractSyntaxTree/ASTNode.h>
 namespace ACC::data{
-    using rule = std::pair<definition, std::function<ACC::ASTNode*(std::vector<ACC::ParseNode*>)>>;
+    using rule = std::pair<production, std::function<ACC::ASTNode*(std::vector<ACC::ParseNode*>)>>;
     std::vector<rule> getRules();
 
 }

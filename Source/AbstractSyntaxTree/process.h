@@ -10,7 +10,8 @@
 #include <astRules.h>
 
 namespace ACC{
-    data::rule getRule(const ParseNode* nodes);
+    data::rule getRule(const ParseNode* node);
+    bool matches(const ParseNode* node, const data::rule& rule);
     ASTNode* process(const ParseNode* node);
 }
 

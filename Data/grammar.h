@@ -21,16 +21,19 @@ namespace ACC {
             none_terminals_start,
 
             expr,
-            stmt
+            stmt,
+            start
     };
 
     bool isNoneterminal(Symbol sys);
 
-    using production = std::vector<Symbol>;
-    using definition = std::pair<Symbol, production>;
+    using prodRhs = std::vector<Symbol>;
+    using production = std::pair<Symbol, prodRhs>;
 
     namespace data {
-        std::vector<definition> getGrammar();
+        std::vector<production> getGrammar();
+
+        std::string productionToString(production p);
         std::string symbolToString(Symbol s);
     }
 }

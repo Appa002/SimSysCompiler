@@ -11,7 +11,8 @@
 enum class AstOperator{
     PLUS,
     MINUS,
-    LITERAL
+    LITERAL,
+    STMT
 };
 
 namespace ACC {

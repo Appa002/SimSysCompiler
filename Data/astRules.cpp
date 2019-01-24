@@ -14,12 +14,30 @@
  *
  * */
 
-std::vector<std::pair <ACC::definition, std::function<ACC::ASTNode * (std::vector < ACC::ParseNode * > )>>> ACC::data::getRules() {
-    return
-    { // vector
-    /* S ::= E */    {{Symbol::stmt, {Symbol::expr}}, [](std::vector < ACC::ParseNode * > children){
+std::vector<std::pair <ACC::production, std::function<ACC::ASTNode * (std::vector < ACC::ParseNode * > )>>> ACC::data::getRules() {
+    /*
+     * {Symbol::start, {Symbol::stmt}}, // start := stmt
+                {Symbol::stmt, {Symbol::expr, Symbol::EOS, Symbol::stmt}}, // S ::= E EOS S
+                {Symbol::stmt, {Symbol::expr, Symbol::EOS}}, // S ::= E EOS
+
+                {Symbol::expr, {Symbol::LITERAL}}, // E ::= A-Za-z0-9
+                {Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, // (E)
+                {Symbol::expr, {Symbol::expr, Symbol::MATH_OPERATOR, Symbol::expr}} // E-E
+     * */
+
+    return { // vector
+    /* start ::= stmt */    {{Symbol::start, {Symbol::stmt}}, [](auto children){
         return process(children[0]);
         }},
+
+    /* stmt ::= expr EOS stmt */    {{Symbol::stmt, {Symbol::expr, Symbol::EOS, Symbol::stmt}}, [](auto children){
+        auto vec = {process(children[0]), process(children[2])};
+        return new ASTNode(AstOperator::STMT, vec);
+    }},
+
+            /* stmt ::= expr EOS*/    {{Symbol::stmt, {Symbol::expr, Symbol::EOS}}, [](auto children){
+        return new ASTNode(AstOperator::STMT, {process(children[0])});
+    }},
 
     /* E ::= Literal */    {{Symbol::expr, {Symbol::LITERAL}}, [](std::vector < ACC::ParseNode * > children) {
         return new ASTNode(AstOperator::LITERAL, static_cast<LiteralToken*>(children[0]->token)->literal);
