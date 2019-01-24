@@ -5,26 +5,7 @@
 #include <AbstractSyntaxTree/ASTNode.h>
 #include <Lexical/Tokens/MathOperatorToken.h>
 
-/*
- * {Symbol::stmt, {Symbol::expr}}, // S ::= E
-                {Symbol::expr, {Symbol::LITERAL}}, // E ::= A-Za-z0-9
-                {Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, // (E)
-                {Symbol::expr, {Symbol::expr, Symbol::MATH_OPERATOR, Symbol::expr}} // E-E
-
- *
- * */
-
 std::vector<std::pair <ACC::production, std::function<ACC::ASTNode * (std::vector < ACC::ParseNode * > )>>> ACC::data::getRules() {
-    /*
-     * {Symbol::start, {Symbol::stmt}}, // start := stmt
-                {Symbol::stmt, {Symbol::expr, Symbol::EOS, Symbol::stmt}}, // S ::= E EOS S
-                {Symbol::stmt, {Symbol::expr, Symbol::EOS}}, // S ::= E EOS
-
-                {Symbol::expr, {Symbol::LITERAL}}, // E ::= A-Za-z0-9
-                {Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, // (E)
-                {Symbol::expr, {Symbol::expr, Symbol::MATH_OPERATOR, Symbol::expr}} // E-E
-     * */
-
     return { // vector
     /* start ::= stmt */    {{Symbol::start, {Symbol::stmt}}, [](auto children){
         return process(children[0]);
