@@ -9,6 +9,17 @@
 const std::string htmlPreamble = R"(<!DOCTYPE html>
 <html>
 <head>
+    <script>
+        window.onload = function () {
+            var list = document.querySelectorAll("#heading");
+            list.forEach((e) => {
+                e.addEventListener("click", (event) => {
+                    event.target.nextSibling.style.display = event.target.nextSibling.style.display == "none" ? ("") : ("none");
+                })
+            });
+        }
+    </script>
+
 	<title>Log</title>
 	<style type="text/css">
 		#running{
@@ -29,6 +40,11 @@ const std::string htmlPreamble = R"(<!DOCTYPE html>
 			font-family: 'Lucida Console', Monaco, monospace;
 			font-weight: 800;
 		}
+
+	    #heading:hover{
+			background: #2a2a2a;
+            cursor: pointer;
+        }
 	</style>
 </head>
 <body>
