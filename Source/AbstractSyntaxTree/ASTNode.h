@@ -12,7 +12,10 @@ enum class AstOperator{
     PLUS,
     MINUS,
     LITERAL,
-    STMT
+    STMT,
+    ASSIGN,
+    ID,
+    PRINT
 };
 
 namespace ACC {

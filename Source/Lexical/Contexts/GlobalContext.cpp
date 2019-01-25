@@ -6,7 +6,6 @@
 #include <regex>
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Contexts/AssignmentContext.h>
-#include <Lexical/Contexts/KeywordContext.h>
 #include <errors.h>
 #include <Lexical/Tokens/VarToken.h>
 #include <evaluators.h>
@@ -18,9 +17,10 @@ ACC::GlobalContext::GlobalContext()
         {
                 {data::id_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::id_eval))},
                 {data::var_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::var_eval))},
+                {data::printKeyword_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::print_eval))},
+                {data::eos_pattern, Instruction(InstructionId::NEW_TOKEN, new evaluator(data::eos_eval))},
 
-                {data::printKeyword_pattern, Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::keyword_switch))},
-                {data::assigment_pattern, Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::assignment_switch))},
+                {data::assignment_pattern, Instruction(InstructionId::CHANGE_CONTEXT, new context_switcher(data::assignment_switch))},
         }
 )
 {

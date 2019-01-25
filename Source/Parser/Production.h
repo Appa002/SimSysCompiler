@@ -21,6 +21,9 @@ namespace ACC {
         none_terminals_start,
 
         expr,
+        declaration,
+        assignment,
+        key,
         stmt,
         start
     };

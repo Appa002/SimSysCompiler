@@ -42,6 +42,12 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return str;
         case AstOperator::STMT:
             return "stmt";
+        case AstOperator::ASSIGN:
+            return "assign";
+        case AstOperator::ID:
+            return str;
+        case AstOperator::PRINT:
+            return "print";
     }
     return "";
 }

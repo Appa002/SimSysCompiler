@@ -14,10 +14,10 @@ namespace ACC{
         IToken* number_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
         IToken* var_eval(const std::string &, const std::string::iterator &, const std::string::iterator &);
         IToken* print_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
+        IToken* eos_eval(const std::string&, const std::string::iterator&, const std::string::iterator&);
 
         /* Switches... */
 
         IContext* assignment_switch();
-        IContext* keyword_switch();
     }
 }

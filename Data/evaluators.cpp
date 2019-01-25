@@ -10,8 +10,8 @@
 #include <Lexical/Tokens/BracketToken.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/VarToken.h>
+#include <Lexical/Tokens/EOSToken.h>
 #include <Lexical/Contexts/AssignmentContext.h>
-#include <Lexical/Contexts/KeywordContext.h>
 #include <Lexical/Tokens/PrintToken.h>
 
 ACC::IToken *ACC::data::id_eval(const std::string &input, const std::string::iterator &matchStart,
@@ -83,14 +83,13 @@ ACC::data::print_eval(const std::string &, const std::string::iterator &matchSta
                                 const std::string::iterator &matchEnd) {
     const std::string document(matchStart, matchEnd);
 
-    std::regex rgx("([a-zA-Z_]+)| +([a-zA-Z_]+)");
+    std::regex rgx("print +([a-zA-Z_]+)");
     if (!std::regex_search(document, rgx))
         throw lexical_error_t("Interpreted \"" + document +
                               "\" as an `print` in an keyword context, yet it doesn't match patterns described.");
 
     std::smatch match(*std::regex_iterator(document.begin(), document.end(), rgx));
-    std::string str = match.str(1).empty() ? match.str(2) : match.str(1);
-    return new PrintToken(str);
+    return new PrintToken(match.str(1));
 }
 
 
@@ -100,6 +99,7 @@ ACC::IContext *ACC::data::assignment_switch() {
     return new AssignmentContext;
 }
 
-ACC::IContext *ACC::data::keyword_switch() {
-    return new KeywordContext;
+ACC::IToken *ACC::data::eos_eval(const std::string &, const std::string::iterator &matchStart,
+                                 const std::string::iterator &matchEnd) {
+    return new EOSToken();
 }

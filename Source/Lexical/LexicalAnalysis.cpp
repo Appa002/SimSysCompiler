@@ -10,6 +10,7 @@
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
 #include <errors.h>
+#include <Logger/Logger.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
@@ -33,13 +34,14 @@ ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
 void ACC::LexicalAnalysis::process() {
     if(processed)
         throw repeated_step_error_t("The file has already been analysed!");
+    LOG.createHeading("Starting Lexical Analysis...");
     processed = true;
     size_t range = 1;
     IContext::match expr;
 
     for(auto itr = document.begin(); (itr+range-1) != document.end();){
         auto context = contextStack.peek();
-        std::string debug(itr, itr + range);
+        LOG() << std::string(itr, itr + range) << std::endl;
         if(context->escapeSequence().matches(itr, range)){
             contextStack.pop();
             tokens.push_back(new EOSToken());
