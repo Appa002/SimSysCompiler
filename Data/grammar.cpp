@@ -13,11 +13,14 @@ bool ACC::isNoneterminal(Symbol sys) {
 
 std::vector<ACC::Production> ACC::data::getGrammar() {
     return {
-            {Symbol::start,       {Symbol::assignment}},
-            {Symbol::start,       {Symbol::key}},
+            {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
+            {Symbol::start,       {Symbol::key, Symbol::EOS}},
 
-            {Symbol::assignment,  {Symbol::VAR, Symbol::ID, Symbol::expr,  Symbol::EOS}},
-            {Symbol::key,         {Symbol::PRINT,  Symbol::EOS}},
+            {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
+            {Symbol::start,       {Symbol::key, Symbol::EOS, Symbol::start}},
+
+            {Symbol::assignment,  {Symbol::VAR, Symbol::ID, Symbol::expr}},
+            {Symbol::key,         {Symbol::PRINT}},
 
             {Symbol::expr,        {Symbol::LITERAL}}, // E ::= A-Za-z0-9
             {Symbol::expr,        {Symbol::BRACKET, Symbol::expr,          Symbol::BRACKET}}, // (E)

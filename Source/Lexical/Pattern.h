@@ -11,8 +11,10 @@ namespace ACC {
     class Pattern {
     private:
         std::vector<std::regex> regexs;
+        std::vector<std::regex> bad;
     public:
         explicit Pattern(std::vector<std::string> str);
+        explicit Pattern(std::vector<std::string> str, std::vector<std::string> bad);
         explicit Pattern();
         bool matches(const std::string::iterator& itr, size_t range);
     };
