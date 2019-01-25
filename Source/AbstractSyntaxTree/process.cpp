@@ -5,11 +5,11 @@
 #include "process.h"
 
 ACC::ASTNode *ACC::process(const ACC::ParseNode * node) {
-    data::rule r = getRule(node);
-    return r.second(node->children);
+    Rule r = getRule(node);
+    return r.apply(node->children);
 }
 
- ACC::data::rule ACC::getRule(const ACC::ParseNode* node) {
+ ACC::Rule ACC::getRule(const ACC::ParseNode* node) {
     for(const auto& rule : data::getRules()){
         if(!matches(node, rule))
             continue;
@@ -19,16 +19,16 @@ ACC::ASTNode *ACC::process(const ACC::ParseNode * node) {
     throw std::runtime_error("Production is not contained in abstract syntax tree rules.");
  }
 
- bool ACC::matches(const ACC::ParseNode *node, const ACC::data::rule &rule) {
-    if(node->symbol != rule.first.first)
+ bool ACC::matches(const ACC::ParseNode *node, const Rule &rule) {
+    if(node->symbol != rule.production.head)
         return false;
 
-    if(rule.first.second.size() != node->children.size())
+    if(rule.production.body.size() != node->children.size())
         return false;
 
     size_t idx = 0;
     for(const auto& child : node->children){
-        if(child->symbol != rule.first.second[idx])
+        if(child->symbol != rule.production.body[idx])
             return false;
         idx++;
     }

@@ -6,17 +6,17 @@
 
 #include <Lexical/LexicalAnalysis.h>
 #include "ParseNode.h"
-#include <iostream>
+#include "Production.h"
 
 
 namespace ACC {
     class ParseTree {
     private:
         void killChildren(ParseNode* node);
-        token_string createString(token_string::iterator& inputItr, prodRhs::iterator& productionItr,
+        token_string createString(token_string::iterator& inputItr, productionBody_t::iterator& productionItr,
                 token_string const& input);
 
-        ParseNode * process(token_string input, Symbol prodSym);
+        ParseNode * process(token_string input, Symbol prodHead);
 
         ParseNode * root = nullptr;
         int refCount = 1;

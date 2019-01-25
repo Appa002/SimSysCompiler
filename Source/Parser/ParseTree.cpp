@@ -6,8 +6,9 @@
 #include <Lexical/Tokens/BracketToken.h>
 #include <iostream>
 #include "ParseTree.h"
-#include <errors.h>
+#include "Production.h"
 #include <Logger/Logger.h>
+#include <errors.h>
 
 size_t gap = 0;
 
@@ -20,18 +21,18 @@ ACC::ParseTree::ParseTree(const ACC::ParseTree &other) : refCount(other.refCount
     refCount++;
 }
 
-ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
+ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
     auto iItr = input.begin();
-    auto node = new ParseNode(prodSym);
+    auto node = new ParseNode(prodHead);
     gap += 4;
 
     for (auto production : data::getGrammar()) {
-        if (production.first != prodSym)
+        if (production.head != prodHead)
             continue;
-        LOG() <<  Log::Colour::Blue << std::string(gap, ' ') << "Selected: " << data::symbolToString(production.first) << std::endl;
+        LOG() <<  Log::Colour::Blue << std::string(gap, ' ') << "Selected: " << data::symbolToString(production.head) << std::endl;
         auto old = iItr;
-        for (auto pItr = production.second.begin();; ++pItr) {
-            if (pItr == production.second.end()) {
+        for (auto pItr = production.body.begin();; ++pItr) {
+            if (pItr == production.body.end()) {
                 if (iItr == input.end()){
                     gap -= 4;
                     return node;
@@ -67,7 +68,7 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodSym) {
                 LOG() << std::string(gap, ' ') << "Terminal in production: " << data::symbolToString(terminal) << std::endl;
                 ++pItr;
                 token_string subStr = createString(iItr, pItr, input);
-                if (iItr == input.end() && pItr != production.second.end()) {
+                if (iItr == input.end() && pItr != production.body.end()) {
                     iItr = old;
                     LOG() << std::string(gap, ' ') << "-----" << std::endl;
                     LOG() << std::string(gap, ' ') << "Substring: " << subStr.createStdString() << std::endl;
@@ -104,7 +105,7 @@ void ACC::ParseTree::killChildren(ACC::ParseNode *node) {
 }
 
 ACC::token_string
-ACC::ParseTree::createString(token_string::iterator& inputItr, prodRhs::iterator& productionItr, token_string const& input){
+ACC::ParseTree::createString(token_string::iterator& inputItr, productionBody_t::iterator& productionItr, token_string const& input){
     int depth = 0;
     token_string subStr;
     while (inputItr != input.end()) {

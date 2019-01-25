@@ -4,8 +4,9 @@
 #include <AbstractSyntaxTree/process.h>
 #include <AbstractSyntaxTree/ASTNode.h>
 #include <Lexical/Tokens/MathOperatorToken.h>
+#include <Parser/Production.h>
 
-std::vector<std::pair <ACC::production, std::function<ACC::ASTNode * (std::vector < ACC::ParseNode * > )>>> ACC::data::getRules() {
+std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
     /* start ::= stmt */    {{Symbol::start, {Symbol::stmt}}, [](auto children){
         return process(children[0]);

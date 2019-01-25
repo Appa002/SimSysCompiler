@@ -8,6 +8,7 @@
 #include <Lexical/Tokens/PrintToken.h>
 #include <Lexical/Tokens/EOSToken.h>
 #include <Lexical/Tokens/BracketToken.h>
+#include "Production.h"
 
 using namespace ACC;
 

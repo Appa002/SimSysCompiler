@@ -10,11 +10,11 @@ ACC::ParseNode::ParseNode() : symbol(Symbol::expr) {
 
 }
 
-ACC::ParseNode::ParseNode(ACC::Symbol s, ACC::IToken *t) : token(t), symbol(s) {
+ACC::ParseNode::ParseNode(Symbol s, ACC::IToken *t) : token(t), symbol(s) {
 
 }
 
-ACC::ParseNode::ParseNode(ACC::Symbol s) : symbol(s) {
+ACC::ParseNode::ParseNode(Symbol s) : symbol(s) {
 
 }
 

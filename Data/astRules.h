@@ -9,10 +9,10 @@
 #include <grammar.h>
 #include <functional>
 #include <AbstractSyntaxTree/ASTNode.h>
-namespace ACC::data{
-    using rule = std::pair<production, std::function<ACC::ASTNode*(std::vector<ACC::ParseNode*>)>>;
-    std::vector<rule> getRules();
+#include <AbstractSyntaxTree/Rule.h>
 
+namespace ACC::data{
+    std::vector<Rule> getRules();
 }
 
 #endif //SIMSYSCOMPILER_ASSOPERATORS_H
