@@ -40,6 +40,10 @@ const std::string htmlPreamble = R"(<!DOCTYPE html>
 			font-family: 'Lucida Console', Monaco, monospace;
 			font-weight: 800;
 		}
+        h1{
+            font-family: 'Lucida Console', Monaco, monospace;
+			font-weight: 800;
+        }
 
 	    #heading:hover{
 			background: #2a2a2a;
@@ -48,6 +52,7 @@ const std::string htmlPreamble = R"(<!DOCTYPE html>
 	</style>
 </head>
 <body>
+<h1>Generated Log (press headings to expand/collapse)...</h1>
 <div id="running">)";
 
 const std::string htmlEnd = R"(</div></body></html>)";
@@ -148,7 +153,7 @@ void ACC::Log::Logger::logToFile(ACC::Log::LogLevel level, std::string str) {
 void ACC::Log::Logger::createHeading(std::string str) {
     if(!isSilent)
         std::cout << ANSI_CODES::heading << str << ANSI_CODES::clear << std::endl;
-    str = R"(</div><div id="heading">)" + str + R"(</div><div id="running">)";
+    str = R"(</div><div id="heading">)" + str + R"(</div><div id="running" style="display: none;">)";
     file.seekp(head);
     file << str;
     file << htmlEnd;

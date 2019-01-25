@@ -18,6 +18,9 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
+    LOG.createHeading("Original Input being Lexically Analysed:");
+    LOG() << this->document << std::endl;
+
     contextStack.push(new GlobalContext());
     preProcessDocument();
     process();
@@ -43,6 +46,7 @@ void ACC::LexicalAnalysis::process() {
         auto context = contextStack.peek();
         LOG() << std::string(itr, itr + range) << std::endl;
         if(context->escapeSequence().matches(itr, range)){
+            LOG() << Log::Colour::Magenta << "Matches escape sequence" << std::endl;
             contextStack.pop();
             tokens.push_back(new EOSToken());
             itr += range;
@@ -55,16 +59,20 @@ void ACC::LexicalAnalysis::process() {
             continue;
         }
 
+        LOG() << Log::Colour::Magenta << "Matches pattern for a ";
+
         while(expr.first.matches(itr, range)){
             range++;
         }
         range--;
         if(expr.second.id == InstructionId::NEW_TOKEN){
+            LOG() << Log::Colour::Magenta << "new token" << std::endl;
             auto func = *static_cast<Instruction::token_func*>(expr.second.func);
             auto token = func(document, itr, itr+range);
             tokens.push_back(token);
         }
         else if(expr.second.id == InstructionId::CHANGE_CONTEXT) {
+            LOG() << Log::Colour::Magenta << "new context" << std::endl;
             contextStack.push(static_cast<Instruction::context_func *>(expr.second.func)->operator()());
         }
         itr += range;

@@ -41,7 +41,7 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
         case AstOperator::LITERAL:
             return str;
         case AstOperator::START:
-            return "stmt";
+            return "start";
         case AstOperator::ASSIGN:
             return "assign";
         case AstOperator::ID:
