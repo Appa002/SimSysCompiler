@@ -52,7 +52,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
         {{Symbol::key, {Symbol::PRINT}}, [](auto children) {
             auto asPrintToken = static_cast<PrintToken*>(children[0]->token);
-            return new ASTNode(AstOperator::PRINT, {new ASTNode(AstOperator::ID, asPrintToken->sym)});
+            return new ASTNode(AstOperator::PRINT, {new ASTNode(AstOperator::ID, "hi")});
         }},
 
 

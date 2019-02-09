@@ -11,15 +11,13 @@
 
 namespace ACC{
     struct PrintToken : public IToken{
-        PrintToken(std::string s) : IToken(), sym(std::move(s)) {this->id = Symbol::PRINT;}
-        std::string sym;
-
+        PrintToken() : IToken() {this->id = Symbol::PRINT;}
         std::string getIdentifier() override{
-            return "print " + sym;
+            return "print";
         }
 
         friend inline bool operator==(PrintToken const & lhs, PrintToken const & rhs){
-            return lhs.sym == rhs.sym;
+            return true;
         }
     };
 }

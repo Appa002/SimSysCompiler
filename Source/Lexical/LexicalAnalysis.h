@@ -5,19 +5,19 @@
 #pragma once
 
 #include <Stack.h>
-#include <Lexical/IContext.h>
+#include <Lexical/IToken.h>
 
 namespace ACC {
     class LexicalAnalysis{
     private:
-        Stack<IContext*> contextStack;
         std::vector<IToken*> tokens;
         std::string document;
         int refCount = 0;
         bool processed = false;
 
         void preProcessDocument();
-        bool matches(IContext* context, const std::string::iterator& itr, size_t range, IContext::match* legalExpr);
+        bool inTable(std::string idf);
+        bool isNumber(char c);
     public:
         explicit LexicalAnalysis(std::string path);
         LexicalAnalysis(const LexicalAnalysis& other);

@@ -17,6 +17,7 @@
 int main() {
     LOG.silence(false);
     auto l = LexicalAnalysis("./test.txt");
+    l.printToken();
     auto p = ParseTree(l);
     p.getRoot()->print();
     auto a = AbstractSyntaxTree(p);

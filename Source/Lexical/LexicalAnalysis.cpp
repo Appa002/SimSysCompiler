@@ -4,13 +4,20 @@
 
 #include "LexicalAnalysis.h"
 #include <fstream>
-#include <Lexical/IContext.h>
-#include <Lexical/Contexts/GlobalContext.h>
-#include <Lexical/Contexts/AssignmentContext.h>
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
 #include <errors.h>
 #include <Logger/Logger.h>
+#include <SymbolTable.h>
+
+#include <Lexical/Tokens/LiteralToken.h>
+#include <Lexical/Tokens/IdToken.h>
+#include <Lexical/Tokens/VarToken.h>
+#include <Lexical/Tokens/BracketToken.h>
+#include <Lexical/Tokens/MathOperatorToken.h>
+#include <Lexical/Tokens/PrintToken.h>
+#include <Lexical/Tokens/AssignToken.h>
+#include <Lexical/Tokens/DeclToken.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
@@ -21,13 +28,12 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
 
-    contextStack.push(new GlobalContext());
     preProcessDocument();
     process();
 }
 
 ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
-        : contextStack(other.contextStack), tokens(other.tokens), document(other.document), refCount(other.refCount),
+        : tokens(other.tokens), document(other.document), refCount(other.refCount),
         processed(other.processed)
 {
     refCount++;
@@ -39,71 +45,89 @@ void ACC::LexicalAnalysis::process() {
         throw repeated_step_error_t("The file has already been analysed!");
     LOG.createHeading("Starting Lexical Analysis...");
     processed = true;
-    size_t range = 1;
-    IContext::match expr;
 
-    for(auto itr = document.begin(); (itr+range-1) != document.end();){
-        auto context = contextStack.peek();
-        LOG() << std::string(itr, itr + range) << std::endl;
-        if(context->escapeSequence().matches(itr, range)){
-            LOG() << Log::Colour::Magenta << "Matches escape sequence" << std::endl;
-            contextStack.pop();
-            tokens.push_back(new EOSToken());
-            itr += range;
-            range = 1;
+    std::string buffer;
+    for(auto itr = document.begin(); itr != document.end(); ) {
+        if(*itr == ' '){
+            itr++;
             continue;
         }
+        if(isNumber(*itr)){ // is c a number
+            for(;isNumber(*itr); itr++)
+                buffer += *itr;
+            LOG() << Log::Colour::Magenta << "Detected Literal: ";
+            LOG() << buffer << std::endl;
+            tokens.push_back(new LiteralToken(buffer));
+            buffer.clear();
+        }else{
+            bool isInTable = false;
+            for(;itr != document.end(); itr++){
+                if(inTable(buffer)) {
+                    isInTable = true;
+                    break;
+                }
+                if(*itr == ' ')
+                    break;
+                buffer += *itr;
+            }
+            if(!isInTable){ //not in table
+                LOG() << Log::Colour::Magenta << "Not in table: ";
+                LOG() << buffer << std::endl;
+                SymbolTable::get()->emplace(buffer, Symbol::DECL);
+                tokens.push_back(new DeclToken(buffer));
+                buffer.clear();
+            }
+            else{ // in table
+                LOG() << Log::Colour::Magenta << "In Table: ";
+                LOG() << buffer << std::endl;
+                switch(SymbolTable::get()->at(buffer)){
+                    case Symbol::empty:break;
+                    case Symbol::ID:break;
+                    case Symbol::none_terminals_start:break;
+                    case Symbol::LITERAL:break;
+                    case Symbol::expr:break;
+                    case Symbol::declaration:break;
+                    case Symbol::assignment:break;
+                    case Symbol::key:break;
+                    case Symbol::stmt:break;
+                    case Symbol::start:break;
 
-        if(!matches(context, itr, range, &expr)){
-            range++;
-            continue;
+                    case Symbol::VAR:
+                        tokens.push_back(new VarToken());
+                        break;
+                    case Symbol::BRACKET:
+                        tokens.push_back(new BracketToken(buffer == "(" ? (BracketKind::OPEN) : (BracketKind::CLOSED)));
+                        break;
+                    case Symbol::MATH_OPERATOR:
+                        tokens.push_back(new MathOperatorToken(buffer == "+" ? (MathOperators::PLUS) : (MathOperators::MINUS)));
+                        break;
+                    case Symbol::PRINT:
+                        tokens.push_back(new PrintToken());
+                        break;
+                    case Symbol::EOS:
+                        tokens.push_back(new EOSToken());
+                        break;
+                    case Symbol::ASSIGN:
+                        tokens.push_back(new AssignToken());
+                        break;
+                    case Symbol::DECL:
+                        tokens.push_back(new IdToken(buffer));
+                        break;
+                }
+                buffer.clear();
+            }
         }
-
-        LOG() << Log::Colour::Magenta << "Matches pattern for a ";
-
-        while(expr.first.matches(itr, range)){
-            range++;
-        }
-        range--;
-        if(expr.second.id == InstructionId::NEW_TOKEN){
-            LOG() << Log::Colour::Magenta << "new token" << std::endl;
-            auto func = *static_cast<Instruction::token_func*>(expr.second.func);
-            auto token = func(document, itr, itr+range);
-            tokens.push_back(token);
-        }
-        else if(expr.second.id == InstructionId::CHANGE_CONTEXT) {
-            LOG() << Log::Colour::Magenta << "new context" << std::endl;
-            contextStack.push(static_cast<Instruction::context_func *>(expr.second.func)->operator()());
-        }
-        itr += range;
-        range = 1;
     }
-
 }
 
 ACC::LexicalAnalysis::~LexicalAnalysis() {
     refCount--;
     if(refCount != 0)
         return;
-
-    for(const auto& it : contextStack)
-        delete it;
-    contextStack.destroy();
-
     for(const auto& it : tokens)
         delete it;
 }
 
-bool ACC::LexicalAnalysis::matches(ACC::IContext *context, const std::string::iterator &itr, size_t range, ACC::IContext::match *legalExpr) {
-    int amount = 0;
-    for(auto expr : context->getLegals()){
-        if(expr.first.matches(itr, range)){
-            amount++;
-            *legalExpr = expr;
-        }
-    }
-    return !(amount == 0 || amount > 1);
-}
 
 void ACC::LexicalAnalysis::preProcessDocument() {
     for(int i = document.size() - 1; i >= 0; i--){
@@ -113,13 +137,14 @@ void ACC::LexicalAnalysis::preProcessDocument() {
         else if (i - 1 >= 0 && cur == ' ' && document[i - 1] == ' ')
             document.erase(i, 1);
     }
+    document += ' ';
 }
 
 void ACC::LexicalAnalysis::printToken() {
+    LOG.createHeading("Tokens generated by the Lexical Analysis:");
     for(auto const& token : tokens){
-        std::cout << (int)token->id << " ";
+        LOG() << token->getIdentifier() << std::endl;
     }
-    std::cout << std::endl;
 }
 
 const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::LexicalAnalysis::begin() {
@@ -132,4 +157,12 @@ const std::vector<ACC::IToken *, std::allocator<ACC::IToken *>>::iterator ACC::L
 
 const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {
     return tokens;
+}
+
+bool ACC::LexicalAnalysis::inTable(std::string idf) {
+    return SymbolTable::get()->find(idf) != SymbolTable::get()->end();
+}
+
+bool ACC::LexicalAnalysis::isNumber(char c) {
+    return (int)c >= 48 && (int)c <=57;
 }

@@ -11,11 +11,13 @@ namespace ACC {
     enum class Symbol : int{
         empty = -1,
         VAR = 0,
+        DECL,
         ID,
         BRACKET,
         MATH_OPERATOR,
         PRINT,
         LITERAL,
+        ASSIGN,
         EOS,
 
         none_terminals_start,

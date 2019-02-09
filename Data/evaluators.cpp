@@ -11,7 +11,6 @@
 #include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/EOSToken.h>
-#include <Lexical/Contexts/AssignmentContext.h>
 #include <Lexical/Tokens/PrintToken.h>
 
 ACC::IToken *ACC::data::id_eval(const std::string &input, const std::string::iterator &matchStart,
@@ -89,14 +88,13 @@ ACC::data::print_eval(const std::string &, const std::string::iterator &matchSta
                               "\" as an `print` in an keyword context, yet it doesn't match patterns described.");
 
     std::smatch match(*std::regex_iterator(document.begin(), document.end(), rgx));
-    return new PrintToken(match.str(1));
+    return new PrintToken();
 }
 
 
 /* Switches... */
 
 ACC::IContext *ACC::data::assignment_switch() {
-    return new AssignmentContext;
 }
 
 ACC::IToken *ACC::data::eos_eval(const std::string &, const std::string::iterator &matchStart,
