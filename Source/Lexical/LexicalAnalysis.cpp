@@ -88,7 +88,7 @@ void ACC::LexicalAnalysis::process() {
                     case Symbol::expr:break;
                     case Symbol::declaration:break;
                     case Symbol::assignment:break;
-                    case Symbol::key:break;
+                    case Symbol::keyword:break;
                     case Symbol::stmt:break;
                     case Symbol::start:break;
 

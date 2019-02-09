@@ -25,7 +25,7 @@ namespace ACC {
         expr,
         declaration,
         assignment,
-        key,
+        keyword,
         stmt,
         start
     };

@@ -29,7 +29,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::START, {process(children[0])});
         }},
 
-        {{Symbol::start, {Symbol::key, Symbol::EOS}}, [](auto children){
+        {{Symbol::start, {Symbol::keyword, Symbol::EOS}}, [](auto children){
             return new ASTNode(AstOperator::START, {process(children[0])});
         }},
 
@@ -38,7 +38,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::START, vec);
         }},
 
-        {{Symbol::start, {Symbol::key, Symbol::EOS, Symbol::start}}, [](auto children){
+        {{Symbol::start, {Symbol::keyword, Symbol::EOS, Symbol::start}}, [](auto children){
             auto vec = {process(children[0]), process(children[2])};
             return new ASTNode(AstOperator::START, vec);
         }},
@@ -50,7 +50,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::key, {Symbol::PRINT}}, [](auto children) {
+        {{Symbol::keyword, {Symbol::PRINT}}, [](auto children) {
             auto asPrintToken = static_cast<PrintToken*>(children[0]->token);
             return new ASTNode(AstOperator::PRINT, {new ASTNode(AstOperator::ID, "hi")});
         }},
