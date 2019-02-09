@@ -12,7 +12,7 @@ enum class AstOperator{
     PLUS,
     MINUS,
     LITERAL,
-    START,
+    SEQ,
     ASSIGN,
     ID,
     PRINT

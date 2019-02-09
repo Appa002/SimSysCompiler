@@ -28,20 +28,20 @@
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
         {{Symbol::start, {Symbol::assignment, Symbol::EOS}}, [](auto children){
-            return new ASTNode(AstOperator::START, {process(children[0])});
+            return new ASTNode(AstOperator::SEQ, {process(children[0])});
         }},
         {{Symbol::start, {Symbol::keyword, Symbol::EOS}}, [](auto children){
-            return new ASTNode(AstOperator::START, {process(children[0])});
+            return new ASTNode(AstOperator::SEQ, {process(children[0])});
         }},
 
 
         {{Symbol::start, {Symbol::assignment, Symbol::EOS, Symbol::start}}, [](auto children){
             auto vec = {process(children[2]), process(children[0])};
-            return new ASTNode(AstOperator::START, vec);
+            return new ASTNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::keyword, Symbol::EOS, Symbol::start}}, [](auto children){
             auto vec = {process(children[2]), process(children[0])};
-            return new ASTNode(AstOperator::START, vec);
+            return new ASTNode(AstOperator::SEQ, vec);
         }},
 
 

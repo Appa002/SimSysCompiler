@@ -40,8 +40,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "-";
         case AstOperator::LITERAL:
             return str;
-        case AstOperator::START:
-            return "start";
+        case AstOperator::SEQ:
+            return "SEQ";
         case AstOperator::ASSIGN:
             return "assign";
         case AstOperator::ID:
