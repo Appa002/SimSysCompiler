@@ -12,9 +12,12 @@
 
 namespace ACC {
     class AbstractSyntaxTree {
-    public:
+    private:
         ASTNode* root;
+    public:
         explicit AbstractSyntaxTree(ParseTree parseTree);
+        void print();
+        ASTNode* getRoot() const;
     };
 }
 
