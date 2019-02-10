@@ -4,6 +4,8 @@
 #include <Parser/ParseTree.h>
 #include <Logger/Logger.h>
 #include <AbstractSyntaxTree/AbstractSyntaxTree.h>
+#include <IntermediateCodeGenerator/RepresentationTypes.h>
+#include <IntermediateCodeGenerator/IntermediateCode.h>
 /*
  * Steps:
  * Load
@@ -21,6 +23,8 @@ int main() {
     auto p = ParseTree(l);
     p.getRoot()->print();
     auto a = AbstractSyntaxTree(p);
-    a.root->print();
+    a.print();
+    auto i = IntermediateCode(a);
+    i.print();
     return 0;
  }
