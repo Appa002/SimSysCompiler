@@ -20,10 +20,10 @@ void ACC::IntermediateCode::print() {
 std::string ACC::IntermediateCode::operator2String(Operator op) {
     switch (op.id) {
         case OperatorId::PLUS:
-            return std::string("plus, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
+            return std::string("add, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
                    printAsTemporary(op.rhs);
         case OperatorId::MINUS:
-            return std::string("minus, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
+            return std::string("subtract, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
                    printAsTemporary(op.rhs);
 
         case OperatorId::COPY:

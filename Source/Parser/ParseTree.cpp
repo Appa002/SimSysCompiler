@@ -67,15 +67,19 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
                 auto terminal = *pItr;
                 LOG() << std::string(gap, ' ') << "Terminal in production: " << data::symbolToString(terminal) << std::endl;
                 ++pItr;
-                token_string subStr = createString(iItr, pItr, input);
+
+
                 if (iItr == input.end() && pItr != production.body.end()) {
                     iItr = old;
                     LOG() << std::string(gap, ' ') << "-----" << std::endl;
-                    LOG() << std::string(gap, ' ') << "Substring: " << subStr.createStdString() << std::endl;
                     LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
                     LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (reached end of input while not reaching the end of production.)" << std::endl;
                     break;
                 }
+
+
+                token_string subStr = createString(iItr, pItr, input, production.body);
+
                 LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
                 LOG() << std::string(gap, ' ') << "Substring: " << subStr.createStdString() << std::endl;
 
@@ -105,7 +109,8 @@ void ACC::ParseTree::killChildren(ACC::ParseNode *node) {
 }
 
 ACC::token_string
-ACC::ParseTree::createString(token_string::iterator& inputItr, productionBody_t::iterator& productionItr, token_string const& input){
+ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t::iterator &productionItr,
+                             token_string const &input, productionBody_t const &production) {
     int depth = 0;
     token_string subStr;
     while (inputItr != input.end()) {
@@ -114,7 +119,7 @@ ACC::ParseTree::createString(token_string::iterator& inputItr, productionBody_t:
             depth++;
         }
 
-        if ((*inputItr)->id == *productionItr && depth == 0)
+        if (productionItr != production.end() && (*inputItr)->id == *productionItr && depth == 0)
             break;
 
         if ((*inputItr)->id == Symbol::BRACKET &&

@@ -7,6 +7,8 @@
 #include "IToken.h"
 
 std::string ACC::token_string::createStdString() {
+    if(this->empty())
+        return "";
     std::string out;
     for(auto const& token : *this){
         out += token->getIdentifier() + " | ";

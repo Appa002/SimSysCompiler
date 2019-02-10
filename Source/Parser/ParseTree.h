@@ -13,8 +13,8 @@ namespace ACC {
     class ParseTree {
     private:
         void killChildren(ParseNode* node);
-        token_string createString(token_string::iterator& inputItr, productionBody_t::iterator& productionItr,
-                token_string const& input);
+        ACC::token_string createString(token_string::iterator &inputItr, productionBody_t::iterator &productionItr,
+                                               token_string const &input, productionBody_t const &production);
 
         ParseNode * process(token_string input, Symbol prodHead);
 
