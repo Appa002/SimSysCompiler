@@ -7,6 +7,7 @@
 
 #include <initializer_list>
 #include <Parser/ParseNode.h>
+#include <memory>
 
 enum class AstOperator{
     PLUS,
@@ -19,16 +20,23 @@ enum class AstOperator{
 };
 
 namespace ACC {
+    class Expr;
+    class Stmt;
+
     class ASTNode {
-        AstOperator op;
-        std::vector<ASTNode*> children;
-        std::string str;
-        void _print(std::string indent, bool isLast) const;
+    private:
         std::string astOperator2String(AstOperator op) const;
-            public:
+    public:
+        void _print(std::string indent, bool isLast) const;
+
         ASTNode(AstOperator op, std::vector<ASTNode*> children);
         ASTNode(AstOperator op, std::string str);
-        void print();
+
+        std::unique_ptr<Expr> asExpr();
+        std::vector<ASTNode*> children;
+
+        AstOperator op;
+        std::string str;
     };
 
 }

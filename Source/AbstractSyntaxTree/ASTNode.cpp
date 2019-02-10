@@ -1,7 +1,17 @@
 #include <utility>
 #include "ASTNode.h"
 #include <AbstractSyntaxTree/process.h>
+#include <IntermediateCodeGenerator/Stmt.h>
+#include <IntermediateCodeGenerator/Expr.h>
 #include <Logger/Logger.h>
+
+#include <IntermediateCodeGenerator/TokenGenerator/PlusTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/MinusTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/LiteralTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/SeqTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/AssignTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/IdTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/PrintTokenGenerator.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;
@@ -52,9 +62,23 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
     return "";
 }
 
-void ACC::ASTNode::print() {
-    std::stringstream ss;
-    ss << "Generated Abstract Syntax Tree: (Node at:" << std::hex << this <<" used as root)";
-    Log::Logger::get()->createHeading(ss.str());
-    _print("", false);
+
+
+std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
+    switch (op){
+        case AstOperator::PLUS:
+            return std::unique_ptr<Expr>(new PlusTokenGenerator(this));
+        case AstOperator::MINUS:
+            return std::unique_ptr<Expr>(new MinusTokenGenerator(this));
+        case AstOperator::LITERAL:
+            return std::unique_ptr<Expr>(new LiteralTokenGenerator(this));
+        case AstOperator::SEQ:
+            return std::unique_ptr<Expr>(new SeqTokenGenerator(this));
+        case AstOperator::ASSIGN:
+            return std::unique_ptr<Expr>(new AssignTokenGenerator(this));
+        case AstOperator::ID:
+            return std::unique_ptr<Expr>(new IdTokenGenerator(this));
+        case AstOperator::PRINT:
+            return std::unique_ptr<Expr>(new PrintTokenGenerator(this));
+    }
 }
