@@ -38,6 +38,7 @@ std::string ACC::IntermediateCode::operator2String(Operator op) {
         case OperatorId::ICOPY:
             return std::string("icopy, ") + printAsTemporary(op.result) + ", " + std::to_string(op.lhs);
     }
+    return "";
 }
 
 

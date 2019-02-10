@@ -115,7 +115,7 @@ ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t:
     token_string subStr;
     while (inputItr != input.end()) {
         if ((*inputItr)->id == Symbol::BRACKET &&
-            static_cast<BracketToken *>(*inputItr)->kind == BracketKind::OPEN){
+                dynamic_cast<BracketToken *>(*inputItr)->kind == BracketKind::OPEN){
             depth++;
         }
 
@@ -123,7 +123,7 @@ ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t:
             break;
 
         if ((*inputItr)->id == Symbol::BRACKET &&
-            static_cast<BracketToken *>(*inputItr)->kind == BracketKind::CLOSED){
+                dynamic_cast<BracketToken *>(*inputItr)->kind == BracketKind::CLOSED){
             depth--;
         }
         subStr.push_back(*inputItr);

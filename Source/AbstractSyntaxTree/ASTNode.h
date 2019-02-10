@@ -31,6 +31,7 @@ namespace ACC {
 
         ASTNode(AstOperator op, std::vector<ASTNode*> children);
         ASTNode(AstOperator op, std::string str);
+        ~ASTNode();
 
         std::unique_ptr<Expr> asExpr();
         std::vector<ASTNode*> children;

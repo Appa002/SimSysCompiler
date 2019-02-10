@@ -82,3 +82,9 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new PrintTokenGenerator(this));
     }
 }
+
+ACC::ASTNode::~ASTNode() {
+    for(const auto& child : children){
+        delete child;
+    }
+}

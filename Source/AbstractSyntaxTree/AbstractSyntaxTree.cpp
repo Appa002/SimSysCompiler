@@ -9,6 +9,7 @@
 
 ACC::AbstractSyntaxTree::AbstractSyntaxTree(ACC::ParseTree parseTree) {
     root = process(parseTree.getRoot());
+    refCount++;
 }
 
 void ACC::AbstractSyntaxTree::print() {
@@ -20,4 +21,16 @@ void ACC::AbstractSyntaxTree::print() {
 
 ACC::ASTNode *ACC::AbstractSyntaxTree::getRoot() const{
     return root;
+}
+
+ACC::AbstractSyntaxTree::~AbstractSyntaxTree() {
+    refCount--;
+    if(refCount != 0)
+        return;
+
+    delete root;
+}
+
+ACC::AbstractSyntaxTree::AbstractSyntaxTree(const ACC::AbstractSyntaxTree &other) : root(other.root), refCount(other.refCount){
+    refCount++;
 }
