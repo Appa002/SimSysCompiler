@@ -4,10 +4,13 @@
 
 #include <Logger/Logger.h>
 #include "IntermediateCode.h"
+#include <IntermediateCodeGenerator/Optimizaions/Optimizations.h>
 
 ACC::IntermediateCode::IntermediateCode(const AbstractSyntaxTree& tree) {
     code = Code();
     tree.getRoot()->asExpr()->generate(code);
+    print();
+    copyElision(code);
 }
 
 void ACC::IntermediateCode::print() {
@@ -29,11 +32,8 @@ std::string ACC::IntermediateCode::operator2String(Operator op) {
         case OperatorId::COPY:
             return std::string("copy, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs);
 
-        case OperatorId::INTERRUPT:
-            return std::string("interrupt, ") + std::to_string(op.lhs);
-
-        case OperatorId::REAL_REGISTER:
-            return std::string("rreg, ") + printAsRRegister(op.lhs) + ", " + printAsTemporary(op.rhs);
+        case OperatorId::PRINT:
+            return std::string("print, ") + printAsTemporary(op.lhs);
 
         case OperatorId::ICOPY:
             return std::string("icopy, ") + printAsTemporary(op.result) + ", " + std::to_string(op.lhs);

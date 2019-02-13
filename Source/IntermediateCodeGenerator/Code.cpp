@@ -33,3 +33,12 @@ std::vector<ACC::Operator, std::allocator<ACC::Operator>>::iterator ACC::Code::b
 std::vector<ACC::Operator, std::allocator<ACC::Operator>>::iterator ACC::Code::end() {
     return data.end();
 }
+
+ACC::Operator &ACC::Code::at(size_t idx) {
+    return data.at(idx);
+}
+
+std::vector<ACC::Operator> &ACC::Code::getData() {
+    return data;
+}
+

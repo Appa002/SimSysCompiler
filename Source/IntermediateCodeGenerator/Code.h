@@ -23,9 +23,12 @@ namespace ACC{
         void emplaceOperator(const Operator& op);
         temporary getLastTemporary();
         temporary createTemporary();
+        Operator& at(size_t idx);
 
         std::vector<Operator>::iterator begin();
         std::vector<Operator>::iterator end();
+
+        std::vector<Operator>& getData();
 
     };
 }

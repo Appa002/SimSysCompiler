@@ -16,8 +16,7 @@ namespace ACC{
         MINUS,
         COPY,
         ICOPY,
-        INTERRUPT,
-        REAL_REGISTER
+        PRINT
     };
 
     struct Operator{
