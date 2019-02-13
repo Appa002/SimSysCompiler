@@ -23,6 +23,7 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::keyword,     {Symbol::PRINT, Symbol::ID}},
 
             {Symbol::expr,        {Symbol::LITERAL}}, // E ::= A-Za-z0-9
+            {Symbol::expr,        {Symbol::ID}}, // E ::= A-Za-z0-9
             {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, // (E)
             {Symbol::expr,        {Symbol::expr,    Symbol::MATH_OPERATOR, Symbol::expr}} // E-E
     };

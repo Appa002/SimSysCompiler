@@ -60,6 +60,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(children[0]->token)->literal);
         }},
 
+        {{Symbol::expr, {Symbol::ID}}, [](std::vector < ACC::ParseNode * > children) {
+            return new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
+        }},
+
          {{Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children){
              return process(children[1]);
          }},
