@@ -9,10 +9,17 @@
 ACC::IntermediateCode::IntermediateCode(const AbstractSyntaxTree& tree) {
     code = Code();
     tree.getRoot()->asExpr()->generate(code);
+    print();
     LOG.createHeading("Dependency graph...");
     code.getData()[6]->printDependency("", false);
 
-   // LOG.createHeading("Dependency graph...");
+    code.removeOp(5);
+    print();
+
+    LOG.createHeading("Dependency graph...");
+    code.getData()[6]->printDependency("", false);
+
+    // LOG.createHeading("Dependency graph...");
    // code.getData()[15]->printDependency("", false);
    // print();
    // copyElision(code);

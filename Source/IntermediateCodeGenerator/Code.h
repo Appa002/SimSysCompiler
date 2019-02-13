@@ -28,6 +28,7 @@ namespace ACC{
         Dependency& getSymbol(std::string sym);
         Dependency& emplaceSymbol(std::string sym, Operator* op);
         void pushOp(Operator *const &op);
+        void removeOp(size_t idx);
         Dependency createTemporary();
         Operator* at(size_t idx);
 

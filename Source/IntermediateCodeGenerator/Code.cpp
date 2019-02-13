@@ -46,3 +46,24 @@ ACC::Code::Code() {
     symTable["none"] = {};
 }
 
+void ACC::Code::removeOp(size_t idx) {
+    auto op = data.at(idx);
+    Operator* prev = nullptr;
+
+    for(auto const & i : data){
+        if(i->opLhs == op || i->opRhs == op){
+            prev = i;
+            break;
+        }
+    }
+    if(prev != nullptr){
+        prev->opLhs = op->opLhs;
+        prev->opRhs = op->opRhs;
+
+        prev->lhs = op->lhs;
+        prev->rhs = op->rhs;
+    }
+
+    data.erase(data.begin() + idx);
+}
+
