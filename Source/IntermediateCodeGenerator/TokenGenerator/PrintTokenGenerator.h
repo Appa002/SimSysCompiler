@@ -11,8 +11,8 @@
 
 namespace ACC{
     struct PrintTokenGenerator : public Expr{
-        temporary generate(ACC::Code &code) override;
-        PrintTokenGenerator(ASTNode* node);
+        Dependency generate(ACC::Code &code) override;
+        explicit PrintTokenGenerator(ASTNode* node);
 
     };
 }

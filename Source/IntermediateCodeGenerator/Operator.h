@@ -6,6 +6,8 @@
 
 #include <stdint.h>
 #include <vector>
+#include <string>
+#include <Logger/Logger.h>
 
 namespace ACC{
     using address = uint32_t;
@@ -25,6 +27,12 @@ namespace ACC{
         address lhs;
         address rhs;
         temporary result;
+
+        Operator* opLhs = nullptr;
+        Operator* opRhs = nullptr;
+        Operator* opResult = nullptr;
+
+        void printDependency(std::string indent, bool isLast) const;
     };
 
 

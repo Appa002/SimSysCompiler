@@ -9,14 +9,19 @@
 ACC::IntermediateCode::IntermediateCode(const AbstractSyntaxTree& tree) {
     code = Code();
     tree.getRoot()->asExpr()->generate(code);
-    print();
-    copyElision(code);
+    LOG.createHeading("Dependency graph...");
+    code.getData()[6]->printDependency("", false);
+
+   // LOG.createHeading("Dependency graph...");
+   // code.getData()[15]->printDependency("", false);
+   // print();
+   // copyElision(code);
 }
 
 void ACC::IntermediateCode::print() {
     LOG.createHeading("Generated Intermediate Representation");
     for(const auto& op : code){
-        LOG() << operator2String(op) << std::endl;
+        LOG() << operator2String(*op) << std::endl;
     }
 }
 

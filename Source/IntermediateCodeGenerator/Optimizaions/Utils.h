@@ -7,7 +7,7 @@
 
 
 #include <string>
-#include <IntermediateCodeGenerator/RepresentationTypes.h>
+#include <IntermediateCodeGenerator/Operator.h>
 #include <Logger/Logger.h>
 #include <IntermediateCodeGenerator/Code.h>
 

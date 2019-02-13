@@ -4,8 +4,13 @@ ACC::IdTokenGenerator::IdTokenGenerator(ASTNode *node) : Expr(node) {
 
 }
 
-ACC::temporary ACC::IdTokenGenerator::generate(ACC::Code &code) {
-    temporary out = code.createTemporary();
-    code.emplaceOperator(Operator(OperatorId::COPY, code.getSymbol(node->str), 0, out));
+ACC::Dependency ACC::IdTokenGenerator::generate(ACC::Code &code) {
+    Dependency out = code.createTemporary();
+    Dependency var = code.getSymbol(node->str);
+
+    auto op = new Operator(OperatorId::COPY, var.temp, 0, out.temp);
+    op->opLhs = var.op;
+    code.pushOp(op);
+    out.op = op;
     return out;
 }

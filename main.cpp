@@ -4,7 +4,7 @@
 #include <Parser/ParseTree.h>
 #include <Logger/Logger.h>
 #include <AbstractSyntaxTree/AbstractSyntaxTree.h>
-#include <IntermediateCodeGenerator/RepresentationTypes.h>
+#include <IntermediateCodeGenerator/Operator.h>
 #include <IntermediateCodeGenerator/IntermediateCode.h>
 /*
  * Steps:

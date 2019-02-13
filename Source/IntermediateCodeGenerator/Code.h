@@ -7,28 +7,34 @@
 
 #include <vector>
 #include <string>
-#include <IntermediateCodeGenerator/RepresentationTypes.h>
+#include <IntermediateCodeGenerator/Operator.h>
 #include <unordered_map>
 
 namespace ACC{
+
+    struct Dependency{
+        temporary temp = 0;
+        Operator* op = nullptr;
+    };
+
     class Code {
     private:
-        std::vector<Operator> data;
-        std::unordered_map<std::string, temporary> symTable;
+        std::vector<Operator*> data;
+        std::unordered_map<std::string, Dependency> symTable;
         temporary temporaryCounter = 1;
 
     public:
-        temporary getSymbol(std::string sym);
-        temporary emplaceSymbol(std::string sym);
-        void emplaceOperator(const Operator& op);
-        temporary getLastTemporary();
-        temporary createTemporary();
-        Operator& at(size_t idx);
+        Code();
+        Dependency& getSymbol(std::string sym);
+        Dependency& emplaceSymbol(std::string sym, Operator* op);
+        void pushOp(Operator *const &op);
+        Dependency createTemporary();
+        Operator* at(size_t idx);
 
-        std::vector<Operator>::iterator begin();
-        std::vector<Operator>::iterator end();
+        std::vector<Operator*>::iterator begin();
+        std::vector<Operator*>::iterator end();
 
-        std::vector<Operator>& getData();
+        std::vector<Operator*>& getData();
 
     };
 }

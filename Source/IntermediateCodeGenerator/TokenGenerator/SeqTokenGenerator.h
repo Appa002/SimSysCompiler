@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct SeqTokenGenerator : public Expr{
-        SeqTokenGenerator(ASTNode* node);
-        temporary generate(ACC::Code &code) override;
+        explicit SeqTokenGenerator(ASTNode* node);
+        Dependency generate(ACC::Code &code) override;
     };
 }

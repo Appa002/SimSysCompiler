@@ -4,11 +4,19 @@ ACC::MinusTokenGenerator::MinusTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
 }
 
-ACC::temporary ACC::MinusTokenGenerator::generate(ACC::Code &code) {
-    temporary out = code.createTemporary();
-    temporary lhs = node->children[0]->asExpr()->generate(code);
-    temporary rhs = node->children[1]->asExpr()->generate(code);
+ACC::Dependency ACC::MinusTokenGenerator::generate(ACC::Code &code) {
+    Dependency out = code.createTemporary();
+    Dependency lhs = node->children[0]->asExpr()->generate(code);
+    Dependency rhs = node->children[1]->asExpr()->generate(code);
 
-    code.emplaceOperator(Operator(OperatorId::PLUS, lhs, rhs, out));
+    auto op = new Operator(OperatorId::MINUS, lhs.temp, rhs.temp, out.temp);
+
+    lhs.op->opResult = op;
+    rhs.op->opResult = op;
+
+    out.op = op;
+    op->opLhs = lhs.op;
+    op->opRhs = rhs.op;
+    code.pushOp(op);
     return out;
 }

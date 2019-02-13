@@ -1,6 +1,6 @@
 #include "Utils.h"
 
-
+/*
 std::string ACC::printAsTemporary(ACC::temporary temp) {
     return "t" + std::to_string(temp);
 }
@@ -83,3 +83,4 @@ ACC::createDependencyGraph(ACC::Tuple<ACC::Operator *, size_t> start, ACC::Code 
     return root;
 }
 
+*/

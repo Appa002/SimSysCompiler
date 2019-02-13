@@ -6,7 +6,7 @@
 #include <Logger/Logger.h>
 #include "Utils.h"
 using namespace ACC;
-
+/*
 std::vector<Tuple<Operator*, size_t >> fetchSignificantOps(Code& input){
     std::vector<Tuple<Operator*, size_t >> out;
     size_t i = 0;
@@ -90,4 +90,4 @@ void ACC::copyElision(ACC::Code& input) {
     input.getData().clear();
     input.getData() = newCode;
 
-}
+}*/

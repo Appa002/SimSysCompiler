@@ -11,8 +11,9 @@
 
 namespace ACC{
     struct AssignTokenGenerator : public Expr{
-        temporary generate(ACC::Code &code) override;
-        AssignTokenGenerator(ASTNode* node);
+        Dependency generate(ACC::Code &code) override;
+
+        explicit AssignTokenGenerator(ASTNode* node);
 
     };
 }

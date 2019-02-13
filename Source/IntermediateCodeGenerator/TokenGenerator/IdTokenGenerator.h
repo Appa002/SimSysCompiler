@@ -12,8 +12,8 @@
 
 namespace ACC{
     struct IdTokenGenerator : public Expr{
-        temporary generate(ACC::Code &code) override;
-        IdTokenGenerator(ASTNode* node);
+        Dependency generate(ACC::Code &code) override;
+        explicit IdTokenGenerator(ASTNode* node);
 
     };
 }

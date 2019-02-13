@@ -5,7 +5,7 @@
 #ifndef SIMSYSCOMPILER_EXPR_H
 #define SIMSYSCOMPILER_EXPR_H
 
-#include <IntermediateCodeGenerator/RepresentationTypes.h>
+#include <IntermediateCodeGenerator/Operator.h>
 #include <memory>
 #include "Code.h"
 #include <AbstractSyntaxTree/ASTNode.h>
@@ -15,7 +15,7 @@ namespace ACC {
     public:
         explicit Expr(ASTNode* n) : node(n) {};
 
-        virtual temporary generate(ACC::Code &code) = 0;
+        virtual Dependency generate(ACC::Code &code) = 0;
 
         ASTNode* node;
     };

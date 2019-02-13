@@ -10,8 +10,8 @@
 
 namespace ACC{
     struct MinusTokenGenerator : public Expr{
-        temporary generate(ACC::Code &code) override;
-        MinusTokenGenerator(ASTNode* node);
+        Dependency generate(ACC::Code &code) override;
+        explicit MinusTokenGenerator(ASTNode* node);
     };
 }
 

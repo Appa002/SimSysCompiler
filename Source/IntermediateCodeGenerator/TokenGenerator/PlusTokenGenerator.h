@@ -9,8 +9,8 @@
 
 namespace ACC{
     struct PlusTokenGenerator : public Expr{
-        temporary generate(ACC::Code &code) override;
-        PlusTokenGenerator(ASTNode* node);
+        Dependency generate(ACC::Code &code) override;
+        explicit PlusTokenGenerator(ASTNode* node);
     };
 }
 

@@ -5,40 +5,44 @@
 #include <Logger/Logger.h>
 #include "Code.h"
 
-ACC::temporary ACC::Code::getSymbol(std::string sym) {
-    return symTable.find(sym) == symTable.end() ? (0) : (symTable.at(sym));
+ACC::Dependency& ACC::Code::getSymbol(std::string sym) {
+    if(symTable.find(sym) == symTable.end())
+        return symTable.at("none");
+    else
+        return symTable.at(sym);
 }
 
-ACC::temporary ACC::Code::emplaceSymbol(std::string sym) {
-    symTable[sym] = ++temporaryCounter;
-    return temporaryCounter;
+ACC::Dependency& ACC::Code::emplaceSymbol(std::string sym, Operator* op) {
+    symTable[sym] = {++temporaryCounter, op};
+    return symTable.at(sym);
 }
 
-void ACC::Code::emplaceOperator(const ACC::Operator &op) {
-    data.emplace_back(op);
+
+ACC::Dependency ACC::Code::createTemporary() {
+    return {++temporaryCounter};
 }
 
-ACC::temporary ACC::Code::getLastTemporary() {
-    return temporaryCounter;
-}
-
-ACC::temporary ACC::Code::createTemporary() {
-    return ++temporaryCounter;
-}
-
-std::vector<ACC::Operator, std::allocator<ACC::Operator>>::iterator ACC::Code::begin() {
+std::vector<ACC::Operator*, std::allocator<ACC::Operator*>>::iterator ACC::Code::begin() {
     return data.begin();
 }
 
-std::vector<ACC::Operator, std::allocator<ACC::Operator>>::iterator ACC::Code::end() {
+std::vector<ACC::Operator*, std::allocator<ACC::Operator*>>::iterator ACC::Code::end() {
     return data.end();
 }
 
-ACC::Operator &ACC::Code::at(size_t idx) {
+ACC::Operator* ACC::Code::at(size_t idx) {
     return data.at(idx);
 }
 
-std::vector<ACC::Operator> &ACC::Code::getData() {
+std::vector<ACC::Operator*>& ACC::Code::getData() {
     return data;
+}
+
+void ACC::Code::pushOp(ACC::Operator *const &op) {
+    data.push_back(op);
+}
+
+ACC::Code::Code() {
+    symTable["none"] = {};
 }
 
