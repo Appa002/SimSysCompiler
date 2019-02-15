@@ -46,24 +46,59 @@ ACC::Code::Code() {
     symTable["none"] = {};
 }
 
-void ACC::Code::removeOp(size_t idx) {
+void ACC::Code::removeUnary(size_t idx) {
     auto op = data.at(idx);
-    Operator* prev = nullptr;
+    Operator* next = nullptr;
 
     for(auto const & i : data){
         if(i->opLhs == op || i->opRhs == op){
-            prev = i;
+            next = i;
             break;
         }
     }
-    if(prev != nullptr){
-        prev->opLhs = op->opLhs;
-        prev->opRhs = op->opRhs;
+    if(next != nullptr){
+        next->opLhs = op->opLhs;
+        next->opRhs = op->opRhs;
 
-        prev->lhs = op->lhs;
-        prev->rhs = op->rhs;
+        if(op->result == next->lhs)
+            next->lhs = op->lhs;
+        if(op->result == next->rhs)
+            next->rhs = op->lhs;
+      //  next->result = op->result;
     }
 
     data.erase(data.begin() + idx);
+}
+
+void ACC::Code::print() {
+    for(const auto& op : data){
+        LOG() << operator2String(*op) << std::endl;
+    }
+}
+
+
+std::string ACC::Code::operator2String(ACC::Operator op) {
+    switch (op.id) {
+        case OperatorId::PLUS:
+            return std::string("add, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
+                   printAsTemporary(op.rhs);
+        case OperatorId::MINUS:
+            return std::string("subtract, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
+                   printAsTemporary(op.rhs);
+
+        case OperatorId::COPY:
+            return std::string("copy, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs);
+
+        case OperatorId::PRINT:
+            return std::string("print, ") + printAsTemporary(op.lhs);
+
+        case OperatorId::ICOPY:
+            return std::string("icopy, ") + printAsTemporary(op.result) + ", " + std::to_string(op.lhs);
+    }
+    return "";
+}
+
+std::string ACC::Code::printAsTemporary(ACC::temporary temp){
+    return "t" + std::to_string(temp);
 }
 

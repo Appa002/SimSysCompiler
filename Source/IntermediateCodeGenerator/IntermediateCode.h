@@ -13,13 +13,11 @@ namespace ACC {
     class IntermediateCode {
     private:
         Code code;
-        std::string operator2String(Operator op);
-        std::string printAsTemporary(ACC::temporary temp);
-        std::string printAsRRegister(ACC::temporary temp);
 
     public:
-        IntermediateCode(const AbstractSyntaxTree& tree);
+        explicit IntermediateCode(const AbstractSyntaxTree& tree);
         void print();
+        void optimize();
 
     };
 

@@ -9,66 +9,15 @@
 ACC::IntermediateCode::IntermediateCode(const AbstractSyntaxTree& tree) {
     code = Code();
     tree.getRoot()->asExpr()->generate(code);
-    print();
-    LOG.createHeading("Dependency graph...");
-    code.getData()[6]->printDependency("", false);
-
-    code.removeOp(5);
-    print();
-
-    LOG.createHeading("Dependency graph...");
-    code.getData()[6]->printDependency("", false);
-
-    // LOG.createHeading("Dependency graph...");
-   // code.getData()[15]->printDependency("", false);
-   // print();
-   // copyElision(code);
 }
 
 void ACC::IntermediateCode::print() {
     LOG.createHeading("Generated Intermediate Representation");
-    for(const auto& op : code){
-        LOG() << operator2String(*op) << std::endl;
-    }
+    code.print();
 }
 
-std::string ACC::IntermediateCode::operator2String(Operator op) {
-    switch (op.id) {
-        case OperatorId::PLUS:
-            return std::string("add, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
-                   printAsTemporary(op.rhs);
-        case OperatorId::MINUS:
-            return std::string("subtract, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
-                   printAsTemporary(op.rhs);
-
-        case OperatorId::COPY:
-            return std::string("copy, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs);
-
-        case OperatorId::PRINT:
-            return std::string("print, ") + printAsTemporary(op.lhs);
-
-        case OperatorId::ICOPY:
-            return std::string("icopy, ") + printAsTemporary(op.result) + ", " + std::to_string(op.lhs);
-    }
-    return "";
-}
-
-
-std::string ACC::IntermediateCode::printAsTemporary(ACC::temporary temp){
-    return "t" + std::to_string(temp);
-}
-
-std::string ACC::IntermediateCode::printAsRRegister(ACC::temporary temp){
-    switch (temp){
-        case 0:
-            return "eax";
-        case 1:
-            return "ebx";
-        case 2:
-            return "ecx";
-        case 3:
-            return "edx";
-        default:
-            return std::to_string(temp);
-    }
+void ACC::IntermediateCode::optimize() {
+    LOG.createHeading("Running Copy Elision...");
+    copyElision(code);
+    code.print();
 }

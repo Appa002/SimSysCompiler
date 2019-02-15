@@ -23,12 +23,16 @@ namespace ACC{
         std::unordered_map<std::string, Dependency> symTable;
         temporary temporaryCounter = 1;
 
+        std::string operator2String(Operator op);
+        std::string printAsTemporary(ACC::temporary temp);
+
+
     public:
         Code();
         Dependency& getSymbol(std::string sym);
         Dependency& emplaceSymbol(std::string sym, Operator* op);
         void pushOp(Operator *const &op);
-        void removeOp(size_t idx);
+        void removeUnary(size_t idx);
         Dependency createTemporary();
         Operator* at(size_t idx);
 
@@ -36,6 +40,7 @@ namespace ACC{
         std::vector<Operator*>::iterator end();
 
         std::vector<Operator*>& getData();
+        void print();
 
     };
 }

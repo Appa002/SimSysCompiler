@@ -5,7 +5,7 @@ ACC::Dependency ACC::AssignTokenGenerator::generate(ACC::Code &code) {
     Dependency& lhs = code.emplaceSymbol(node->children[0]->str, nullptr);
 
     auto op = new Operator(OperatorId::COPY, rhs.temp, 0, lhs.temp);
-    op->opRhs = rhs.op;
+    op->opLhs = rhs.op;
     lhs.op = op;
 
     code.pushOp(op);

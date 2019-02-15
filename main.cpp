@@ -6,13 +6,7 @@
 #include <AbstractSyntaxTree/AbstractSyntaxTree.h>
 #include <IntermediateCodeGenerator/Operator.h>
 #include <IntermediateCodeGenerator/IntermediateCode.h>
-/*
- * Steps:
- * Load
- * Tokenize
- * Expressionize
- * */
-
+#include <IntermediateCodeGenerator/Optimizaions/Optimizations.h>
  using namespace ACC;
 
 
@@ -26,5 +20,6 @@ int main() {
     a.print();
     auto i = IntermediateCode(a);
     i.print();
+    i.optimize();
     return 0;
  }
