@@ -4,7 +4,6 @@
 
 #include <IntermediateCodeGenerator/Optimizaions/Optimizations.h>
 #include <Logger/Logger.h>
-#include "Utils.h"
 #include "Optimizations.h"
 
 using namespace ACC;

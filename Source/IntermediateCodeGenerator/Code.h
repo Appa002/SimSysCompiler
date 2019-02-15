@@ -32,6 +32,12 @@ namespace ACC{
         Dependency& getSymbol(std::string sym);
         Dependency& emplaceSymbol(std::string sym, Operator* op);
         void pushOp(Operator *const &op);
+
+        /** This function removes an Operator from the generated code such that the dependency graph of the operators
+         * stays intact. This only works for unary operators (i.e. the operator only uses the fields `result` and `lhs`).
+         * For instance, `Copy` is such an operator, it only takes the register to copy and the register to copy it to and therefore
+         * is a unary operator.
+         * */
         void removeUnary(size_t idx);
         Dependency createTemporary();
         Operator* at(size_t idx);
