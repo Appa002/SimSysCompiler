@@ -48,23 +48,20 @@ ACC::Code::Code() {
 
 void ACC::Code::removeUnary(size_t idx) {
     auto op = data.at(idx);
-    Operator* next = nullptr;
+    Operator* next = op->opResult;
 
-    for(auto const & i : data){
-        if(i->opLhs == op || i->opRhs == op){
-            next = i;
-            break;
-        }
-    }
     if(next != nullptr){
-        next->opLhs = op->opLhs;
-        next->opRhs = op->opRhs;
-
-        if(op->result == next->lhs)
+        if(op->result == next->lhs){
             next->lhs = op->lhs;
-        if(op->result == next->rhs)
+            next->opLhs = op->opLhs;
+        }
+
+        if(op->result == next->rhs){
             next->rhs = op->lhs;
-      //  next->result = op->result;
+            next->opRhs = op->opRhs;
+        }
+
+        op->opLhs->opResult = next;
     }
 
     data.erase(data.begin() + idx);
