@@ -20,7 +20,8 @@ namespace ACC{
         ISUBTRACT,
         COPY,
         ICOPY,
-        PRINT
+        PRINT,
+        IPRINT
     };
 
     struct Operator{

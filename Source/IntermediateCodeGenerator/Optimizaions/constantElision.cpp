@@ -18,13 +18,18 @@ size_t find(ACC::Operator *op, ACC::Code &input, bool &found) {
     return 0;
 }
 
+
 bool isDependentOnConstants(ACC::Operator *op) {
-    return
+    if(op->opRhs != nullptr)
+        return
             (op->opLhs->id == OperatorId::ICOPY || op->opLhs->id == OperatorId::IADD ||
              op->opLhs->id == OperatorId::ISUBTRACT)
             &&
             (op->opRhs->id == OperatorId::ICOPY || op->opRhs->id == OperatorId::IADD ||
-             op->opRhs->id == OperatorId::ISUBTRACT);
+             op->opRhs->id == OperatorId::ISUBTRACT || op->rhs == 0);
+    else
+        return  (op->opLhs->id == OperatorId::ICOPY || op->opLhs->id == OperatorId::IADD ||
+                 op->opLhs->id == OperatorId::ISUBTRACT);
 }
 
 temporary evalConstant(ACC::Operator *op) {
@@ -74,6 +79,21 @@ void handleSubtract(ACC::Code &input, Operator *op) {
 
 }
 
+
+void handlePrint(ACC::Code &input, Operator *op) {
+    op->id = OperatorId::IPRINT;
+
+    op->lhs = evalConstant(op->opLhs);
+
+    bool found;
+    size_t lhsIdx = find(op->opLhs, input, found);
+    if (found) input.remove(lhsIdx);
+
+    op->opLhs = nullptr;
+    op->opRhs = nullptr;
+
+}
+
 void ACC::constantElision(ACC::Code &input) {
     bool hasChanged = false;
     do {
@@ -88,6 +108,11 @@ void ACC::constantElision(ACC::Code &input) {
                 if (isDependentOnConstants(op)) {
                     hasChanged = true;
                     handleSubtract(input, op);
+                }
+            } else if(op->id == OperatorId::PRINT){
+                if(isDependentOnConstants(op)){
+                    hasChanged = true;
+                    handlePrint(input, op);
                 }
             }
 
