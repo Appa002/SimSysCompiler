@@ -3,15 +3,15 @@
 //
 #pragma once
 
-
 #include <IntermediateCodeGenerator/Expr.h>
 #include <IntermediateCodeGenerator/Code.h>
 
 
 namespace ACC{
-    struct MinusTokenGenerator : public Expr{
+    struct AddTokenGenerator : public Expr{
         Dependency generate(ACC::Code &code) override;
-        explicit MinusTokenGenerator(ASTNode* node);
+        explicit AddTokenGenerator(ASTNode* node);
     };
 }
+
 

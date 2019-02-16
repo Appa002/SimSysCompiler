@@ -1,15 +1,15 @@
-#include "PlusTokenGenerator.h"
+#include "AddTokenGenerator.h"
 
-ACC::PlusTokenGenerator::PlusTokenGenerator(ACC::ASTNode *node) : Expr(node) {
+ACC::AddTokenGenerator::AddTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
 }
 
-ACC::Dependency ACC::PlusTokenGenerator::generate(ACC::Code &code) {
+ACC::Dependency ACC::AddTokenGenerator::generate(ACC::Code &code) {
     Dependency out = code.createTemporary();
     Dependency lhs = node->children[0]->asExpr()->generate(code);
     Dependency rhs = node->children[1]->asExpr()->generate(code);
 
-    auto op = new Operator(OperatorId::PLUS, lhs.temp, rhs.temp, out.temp);
+    auto op = new Operator(OperatorId::ADD, lhs.temp, rhs.temp, out.temp);
 
     lhs.op->opResult = op;
     rhs.op->opResult = op;

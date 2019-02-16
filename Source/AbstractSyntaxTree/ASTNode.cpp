@@ -5,8 +5,8 @@
 #include <IntermediateCodeGenerator/Expr.h>
 #include <Logger/Logger.h>
 
-#include <IntermediateCodeGenerator/TokenGenerator/PlusTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/MinusTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/AddTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/SubtractTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/LiteralTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/SeqTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/AssignTokenGenerator.h>
@@ -67,9 +67,9 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
 std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
     switch (op){
         case AstOperator::PLUS:
-            return std::unique_ptr<Expr>(new PlusTokenGenerator(this));
+            return std::unique_ptr<Expr>(new AddTokenGenerator(this));
         case AstOperator::MINUS:
-            return std::unique_ptr<Expr>(new MinusTokenGenerator(this));
+            return std::unique_ptr<Expr>(new SubtractTokenGenerator(this));
         case AstOperator::LITERAL:
             return std::unique_ptr<Expr>(new LiteralTokenGenerator(this));
         case AstOperator::SEQ:
@@ -81,6 +81,7 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
         case AstOperator::PRINT:
             return std::unique_ptr<Expr>(new PrintTokenGenerator(this));
     }
+    std::unique_ptr<Expr>(nullptr);
 }
 
 ACC::ASTNode::~ASTNode() {

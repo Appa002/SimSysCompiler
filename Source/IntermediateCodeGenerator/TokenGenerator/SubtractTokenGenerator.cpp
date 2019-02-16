@@ -1,15 +1,15 @@
-#include "MinusTokenGenerator.h"
+#include "SubtractTokenGenerator.h"
 
-ACC::MinusTokenGenerator::MinusTokenGenerator(ACC::ASTNode *node) : Expr(node) {
+ACC::SubtractTokenGenerator::SubtractTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
 }
 
-ACC::Dependency ACC::MinusTokenGenerator::generate(ACC::Code &code) {
+ACC::Dependency ACC::SubtractTokenGenerator::generate(ACC::Code &code) {
     Dependency out = code.createTemporary();
     Dependency lhs = node->children[0]->asExpr()->generate(code);
     Dependency rhs = node->children[1]->asExpr()->generate(code);
 
-    auto op = new Operator(OperatorId::MINUS, lhs.temp, rhs.temp, out.temp);
+    auto op = new Operator(OperatorId::SUBTRACT, lhs.temp, rhs.temp, out.temp);
 
     lhs.op->opResult = op;
     rhs.op->opResult = op;

@@ -76,10 +76,10 @@ void ACC::Code::print() {
 
 std::string ACC::Code::operator2String(ACC::Operator op) {
     switch (op.id) {
-        case OperatorId::PLUS:
+        case OperatorId::ADD:
             return std::string("add, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
                    printAsTemporary(op.rhs);
-        case OperatorId::MINUS:
+        case OperatorId::SUBTRACT:
             return std::string("subtract, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
                    printAsTemporary(op.rhs);
 

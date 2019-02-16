@@ -14,8 +14,8 @@ namespace ACC{
     using temporary = uint32_t;
 
     enum class OperatorId{
-        PLUS,
-        MINUS,
+        ADD,
+        SUBTRACT,
         COPY,
         ICOPY,
         PRINT
