@@ -101,18 +101,45 @@ void ACC::constantElision(ACC::Code &input) {
         for (ACC::Operator *op : input) {
             if (op->id == OperatorId::ADD) {
                 if (isDependentOnConstants(op)) {
+                    LOG() << "Running Elision for ADD Operator ..." << std::endl;
+                    LOG() << "lhs: t" << op->lhs << std::endl;
+                    LOG() << "rhs: t" << op->rhs << std::endl;
+
                     hasChanged = true;
                     handleAdd(input, op);
+
+                    LOG() << "constant evaluated lhs: " << op->lhs << std::endl;
+                    LOG() << "constant evaluated rhs: " << op->rhs << std::endl;
+
+                    LOG() << "" << std::endl << std::endl;
                 }
             } else if (op->id == OperatorId::SUBTRACT) {
                 if (isDependentOnConstants(op)) {
+                    LOG() << "Running Elision for SUBTRACT Operator ..." << std::endl;
+                    LOG() << "lhs: t" << op->lhs << std::endl;
+                    LOG() << "rhs: t" << op->rhs << std::endl;
+
                     hasChanged = true;
                     handleSubtract(input, op);
+
+                    LOG() << "constant evaluated lhs: " << op->lhs << std::endl;
+                    LOG() << "constant evaluated rhs: " << op->rhs << std::endl;
+
+                    LOG() << "" << std::endl << std::endl;
+
                 }
             } else if(op->id == OperatorId::PRINT){
                 if(isDependentOnConstants(op)){
+                    LOG() << "Running Elision for PRINT Operator ..." << std::endl;
+                    LOG() << "lhs: t" << op->lhs << std::endl;
+
                     hasChanged = true;
                     handlePrint(input, op);
+
+                    LOG() << "constant evaluated lhs: " << op->lhs << std::endl;
+
+                    LOG() << "" << std::endl << std::endl;
+
                 }
             }
 

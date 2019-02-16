@@ -23,5 +23,7 @@ void ACC::IntermediateCode::optimize() {
 
     LOG.createHeading("Running Constant Elision...");
     constantElision(code);
+    LOG() << "" << std::endl;
+    LOG() << Log::Colour::Blue << "New Intermediate Representation:" << std::endl;
     code.print();
 }
