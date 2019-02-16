@@ -8,28 +8,37 @@ std::string printAsTemporary(ACC::temporary temp) {
     return "t" + std::to_string(temp);
 }
 
-std::string opToString(ACC::Operator op) {
-    switch (op.id) {
+std::string ACC::Operator::asString() const {
+    switch (id) {
         case OperatorId::ADD:
-            return std::string("add, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
-                   printAsTemporary(op.rhs);
+            return std::string("add, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs) + ", " +
+                   printAsTemporary(rhs);
         case OperatorId::SUBTRACT:
-            return std::string("subtract, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
-                   printAsTemporary(op.rhs);
+            return std::string("subtract, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs) + ", " +
+                   printAsTemporary(rhs);
 
         case OperatorId::COPY:
-            return std::string("copy, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs);
+            return std::string("copy, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs);
 
         case OperatorId::PRINT:
-            return std::string("print, ") + printAsTemporary(op.lhs);
+            return std::string("print, ") + printAsTemporary(lhs);
 
         case OperatorId::ICOPY:
-            return std::string("icopy, ") + printAsTemporary(op.result) + ", " + std::to_string(op.lhs);
+            return std::string("icopy, ") + printAsTemporary(result) + ", " + std::to_string(lhs);
+
+        case OperatorId::IADD:
+            return std::string("iadd, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
+                   std::to_string(rhs);
+
+        case OperatorId::ISUBTRACT:
+            return std::string("isubtract, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
+                   std::to_string(rhs);
     }
+    return std::string("unknown, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
+           std::to_string(rhs);
 }
 
 void ACC::Operator::printDependency(std::string indent, bool isLast) const {
-    std::string representation = opToString(*this);
     auto colour = Log::Colour::Magenta;
 
     LOG() << indent;
@@ -41,12 +50,13 @@ void ACC::Operator::printDependency(std::string indent, bool isLast) const {
         indent += "|    ";
     }
     // std::cout
-    LOG() << colour << "[" << representation << "]" << std::endl;
+    LOG() << colour << "[" << asString() << "]" << std::endl;
 
     if (opLhs != nullptr)
         opLhs->printDependency(indent, false);
     if (opRhs != nullptr)
         opRhs->printDependency(indent, true);
 }
+
 
 

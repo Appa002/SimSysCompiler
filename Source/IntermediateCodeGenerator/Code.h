@@ -23,8 +23,6 @@ namespace ACC{
         std::unordered_map<std::string, Dependency> symTable;
         temporary temporaryCounter = 1;
 
-        std::string operator2String(Operator op);
-        std::string printAsTemporary(ACC::temporary temp);
 
 
     public:
@@ -39,6 +37,9 @@ namespace ACC{
          * is a unary operator.
          * */
         void removeUnary(size_t idx);
+
+        void remove(size_t idx);
+
         Dependency createTemporary();
         Operator* at(size_t idx);
 

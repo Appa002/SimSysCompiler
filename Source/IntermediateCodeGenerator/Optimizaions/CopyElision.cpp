@@ -9,11 +9,16 @@
 using namespace ACC;
 
 
-void ACC::copyElision(Code& input){
-    size_t i = 0;
-    for(auto op : input){
-        if(op->id == OperatorId::COPY)
-            input.removeUnary(i);
-        i++;
-    }
+void ACC::copyElision(Code &input) {
+    bool hasChanged = false;
+    do {
+        hasChanged = false;
+        for (size_t i = 0; i < input.getData().size(); i++) {
+            if (input.at(i)->id == OperatorId::COPY) {
+                input.removeUnary(i);
+                hasChanged = true;
+            }
+        }
+    } while (hasChanged);
 }
+

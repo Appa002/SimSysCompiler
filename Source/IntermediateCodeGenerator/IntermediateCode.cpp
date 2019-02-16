@@ -20,4 +20,8 @@ void ACC::IntermediateCode::optimize() {
     LOG.createHeading("Running Copy Elision...");
     copyElision(code);
     code.print();
+
+    LOG.createHeading("Running Constant Elision...");
+    constantElision(code);
+    code.print();
 }

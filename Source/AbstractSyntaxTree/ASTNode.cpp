@@ -81,7 +81,7 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
         case AstOperator::PRINT:
             return std::unique_ptr<Expr>(new PrintTokenGenerator(this));
     }
-    std::unique_ptr<Expr>(nullptr);
+    return std::unique_ptr<Expr>(nullptr);
 }
 
 ACC::ASTNode::~ASTNode() {

@@ -15,7 +15,9 @@ namespace ACC{
 
     enum class OperatorId{
         ADD,
+        IADD,
         SUBTRACT,
+        ISUBTRACT,
         COPY,
         ICOPY,
         PRINT
@@ -33,6 +35,7 @@ namespace ACC{
         Operator* opResult = nullptr;
 
         void printDependency(std::string indent, bool isLast) const;
+        std::string asString() const;
     };
 
 

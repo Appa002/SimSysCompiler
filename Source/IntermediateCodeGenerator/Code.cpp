@@ -48,54 +48,36 @@ ACC::Code::Code() {
 
 void ACC::Code::removeUnary(size_t idx) {
     auto op = data.at(idx);
-    Operator* next = op->opResult;
+    for(size_t i = idx; i < data.size(); i++){
+        Operator* next = data.at(i);
 
-    if(next != nullptr){
-        if(op->result == next->lhs){
-            next->lhs = op->lhs;
-            next->opLhs = op->opLhs;
+        if(op->result == next->lhs || op->result == next->rhs){
+            if(op->result == next->lhs){
+                next->lhs = op->lhs;
+                next->opLhs = op->opLhs;
+            }
+
+            if(op->result == next->rhs){
+                next->rhs = op->lhs;
+                next->opRhs = op->opLhs;
+            }
+
+            if(op->opLhs)
+                op->opLhs->opResult = next;
         }
-
-        if(op->result == next->rhs){
-            next->rhs = op->lhs;
-            next->opRhs = op->opRhs;
-        }
-
-        op->opLhs->opResult = next;
     }
+
 
     data.erase(data.begin() + idx);
 }
 
 void ACC::Code::print() {
     for(const auto& op : data){
-        LOG() << operator2String(*op) << std::endl;
+        LOG() << op->asString() << std::endl;
     }
 }
 
-
-std::string ACC::Code::operator2String(ACC::Operator op) {
-    switch (op.id) {
-        case OperatorId::ADD:
-            return std::string("add, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
-                   printAsTemporary(op.rhs);
-        case OperatorId::SUBTRACT:
-            return std::string("subtract, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs) + ", " +
-                   printAsTemporary(op.rhs);
-
-        case OperatorId::COPY:
-            return std::string("copy, ") + printAsTemporary(op.result) + ", " + printAsTemporary(op.lhs);
-
-        case OperatorId::PRINT:
-            return std::string("print, ") + printAsTemporary(op.lhs);
-
-        case OperatorId::ICOPY:
-            return std::string("icopy, ") + printAsTemporary(op.result) + ", " + std::to_string(op.lhs);
-    }
-    return "";
-}
-
-std::string ACC::Code::printAsTemporary(ACC::temporary temp){
-    return "t" + std::to_string(temp);
+void ACC::Code::remove(size_t idx) {
+    data.erase(data.begin() + idx);
 }
 

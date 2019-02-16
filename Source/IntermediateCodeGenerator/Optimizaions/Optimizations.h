@@ -9,6 +9,7 @@
 
 namespace ACC{
     void copyElision(Code& input);
+    void constantElision(Code &input);
 }
 
 #endif //SIMSYSCOMPILER_OPTIMIZATIONS_H
