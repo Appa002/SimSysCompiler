@@ -20,5 +20,6 @@ void ACC::copyElision(Code &input) {
             }
         }
     } while (hasChanged);
+    input.deleteDead();
 }
 

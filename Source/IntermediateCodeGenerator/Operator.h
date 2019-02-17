@@ -25,7 +25,11 @@ namespace ACC{
     };
 
     struct Operator{
-        Operator(OperatorId id, address lhs, address rhs, temporary result) :  id(id), lhs(lhs), rhs(rhs), result(result) {};
+    private:
+        bool dead = false;
+
+    public:
+        Operator(OperatorId id, address lhs, address rhs, temporary result);
         OperatorId id;
         address lhs;
         address rhs;
@@ -37,6 +41,8 @@ namespace ACC{
 
         void printDependency(std::string indent, bool isLast) const;
         std::string asString() const;
+        void makeDead();
+        bool isDead();
     };
 
 

@@ -61,5 +61,16 @@ void ACC::Operator::printDependency(std::string indent, bool isLast) const {
         opRhs->printDependency(indent, true);
 }
 
+void Operator::makeDead() {
+    dead = true;
+}
+
+bool Operator::isDead() {
+    return dead;
+}
+
+Operator::Operator(OperatorId id, address lhs, address rhs, temporary result)  :  id(id), lhs(lhs), rhs(rhs), result(result) {
+
+}
 
 

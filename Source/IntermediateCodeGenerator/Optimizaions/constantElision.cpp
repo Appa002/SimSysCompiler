@@ -145,4 +145,6 @@ void ACC::constantElision(ACC::Code &input) {
 
         }
     } while (hasChanged);
+
+    input.deleteDead();
 }

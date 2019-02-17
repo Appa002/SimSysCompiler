@@ -20,13 +20,16 @@ namespace ACC{
     class Code {
     private:
         std::vector<Operator*> data;
+        std::vector<Operator*> deadOperators;
         std::unordered_map<std::string, Dependency> symTable;
         temporary temporaryCounter = 1;
-
+        int ref = 1;
 
 
     public:
         Code();
+        ~Code();
+        Code(Code const & other);
         Dependency& getSymbol(std::string sym);
         Dependency& emplaceSymbol(std::string sym, Operator* op);
         void pushOp(Operator *const &op);
@@ -39,6 +42,10 @@ namespace ACC{
         void removeUnary(size_t idx);
 
         void remove(size_t idx);
+
+        void deleteDead();
+
+        void makeOperatorDead(size_t idx);
 
         Dependency createTemporary();
         Operator* at(size_t idx);

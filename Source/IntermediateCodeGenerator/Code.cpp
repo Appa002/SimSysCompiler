@@ -67,7 +67,7 @@ void ACC::Code::removeUnary(size_t idx) {
         }
     }
 
-
+    makeOperatorDead(idx);
     data.erase(data.begin() + idx);
 }
 
@@ -78,6 +78,38 @@ void ACC::Code::print() {
 }
 
 void ACC::Code::remove(size_t idx) {
+    makeOperatorDead(idx);
     data.erase(data.begin() + idx);
+}
+
+ACC::Code::~Code() {
+    ref--;
+    if(ref > 0)
+        return;
+    for(auto op : data){
+        delete op;
+    }
+}
+
+ACC::Code::Code(Code const & other) : ref(other.ref), data(other.data),
+symTable(other.symTable), temporaryCounter(other.temporaryCounter) {
+    ref++;
+}
+
+void ACC::Code::deleteDead() {
+    for(auto op : data){
+        if(op->isDead())
+            delete op;
+    }
+    for(auto op : deadOperators){
+        if(op->isDead())
+            delete op;
+    }
+    deadOperators.clear();
+}
+
+void ACC::Code::makeOperatorDead(size_t idx) {
+    data.at(idx)->makeDead();
+    deadOperators.push_back(data.at(idx));
 }
 
