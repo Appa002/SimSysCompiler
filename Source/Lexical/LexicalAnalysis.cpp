@@ -18,6 +18,7 @@
 #include <Lexical/Tokens/PrintToken.h>
 #include <Lexical/Tokens/AssignToken.h>
 #include <Lexical/Tokens/DeclToken.h>
+#include <Lexical/Tokens/ExitToken.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
@@ -112,6 +113,9 @@ void ACC::LexicalAnalysis::process() {
                         break;
                     case Symbol::DECL:
                         tokens.push_back(new IdToken(buffer));
+                        break;
+                    case Symbol::EXIT:
+                        tokens.push_back(new ExitToken());
                         break;
                 }
                 buffer.clear();

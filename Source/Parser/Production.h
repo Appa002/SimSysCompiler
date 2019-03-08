@@ -19,6 +19,7 @@ namespace ACC {
         LITERAL,
         ASSIGN,
         EOS,
+        EXIT,
 
         none_terminals_start,
 

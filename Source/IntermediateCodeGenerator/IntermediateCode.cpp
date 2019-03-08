@@ -27,3 +27,7 @@ void ACC::IntermediateCode::optimize() {
     LOG() << Log::Colour::Blue << "New Intermediate Representation:" << std::endl;
     code.print();
 }
+
+const ACC::Code &ACC::IntermediateCode::getCode() const{
+    return code;
+}

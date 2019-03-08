@@ -16,7 +16,8 @@ enum class AstOperator{
     SEQ,
     ASSIGN,
     ID,
-    PRINT
+    PRINT,
+    EXIT
 };
 
 namespace ACC {

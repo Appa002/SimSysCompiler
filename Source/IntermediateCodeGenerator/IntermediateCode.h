@@ -18,6 +18,7 @@ namespace ACC {
         explicit IntermediateCode(const AbstractSyntaxTree& tree);
         void print();
         void optimize();
+        const Code& getCode() const;
 
     };
 
