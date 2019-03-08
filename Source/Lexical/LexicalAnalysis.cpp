@@ -128,13 +128,15 @@ ACC::LexicalAnalysis::~LexicalAnalysis() {
     refCount--;
     if(refCount != 0)
         return;
+
+    SymbolTable::get()->del();
     for(const auto& it : tokens)
         delete it;
 }
 
 
 void ACC::LexicalAnalysis::preProcessDocument() {
-    for(int i = document.size() - 1; i >= 0; i--){
+    for(long i = document.size() - 1; i >= 0; i--){
         char cur = document.at(i);
         if(cur == '\n' || cur == '\r')
             document.erase(i, 1);

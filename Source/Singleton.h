@@ -18,7 +18,7 @@ namespace ACC{
         }
 
         void del(){
-            if(instance == nullptr)
+            if(instance != nullptr)
                 delete instance;
             instance = nullptr;
         }
