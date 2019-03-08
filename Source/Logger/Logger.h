@@ -18,7 +18,7 @@ namespace ACC::Log {
     };
 
     enum class Colour{
-        Blue, Magenta, Cleared
+        Blue, Magenta, Cleared, Red
     };
 
     class Logger;
