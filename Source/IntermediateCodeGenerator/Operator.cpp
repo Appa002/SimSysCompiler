@@ -36,6 +36,9 @@ std::string ACC::Operator::asString() const {
 
         case OperatorId::IPRINT:
             return std::string("iprint, ") + std::to_string(lhs);
+
+        case OperatorId::EXIT:
+            return std::string("exit, ") + std::to_string(lhs);
     }
     return std::string("unknown, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
            std::to_string(rhs);
