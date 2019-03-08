@@ -7,6 +7,8 @@
 #include <IntermediateCodeGenerator/Operator.h>
 #include <IntermediateCodeGenerator/IntermediateCode.h>
 #include <IntermediateCodeGenerator/Optimizaions/Optimizations.h>
+#include <AssemblyGenerator/Assembly.h>
+
  using namespace ACC;
 
 
@@ -21,5 +23,11 @@ int main() {
     auto i = IntermediateCode(a);
     i.print();
     i.optimize();
+    auto ass = Assembly();
+    ass.generate(i);
+    ass.print();
+    ass.writeToFile();
+
+
     return 0;
  }
