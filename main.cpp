@@ -9,7 +9,42 @@
 #include <IntermediateCodeGenerator/Optimizaions/Optimizations.h>
 #include <AssemblyGenerator/Assembly.h>
 
- using namespace ACC;
+using namespace ACC;
+
+void runToolchainLinux(std::string filePath){
+    std::string nasmCommand = "nasm -f elf64 "+ filePath +".asm";
+    std::string ldCommand = "ld " + filePath + ".o";
+
+
+    LOG.createHeading("Running toolchain for 64 bit Linux (nasm, ld) ...");
+
+    LOG() << Log::Colour::Magenta << "Running nasm ";
+    LOG() << Log::Colour::Blue << "("+nasmCommand+")" << std::endl << "[Nasm> ";
+    LOG() << Log::Colour::Cleared << " ";
+    fflush(stdout);
+    int exitNasm = system(nasmCommand.c_str());
+    LOG() << "" << std::endl;
+    LOG() << Log::Colour::Cleared << "... exited with: " + std::to_string(exitNasm) << std::endl;
+    if(exitNasm != 0){
+        LOG() << Log::Colour::Red << "nasm failed; giving up on the toolchain" << std::endl;
+        return;
+    }
+
+    LOG() << "" << std::endl;
+
+    LOG() << Log::Colour::Magenta << "Running ld ";
+    LOG() << Log::Colour::Blue << "("+ldCommand+")" << std::endl << "[LD> ";
+    LOG() << Log::Colour::Cleared << " ";
+    fflush(stdout);
+    int exitLd = system(ldCommand.c_str());
+    LOG() << "" << std::endl;
+    LOG() << Log::Colour::Cleared << "... exited with: " + std::to_string(exitLd) << std::endl;
+    if(exitLd){
+        LOG() << Log::Colour::Red << "ld failed; giving up on the toolchain" << std::endl;
+        return;
+    }
+
+}
 
 
 int main() {
@@ -28,6 +63,7 @@ int main() {
     ass.print();
     ass.writeToFile();
 
+    runToolchainLinux("./a");
 
     return 0;
  }
