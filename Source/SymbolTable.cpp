@@ -10,6 +10,8 @@ ACC::SymbolTable::SymbolTable() : std::unordered_map<std::string, Symbol>() {
     this->emplace(")", Symbol::BRACKET);
     this->emplace("+", Symbol::MATH_OPERATOR);
     this->emplace("-", Symbol::MATH_OPERATOR);
+    this->emplace("*", Symbol::MATH_OPERATOR);
+    this->emplace("/", Symbol::MATH_OPERATOR);
     this->emplace("print", Symbol::PRINT);
     this->emplace(";", Symbol::EOS);
     this->emplace("=", Symbol::ASSIGN);

@@ -39,6 +39,12 @@ std::string ACC::Operator::asString() const {
 
         case OperatorId::EXIT:
             return std::string("exit, ") + std::to_string(lhs);
+        case OperatorId::MULTIPLY:
+            return std::string("multiply, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs) + ", " +
+                   printAsTemporary(rhs);;
+        case OperatorId::DIVIDE:
+            return std::string("divide, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs) + ", " +
+                   printAsTemporary(rhs);
     }
     return std::string("unknown, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
            std::to_string(rhs);

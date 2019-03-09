@@ -50,6 +50,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                         process(children[3])};
             return new ASTNode(AstOperator::ASSIGN, vec);
         }},
+
         {{Symbol::keyword, {Symbol::PRINT, Symbol::ID}}, [](auto children){
             return new ASTNode(AstOperator::PRINT,
                     {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym)});
@@ -80,6 +81,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                      return new ASTNode(AstOperator::PLUS, vec);
                  case MathOperators::MINUS:
                       return new ASTNode(AstOperator::MINUS, vec);
+                 case MathOperators::MULTIPLICATION:
+                     return new ASTNode(AstOperator::MULTIPLICATION, vec);
+                 case MathOperators::DIVISION:
+                     return new ASTNode(AstOperator::DIVISION, vec);
              }
          }}
     };

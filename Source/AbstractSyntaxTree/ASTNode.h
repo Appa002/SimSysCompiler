@@ -12,6 +12,8 @@
 enum class AstOperator{
     PLUS,
     MINUS,
+    MULTIPLICATION,
+    DIVISION,
     LITERAL,
     SEQ,
     ASSIGN,

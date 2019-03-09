@@ -18,6 +18,8 @@ namespace ACC{
         IADD,
         SUBTRACT,
         ISUBTRACT,
+        MULTIPLY,
+        DIVIDE,
         COPY,
         ICOPY,
         PRINT,

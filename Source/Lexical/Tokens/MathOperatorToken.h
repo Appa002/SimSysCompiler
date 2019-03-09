@@ -10,10 +10,10 @@
 
 namespace ACC{
     enum class MathOperators{
-        PLUS, MINUS
+        PLUS, MINUS, MULTIPLICATION, DIVISION
     };
     struct MathOperatorToken : public IToken{
-        MathOperatorToken(MathOperators k) : IToken(), kind(k) {id = Symbol::MATH_OPERATOR;};
+        explicit MathOperatorToken(MathOperators k) : IToken(), kind(k) {id = Symbol::MATH_OPERATOR;};
         MathOperators kind;
 
         std::string getIdentifier() override{
@@ -22,6 +22,10 @@ namespace ACC{
                     return "MathToken (+)";
                 case MathOperators::MINUS:
                     return "MathToken (-)";
+                case MathOperators::MULTIPLICATION:
+                    return "MathToken (*)";
+                case MathOperators::DIVISION:
+                    return "MathToken (/)";
             }
             throw std::runtime_error("Kind of MathOperatorToken is unknown value");
         }

@@ -13,6 +13,8 @@
 #include <IntermediateCodeGenerator/TokenGenerator/IdTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/PrintTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/ExitTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/DivisionTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/MultiplicationTokenGenerator.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;
@@ -61,6 +63,10 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "print";
         case AstOperator::EXIT:
             return "exit";
+        case AstOperator::MULTIPLICATION:
+            return "*";
+        case AstOperator::DIVISION:
+            return "/";
     }
     return "";
 }
@@ -85,6 +91,10 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new PrintTokenGenerator(this));
         case AstOperator::EXIT:
             return std::unique_ptr<Expr>(new ExitTokenGenerator(this));
+        case AstOperator::MULTIPLICATION:
+            return std::unique_ptr<Expr>(new MultiplicationTokenGenerator(this));
+        case AstOperator::DIVISION:
+            return std::unique_ptr<Expr>(new DivisionTokenGenerator(this));
     }
     return std::unique_ptr<Expr>(nullptr);
 }

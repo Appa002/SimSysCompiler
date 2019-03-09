@@ -100,7 +100,14 @@ void ACC::LexicalAnalysis::process() {
                         tokens.push_back(new BracketToken(buffer == "(" ? (BracketKind::OPEN) : (BracketKind::CLOSED)));
                         break;
                     case Symbol::MATH_OPERATOR:
-                        tokens.push_back(new MathOperatorToken(buffer == "+" ? (MathOperators::PLUS) : (MathOperators::MINUS)));
+                        if(buffer == "+")
+                            tokens.push_back(new MathOperatorToken(MathOperators::PLUS));
+                        else if (buffer == "-")
+                            tokens.push_back(new MathOperatorToken(MathOperators::MINUS));
+                        else if (buffer == "*")
+                            tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
+                        else if (buffer == "/")
+                            tokens.push_back(new MathOperatorToken(MathOperators::DIVISION));
                         break;
                     case Symbol::PRINT:
                         tokens.push_back(new PrintToken());
