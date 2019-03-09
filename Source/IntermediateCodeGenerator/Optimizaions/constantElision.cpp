@@ -23,13 +23,16 @@ bool isDependentOnConstants(ACC::Operator *op) {
     if(op->opRhs != nullptr)
         return
             (op->opLhs->id == OperatorId::ICOPY || op->opLhs->id == OperatorId::IADD ||
-             op->opLhs->id == OperatorId::ISUBTRACT)
+             op->opLhs->id == OperatorId::ISUBTRACT || op->opLhs->id == OperatorId::IMULTIPLY ||
+             op->opLhs->id == OperatorId::IDIVIDE)
             &&
             (op->opRhs->id == OperatorId::ICOPY || op->opRhs->id == OperatorId::IADD ||
-             op->opRhs->id == OperatorId::ISUBTRACT || op->rhs == 0);
+             op->opRhs->id == OperatorId::ISUBTRACT || op->opRhs->id == OperatorId::IMULTIPLY ||
+             op->opRhs->id == OperatorId::IDIVIDE ||op->rhs == 0);
     else
         return  (op->opLhs->id == OperatorId::ICOPY || op->opLhs->id == OperatorId::IADD ||
-                 op->opLhs->id == OperatorId::ISUBTRACT);
+                 op->opLhs->id == OperatorId::ISUBTRACT || op->opLhs->id == OperatorId::IMULTIPLY ||
+                 op->opLhs->id == OperatorId::IDIVIDE);
 }
 
 temporary evalConstant(ACC::Operator *op) {
@@ -41,6 +44,13 @@ temporary evalConstant(ACC::Operator *op) {
 
     if (op->id == OperatorId::ISUBTRACT)
         return op->lhs - op->rhs;
+
+    if (op->id == OperatorId::IDIVIDE)
+        return op->lhs / op->rhs;
+
+    if (op->id == OperatorId::IMULTIPLY)
+        return op->lhs * op->rhs;
+
 
     return 0;
 }
@@ -64,6 +74,41 @@ void handleAdd(ACC::Code &input, Operator *op) {
 
 void handleSubtract(ACC::Code &input, Operator *op) {
     op->id = OperatorId::ISUBTRACT;
+
+    op->lhs = evalConstant(op->opLhs);
+    op->rhs = evalConstant(op->opRhs);
+
+    bool found;
+    size_t lhsIdx = find(op->opLhs, input, found);
+    if (found) input.remove(lhsIdx);
+    size_t rhsIdx = find(op->opRhs, input, found);
+    if (found) input.remove(rhsIdx);
+
+    op->opLhs = nullptr;
+    op->opRhs = nullptr;
+
+}
+
+void handleMultiplication(ACC::Code &input, Operator *op) {
+    op->id = OperatorId::IMULTIPLY;
+
+    op->lhs = evalConstant(op->opLhs);
+    op->rhs = evalConstant(op->opRhs);
+
+    bool found;
+    size_t lhsIdx = find(op->opLhs, input, found);
+    if (found) input.remove(lhsIdx);
+    size_t rhsIdx = find(op->opRhs, input, found);
+    if (found) input.remove(rhsIdx);
+
+    op->opLhs = nullptr;
+    op->opRhs = nullptr;
+
+}
+
+
+void handleDivision(ACC::Code &input, Operator *op) {
+    op->id = OperatorId::IDIVIDE;
 
     op->lhs = evalConstant(op->opLhs);
     op->rhs = evalConstant(op->opRhs);
@@ -137,6 +182,36 @@ void ACC::constantElision(ACC::Code &input) {
                     handlePrint(input, op);
 
                     LOG() << "constant evaluated lhs: " << op->lhs << std::endl;
+
+                    LOG() << "" << std::endl << std::endl;
+
+                }
+            } else if(op->id == OperatorId::MULTIPLY){
+                if(isDependentOnConstants(op)){
+                    LOG() << "Running Elision for MULTIPLY Operator ..." << std::endl;
+                    LOG() << "lhs: t" << op->lhs << std::endl;
+                    LOG() << "rhs: t" << op->rhs << std::endl;
+
+                    hasChanged = true;
+                    handleMultiplication(input, op);
+
+                    LOG() << "constant evaluated lhs: " << op->lhs << std::endl;
+                    LOG() << "constant evaluated rhs: " << op->rhs << std::endl;
+
+                    LOG() << "" << std::endl << std::endl;
+
+                }
+            }else if(op->id == OperatorId::DIVIDE){
+                if(isDependentOnConstants(op)){
+                    LOG() << "Running Elision for DIVIDE Operator ..." << std::endl;
+                    LOG() << "lhs: t" << op->lhs << std::endl;
+                    LOG() << "rhs: t" << op->rhs << std::endl;
+
+                    hasChanged = true;
+                    handleDivision(input, op);
+
+                    LOG() << "constant evaluated lhs: " << op->lhs << std::endl;
+                    LOG() << "constant evaluated rhs: " << op->rhs << std::endl;
 
                     LOG() << "" << std::endl << std::endl;
 
