@@ -33,16 +33,16 @@ std::string toHex (int value){
     return str;
 }
 
-ACC::Snippet ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
+void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
     std::string value = std::to_string(op->lhs);
+    auto& targetFunction = assembly.fetchFunction();
+
+
     value += "\n";
 
-    std::string code = "sub rsp, "+ std::to_string(value.size()) + " ; reserve n bytes of data on the stack";
-    code +=R"(
-mov rax, 1 ; sys_write
-mov rdi, 1 ; stdout
-)";
-
+    targetFunction.writeLine("sub rsp, "+ std::to_string(value.size()) + " ; reserve n bytes of data on the stack");
+    targetFunction.writeLine("mov rax, 1 ; sys_write");
+    targetFunction.writeLine("mov rdi, 1 ; stdout");
 
     std::string data = "mov dword [rsp], 0x";
 
@@ -60,21 +60,19 @@ mov rdi, 1 ; stdout
         data.insert(offset, toHex((unsigned) it));
         i++;
     }
-    code += data + "\n";
-    code += std::string("mov rsi, rsp") + "\n";
-    code += "mov rdx, " + std::to_string(value.size()) + "\n";
-    code += "syscall\n";
-
-    assembly.writeToText(code);
-    return Snippet(code, AccessMethod::NONE, nullptr);
+    targetFunction.writeLine(data);
+    targetFunction.writeLine("mov rsi, rsp");
+    targetFunction.writeLine("mov rdx, " + std::to_string(value.size()));
+    targetFunction.writeLine("syscall");
 }
 
-ACC::Snippet ACC::OpGenerators::exit(ACC::Operator *op, ACC::Assembly &assembly) {
-    std::string code;
-    code += "mov rax, 60 ;sys_exit\n";
-    code += "mov rdi, "+std::to_string(op->lhs)+" ; exit code\n";
-    code += "syscall\n";
-    assembly.writeToText(code);
-    return Snippet(code, AccessMethod::NONE, nullptr);
+void ACC::OpGenerators::exit(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& targetFunction = assembly.fetchFunction();
+    targetFunction.writeLine("mov rax, 60 ;sys_exit");
+    targetFunction.writeLine("mov rdi, "+std::to_string(op->lhs)+" ; exit code");
+    targetFunction.writeLine("syscall");
+}
+
+void ACC::OpGenerators::iAddOp(ACC::Operator *op, ACC::Assembly &assembly) {
 
 }

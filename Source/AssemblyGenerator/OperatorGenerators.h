@@ -11,15 +11,15 @@
 #include "Assembly.h"
 
 namespace ACC::OpGenerators{
-    Snippet addOp (Operator* op);
-    Snippet iAddOp (Operator* op);
-    Snippet subtractOp (Operator* op);
-    Snippet iSubtractOp (Operator* op);
-    Snippet copy (Operator* op);
-    Snippet iCopy (Operator* op);
-    Snippet print (Operator* op);
-    Snippet iPrint (Operator* op, Assembly& assembly);
-    Snippet exit (Operator* op, Assembly& assembly);
+    void addOp (Operator* op);
+    void iAddOp (Operator* op, Assembly& assembly);
+    void subtractOp (Operator* op);
+    void iSubtractOp (Operator* op);
+    void copy (Operator* op);
+    void iCopy (Operator* op);
+    void print (Operator* op);
+    void iPrint (Operator* op, Assembly& assembly);
+    void exit (Operator* op, Assembly& assembly);
 
 
 }

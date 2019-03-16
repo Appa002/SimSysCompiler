@@ -30,7 +30,15 @@ size_t ACC::Assembly::writeToData(std::string text) {
 }
 
 std::string ACC::Assembly::combinedOutput() {
-    return dataSection + "\n" + textSection;
+    std::string out = dataSection + "\n" + textSection;
+    out += "\n";
+    for(auto & function : functionTable)
+        out += "global " + function.first + "\n";
+
+    for(auto & function : functionTable)
+        out += function.first + ":\n" + function.second.code;
+
+    return out;
 }
 
 std::string ACC::Assembly::getTextSection() {
@@ -42,8 +50,10 @@ std::string ACC::Assembly::getDataSection() {
 }
 
 void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
-    writeToText("section .text \nglobal _start \n_start: \n");
+    writeToText("section .text \n");
     writeToData("section .data \n");
+    emplaceFunction("_start");
+    functionStack.push("_start");
 
     for(auto it : const_cast<Code&>(ir.getCode())){
         switch (it->id){
@@ -71,4 +81,29 @@ void ACC::Assembly::writeToFile(std::string path) {
 
     file << combinedOutput();
     file.close();
+}
+
+ACC::Snippet ACC::Assembly::fetchSnippet(ACC::temporary reg) {
+    if(registerTable.find(reg) != registerTable.cend())
+        return registerTable.at(reg);
+    return Snippet(AccessMethod::NONE, nullptr);
+}
+
+void ACC::Assembly::emplaceSnippet(ACC::temporary reg, const ACC::Snippet &snippet) {
+    registerTable[reg] = snippet;
+}
+
+ACC::AssemblyFunction &ACC::Assembly::fetchFunction(std::string sym) {
+    if(functionTable.find(sym) != functionTable.cend())
+        return functionTable.at(sym);
+
+    throw std::runtime_error("Can't find function with symbole: \"" + sym + "\"");
+}
+
+ACC::AssemblyFunction &ACC::Assembly::emplaceFunction(std::string sym) {
+    return functionTable[sym] = AssemblyFunction(sym);
+}
+
+ACC::AssemblyFunction &ACC::Assembly::fetchFunction() {
+    return functionTable.at(functionStack.peek());
 }
