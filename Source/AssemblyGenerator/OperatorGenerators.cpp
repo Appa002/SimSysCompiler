@@ -41,6 +41,8 @@ void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
     value += "\n";
 
     targetFunction.writeLine("sub rsp, "+ std::to_string(value.size()) + " ; reserve n bytes of data on the stack");
+    targetFunction.mov("rax", "1", "sys_write");
+
     targetFunction.writeLine("mov rax, 1 ; sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
 

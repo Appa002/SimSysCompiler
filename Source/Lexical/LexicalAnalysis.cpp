@@ -19,6 +19,8 @@
 #include <Lexical/Tokens/AssignToken.h>
 #include <Lexical/Tokens/DeclToken.h>
 #include <Lexical/Tokens/ExitToken.h>
+#include <Lexical/Tokens/IndentToken.h>
+#include <Lexical/Tokens/ExtentToken.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
@@ -124,6 +126,12 @@ void ACC::LexicalAnalysis::process() {
                     case Symbol::EXIT:
                         tokens.push_back(new ExitToken());
                         break;
+                    case Symbol::INDENT:
+                        tokens.push_back(new IndentToken());
+                        break;
+                    case Symbol::EXTENT:
+                        tokens.push_back(new ExtentToken());
+                        break;
                 }
                 buffer.clear();
             }
@@ -143,13 +151,38 @@ ACC::LexicalAnalysis::~LexicalAnalysis() {
 
 
 void ACC::LexicalAnalysis::preProcessDocument() {
-    for(long i = document.size() - 1; i >= 0; i--){
+    /*for(long i = document.size() - 1; i >= 0; i--){
         char cur = document.at(i);
         if(cur == '\n' || cur == '\r')
             document.erase(i, 1);
         else if (i - 1 >= 0 && cur == ' ' && document[i - 1] == ' ')
             document.erase(i, 1);
+    }*/
+
+    int lastDepth = 0;
+    for(long i = 0; i < document.size(); i++){
+        if(document.at(i) == '\n') {
+            document.erase(i, 1);
+
+            int depth = 0;
+
+            for(; document.at(i) == ' '; i++) {
+                depth++;
+            }
+
+            if(depth > lastDepth) {
+                std::string str;
+                str += (char)0xFF;
+                document.insert(i, str);
+            }else if(depth < lastDepth){
+                std::string str;
+                str += (char)0xFA;
+                document.insert(i, str);
+            }
+            lastDepth = depth;
+        }
     }
+
     document += ' ';
 }
 

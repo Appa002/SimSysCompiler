@@ -20,6 +20,8 @@ namespace ACC {
         ASSIGN,
         EOS,
         EXIT,
+        INDENT,
+        EXTENT,
 
         none_terminals_start,
 
