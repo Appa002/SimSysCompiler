@@ -16,6 +16,12 @@ ACC::SymbolTable::SymbolTable() : std::unordered_map<std::string, Symbol>() {
     this->emplace(";", Symbol::EOS);
     this->emplace("=", Symbol::ASSIGN);
     this->emplace("exit", Symbol::EXIT);
+    this->emplace("fn", Symbol::FUNCTION);
+    this->emplace(":", Symbol::COLON);
+    this->emplace(",", Symbol::COMMA);
+
+
+
     std::string str;
     str += (char)0xFF;
     this->emplace(str, Symbol::INDENT);

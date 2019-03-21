@@ -20,7 +20,10 @@
 #include <Lexical/Tokens/DeclToken.h>
 #include <Lexical/Tokens/ExitToken.h>
 #include <Lexical/Tokens/IndentToken.h>
+#include <Lexical/Tokens/FunctionToken.h>
+#include <Lexical/Tokens/ColonToken.h>
 #include <Lexical/Tokens/ExtentToken.h>
+#include <Lexical/Tokens/CommaToken.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
@@ -74,6 +77,12 @@ void ACC::LexicalAnalysis::process() {
                 buffer += *itr;
             }
             if(!isInTable){ //not in table
+
+                if(buffer.at(buffer.size() - 1) == ','){
+                     buffer.erase(buffer.size() - 1, 1);
+                     itr--;
+                }
+
                 LOG() << Log::Colour::Magenta << "Not in table: ";
                 LOG() << buffer << std::endl;
                 SymbolTable::get()->emplace(buffer, Symbol::DECL);
@@ -132,6 +141,15 @@ void ACC::LexicalAnalysis::process() {
                     case Symbol::EXTENT:
                         tokens.push_back(new ExtentToken());
                         break;
+                    case Symbol::FUNCTION:
+                        tokens.push_back(new FunctionToken());
+                        break;
+                    case Symbol::COLON:
+                        tokens.push_back(new ColonToken());
+                        break;
+                    case Symbol::COMMA:
+                        tokens.push_back(new CommaToken());
+                        break;
                 }
                 buffer.clear();
             }
@@ -151,14 +169,6 @@ ACC::LexicalAnalysis::~LexicalAnalysis() {
 
 
 void ACC::LexicalAnalysis::preProcessDocument() {
-    /*for(long i = document.size() - 1; i >= 0; i--){
-        char cur = document.at(i);
-        if(cur == '\n' || cur == '\r')
-            document.erase(i, 1);
-        else if (i - 1 >= 0 && cur == ' ' && document[i - 1] == ' ')
-            document.erase(i, 1);
-    }*/
-
     int lastDepth = 0;
     for(long i = 0; i < document.size(); i++){
         if(document.at(i) == '\n') {

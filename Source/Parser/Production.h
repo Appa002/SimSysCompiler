@@ -22,6 +22,9 @@ namespace ACC {
         EXIT,
         INDENT,
         EXTENT,
+        FUNCTION,
+        COLON,
+        COMMA,
 
         none_terminals_start,
 
