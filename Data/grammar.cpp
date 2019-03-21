@@ -13,13 +13,24 @@ bool ACC::isNoneterminal(Symbol sys) {
 
 std::vector<ACC::Production> ACC::data::getGrammar() {
     return {
+
             {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
+            {Symbol::start,       {Symbol::function, Symbol::EXTENT}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
+            {Symbol::start,       {Symbol::function, Symbol::EXTENT, Symbol::start}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS, Symbol::start}},
 
+            {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::params, Symbol::BRACKET,
+                                   Symbol::COLON, Symbol::INDENT, Symbol::start}},
+
+            {Symbol::params,      {Symbol::DECL}},
+            {Symbol::params,      {Symbol::DECL, Symbol::COMMA, Symbol::params}},
+
+
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}},
+
             {Symbol::keyword,     {Symbol::PRINT, Symbol::ID}},
             {Symbol::keyword,     {Symbol::EXIT, Symbol::LITERAL}},
 
@@ -68,6 +79,20 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "assign";
         case Symbol::EXIT:
             return "exit";
+        case Symbol::INDENT:
+            return "indent";
+        case Symbol::EXTENT:
+            return "extent";
+        case Symbol::FUNCTION:
+            return "fn";
+        case Symbol::COLON:
+            return ":";
+        case Symbol::COMMA:
+            return ",";
+        case Symbol::function:
+            return "function";
+        case Symbol::params:
+            return "params";
     }
     throw std::runtime_error("Symbol not known.");
 }
