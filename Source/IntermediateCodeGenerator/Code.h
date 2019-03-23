@@ -17,12 +17,21 @@ namespace ACC{
         Operator* op = nullptr;
     };
 
+    struct FunctionId{
+        FunctionId() = default;
+        explicit FunctionId(uint32_t id) : id(id) {};
+
+        uint32_t id = 0;
+    };
+
     class Code {
     private:
         std::vector<Operator*> data;
         std::vector<Operator*> deadOperators;
-        std::unordered_map<std::string, Dependency> symTable;
-        temporary temporaryCounter = 1;
+        std::unordered_map<std::string, Dependency> varTable;
+        std::unordered_map<std::string, FunctionId> fnTable;
+        temporary temporaryCounter = 0;
+        uint32_t fnCounter = 0;
         int ref = 1;
 
 
@@ -30,8 +39,13 @@ namespace ACC{
         Code();
         ~Code();
         Code(Code const & other);
-        Dependency& getSymbol(std::string sym);
-        Dependency& emplaceSymbol(std::string sym, Operator* op);
+
+        Dependency& getVarSymbol(std::string sym);
+        Dependency& emplaceVarSymbol(std::string sym, Operator *op);
+
+        FunctionId& getFnSymbol(std::string sym);
+        FunctionId& emplaceFnSymbol(std::string sym);
+
         void pushOp(Operator *const &op);
 
         /** This function removes an Operator from the generated code such that the dependency graph of the operators

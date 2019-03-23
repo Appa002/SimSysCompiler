@@ -5,16 +5,28 @@
 #include <Logger/Logger.h>
 #include "Code.h"
 
-ACC::Dependency& ACC::Code::getSymbol(std::string sym) {
-    if(symTable.find(sym) == symTable.end())
-        return symTable.at("none");
+ACC::Dependency& ACC::Code::getVarSymbol(std::string sym) {
+    if(varTable.find(sym) == varTable.end())
+        throw std::runtime_error("Unknown variable: " + sym);
     else
-        return symTable.at(sym);
+        return varTable.at(sym);
 }
 
-ACC::Dependency& ACC::Code::emplaceSymbol(std::string sym, Operator* op) {
-    symTable[sym] = {++temporaryCounter, op};
-    return symTable.at(sym);
+ACC::Dependency& ACC::Code::emplaceVarSymbol(std::string sym, Operator *op) {
+    varTable[sym] = {++temporaryCounter, op};
+    return varTable.at(sym);
+}
+
+ACC::FunctionId& ACC::Code::getFnSymbol(std::string sym) {
+    if(fnTable.find(sym) == fnTable.end())
+        throw std::runtime_error("Unknown fn: " + sym);
+    else
+        return fnTable.at(sym);
+}
+
+ACC::FunctionId& ACC::Code::emplaceFnSymbol(std::string sym) {
+    fnTable[sym] = FunctionId(++fnCounter);
+    return fnTable.at(sym);
 }
 
 
@@ -42,9 +54,7 @@ void ACC::Code::pushOp(ACC::Operator *const &op) {
     data.push_back(op);
 }
 
-ACC::Code::Code() {
-    symTable["none"] = {};
-}
+ACC::Code::Code() = default;
 
 void ACC::Code::removeUnary(size_t idx) {
     auto op = data.at(idx);
@@ -92,7 +102,7 @@ ACC::Code::~Code() {
 }
 
 ACC::Code::Code(Code const & other) : ref(other.ref), data(other.data),
-symTable(other.symTable), temporaryCounter(other.temporaryCounter) {
+varTable(other.varTable), temporaryCounter(other.temporaryCounter) {
     ref++;
 }
 

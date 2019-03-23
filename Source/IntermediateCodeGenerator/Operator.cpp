@@ -45,6 +45,22 @@ std::string ACC::Operator::asString() const {
         case OperatorId::DIVIDE:
             return std::string("divide, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs) + ", " +
                    printAsTemporary(rhs);
+        case OperatorId::IMULTIPLY:
+            return std::string("imultiply, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
+                   std::to_string(rhs);
+
+        case OperatorId::IDIVIDE:
+            return std::string("idivide, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
+                   std::to_string(rhs);
+
+        case OperatorId::FUNCTION:
+            return std::string("function, " + std::to_string(lhs));
+
+        case OperatorId::CALL:break;
+
+        case OperatorId::LATTR:
+            return std::string("lattr, " + printAsTemporary(result) + ", " + std::to_string(lhs));
+
     }
     return std::string("unknown, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
            std::to_string(rhs);

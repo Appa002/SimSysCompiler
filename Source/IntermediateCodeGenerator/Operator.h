@@ -26,7 +26,11 @@ namespace ACC{
         ICOPY,
         PRINT,
         IPRINT,
-        EXIT
+        EXIT,
+        FUNCTION,
+        CALL,
+        LATTR,
+
     };
 
     struct Operator{

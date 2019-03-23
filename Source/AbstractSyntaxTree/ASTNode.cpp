@@ -15,6 +15,7 @@
 #include <IntermediateCodeGenerator/TokenGenerator/ExitTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/DivisionTokenGenerator.h>
 #include <IntermediateCodeGenerator/TokenGenerator/MultiplicationTokenGenerator.h>
+#include <IntermediateCodeGenerator/TokenGenerator/FunctionTokenGenerator.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;
@@ -99,6 +100,9 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new MultiplicationTokenGenerator(this));
         case AstOperator::DIVISION:
             return std::unique_ptr<Expr>(new DivisionTokenGenerator(this));
+        case AstOperator::FUNCTION:
+            return std::unique_ptr<Expr>(new FunctionTokenGenerator(this));
+        case AstOperator::CALL:break;
     }
     return std::unique_ptr<Expr>(nullptr);
 }

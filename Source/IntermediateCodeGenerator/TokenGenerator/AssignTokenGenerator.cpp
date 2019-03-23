@@ -2,7 +2,7 @@
 
 ACC::Dependency ACC::AssignTokenGenerator::generate(ACC::Code &code) {
     Dependency rhs = node->children[1]->asExpr()->generate(code);
-    Dependency& lhs = code.emplaceSymbol(node->children[0]->str, nullptr);
+    Dependency& lhs = code.emplaceVarSymbol(node->children[0]->str, nullptr);
 
     // lhs = rhs
 
@@ -12,7 +12,6 @@ ACC::Dependency ACC::AssignTokenGenerator::generate(ACC::Code &code) {
 
     op->opLhs = rhs.op;
     lhs.op = op;
-    rhs.op->opResult = op;
 
     code.pushOp(op);
     return {op->result, op};
