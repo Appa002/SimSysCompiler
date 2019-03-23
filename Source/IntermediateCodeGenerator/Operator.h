@@ -28,8 +28,10 @@ namespace ACC{
         IPRINT,
         EXIT,
         FUNCTION,
-        CALL,
+        ICALL,
         LATTR,
+        SATTR,
+        ISATTR,
         RETURN,
         IRETURN
 

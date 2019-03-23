@@ -56,7 +56,8 @@ std::string ACC::Operator::asString() const {
         case OperatorId::FUNCTION:
             return std::string("function, " + std::to_string(lhs));
 
-        case OperatorId::CALL:break;
+        case OperatorId::ICALL:
+            return std::string("icall, " + std::to_string(lhs));
 
         case OperatorId::LATTR:
             return std::string("lattr, " + printAsTemporary(result) + ", " + std::to_string(lhs));
@@ -66,6 +67,12 @@ std::string ACC::Operator::asString() const {
 
         case OperatorId::IRETURN:
             return std::string("ireturn, ") + std::to_string(lhs);
+
+        case OperatorId::SATTR:
+            return std::string("sattr, ") + printAsTemporary(lhs) + ", " + std::to_string(rhs);
+
+        case OperatorId::ISATTR:
+            return std::string("isattr, ") + std::to_string(lhs) + ", " + std::to_string(rhs);
     }
     return std::string("unknown, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
            std::to_string(rhs);

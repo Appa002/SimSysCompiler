@@ -22,6 +22,7 @@ namespace ACC{
         explicit FunctionId(uint32_t id) : id(id) {};
 
         uint32_t id = 0;
+        Operator* op = nullptr;
     };
 
     class Code {
