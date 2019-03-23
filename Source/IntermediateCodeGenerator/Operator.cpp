@@ -61,6 +61,11 @@ std::string ACC::Operator::asString() const {
         case OperatorId::LATTR:
             return std::string("lattr, " + printAsTemporary(result) + ", " + std::to_string(lhs));
 
+        case OperatorId::RETURN:
+            return std::string("return, ") + printAsTemporary(lhs);
+
+        case OperatorId::IRETURN:
+            return std::string("ireturn, ") + std::to_string(lhs);
     }
     return std::string("unknown, ") + printAsTemporary(result) + ", " + std::to_string(lhs) + ", " +
            std::to_string(rhs);

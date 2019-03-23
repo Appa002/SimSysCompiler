@@ -30,6 +30,8 @@ namespace ACC{
         FUNCTION,
         CALL,
         LATTR,
+        RETURN,
+        IRETURN
 
     };
 
