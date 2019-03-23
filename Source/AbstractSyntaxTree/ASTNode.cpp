@@ -69,6 +69,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "/";
         case AstOperator::FUNCTION:
             return "function";
+        case AstOperator::CALL:
+            return "call";
     }
     return "";
 }

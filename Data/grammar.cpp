@@ -17,16 +17,30 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS}},
+            {Symbol::start,       {Symbol::call, Symbol::EOS}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT, Symbol::start}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS, Symbol::start}},
+            {Symbol::start,       {Symbol::call, Symbol::EOS, Symbol::start}},
 
-            {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::params, Symbol::BRACKET,
+
+
+            {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl, Symbol::BRACKET,
                                    Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
-            {Symbol::params,      {Symbol::DECL}},
-            {Symbol::params,      {Symbol::DECL, Symbol::COMMA, Symbol::params}},
+            {Symbol::paramsDecl,  {Symbol::DECL}},
+            {Symbol::paramsDecl,  {Symbol::DECL, Symbol::COMMA, Symbol::paramsDecl}},
+
+            {Symbol::call,        {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}},
+            {Symbol::call,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
+
+
+            {Symbol::paramsList,  {Symbol::ID}},
+            {Symbol::paramsList,  {Symbol::ID, Symbol::COMMA, Symbol::paramsList}},
+
+            {Symbol::paramsList,  {Symbol::LITERAL}},
+            {Symbol::paramsList,  {Symbol::LITERAL, Symbol::COMMA, Symbol::paramsList}},
 
 
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}},
@@ -91,8 +105,12 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return ",";
         case Symbol::function:
             return "function";
-        case Symbol::params:
+        case Symbol::paramsDecl:
             return "params";
+        case Symbol::paramsList:
+            return "paramsList";
+        case Symbol::call:
+            return "call";
     }
     throw std::runtime_error("Symbol not known.");
 }

@@ -35,7 +35,9 @@ namespace ACC {
         stmt,
         start,
         function,
-        params
+        paramsDecl,
+        paramsList,
+        call
     };
 
     using productionBody_t = std::vector<Symbol>;

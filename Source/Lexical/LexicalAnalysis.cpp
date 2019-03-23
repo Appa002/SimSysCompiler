@@ -78,7 +78,7 @@ void ACC::LexicalAnalysis::process() {
             }
             if(!isInTable){ //not in table
 
-                if(buffer.at(buffer.size() - 1) == ','){
+                if(buffer.at(buffer.size() - 1) == ',' || buffer.at(buffer.size() - 1) == '('){
                      buffer.erase(buffer.size() - 1, 1);
                      itr--;
                 }
