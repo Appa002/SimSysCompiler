@@ -21,7 +21,8 @@ enum class AstOperator{
     PRINT,
     EXIT,
     FUNCTION,
-    CALL
+    CALL,
+    RETURN
 };
 
 namespace ACC {

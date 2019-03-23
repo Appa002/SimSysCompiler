@@ -25,6 +25,7 @@ namespace ACC {
         FUNCTION,
         COLON,
         COMMA,
+        RETURN,
 
         none_terminals_start,
 

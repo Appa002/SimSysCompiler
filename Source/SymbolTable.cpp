@@ -19,6 +19,7 @@ ACC::SymbolTable::SymbolTable() : std::unordered_map<std::string, Symbol>() {
     this->emplace("fn", Symbol::FUNCTION);
     this->emplace(":", Symbol::COLON);
     this->emplace(",", Symbol::COMMA);
+    this->emplace("return", Symbol::RETURN);
 
 
 

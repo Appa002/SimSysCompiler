@@ -47,6 +47,8 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::keyword,     {Symbol::PRINT, Symbol::ID}},
             {Symbol::keyword,     {Symbol::EXIT, Symbol::LITERAL}},
+            {Symbol::keyword,     {Symbol::RETURN, Symbol::LITERAL}},
+            {Symbol::keyword,     {Symbol::RETURN, Symbol::ID}},
 
             {Symbol::expr,        {Symbol::LITERAL}}, // E ::= A-Za-z0-9
             {Symbol::expr,        {Symbol::ID}}, // E ::= A-Za-z0-9
@@ -111,6 +113,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "paramsList";
         case Symbol::call:
             return "call";
+        case Symbol::RETURN:
+            return "return";
     }
     throw std::runtime_error("Symbol not known.");
 }

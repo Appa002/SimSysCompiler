@@ -72,6 +72,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "function";
         case AstOperator::CALL:
             return "call";
+        case AstOperator::RETURN:
+            return "return";
     }
     return "";
 }

@@ -24,6 +24,7 @@
 #include <Lexical/Tokens/ColonToken.h>
 #include <Lexical/Tokens/ExtentToken.h>
 #include <Lexical/Tokens/CommaToken.h>
+#include <Lexical/Tokens/ReturnToken.h>
 
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
@@ -103,6 +104,10 @@ void ACC::LexicalAnalysis::process() {
                     case Symbol::keyword:break;
                     case Symbol::stmt:break;
                     case Symbol::start:break;
+                    case Symbol::function:break;
+                    case Symbol::paramsDecl:break;
+                    case Symbol::paramsList:break;
+                    case Symbol::call:break;
 
                     case Symbol::VAR:
                         tokens.push_back(new VarToken());
@@ -150,6 +155,10 @@ void ACC::LexicalAnalysis::process() {
                     case Symbol::COMMA:
                         tokens.push_back(new CommaToken());
                         break;
+                    case Symbol::RETURN:
+                        tokens.push_back(new ReturnToken());
+                        break;
+
                 }
                 buffer.clear();
             }
