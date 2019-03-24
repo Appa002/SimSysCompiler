@@ -46,7 +46,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "print", "\0", "return"
+            "fn", "var", "exit", "print", "return"
     };
 
     if(shallCheckIndent) {
@@ -87,8 +87,6 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             tokens.push_back(new ReturnToken());
             buffer.clear();
             ret(pos + 1);
-            return;
-        } else if ("\0" == buffer){
             return;
         }
     }else{
@@ -349,7 +347,6 @@ ACC::LexicalAnalysis::~LexicalAnalysis() {
     for(const auto& it : tokens)
         delete it;
 }
-
 
 void ACC::LexicalAnalysis::preProcessDocument() {
     document += "\nexit 0;";
