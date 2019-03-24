@@ -37,8 +37,12 @@ std::string ACC::Operator::asString() const {
         case OperatorId::IPRINT:
             return std::string("iprint, ") + std::to_string(lhs);
 
+        case OperatorId::IEXIT:
+            return std::string("iexit, ") + std::to_string(lhs);
+
         case OperatorId::EXIT:
-            return std::string("exit, ") + std::to_string(lhs);
+            return std::string("exit, ") + printAsTemporary(lhs);
+
         case OperatorId::MULTIPLY:
             return std::string("multiply, ") + printAsTemporary(result) + ", " + printAsTemporary(lhs) + ", " +
                    printAsTemporary(rhs);;

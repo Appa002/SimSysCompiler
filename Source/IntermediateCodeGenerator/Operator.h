@@ -27,6 +27,7 @@ namespace ACC{
         PRINT,
         IPRINT,
         EXIT,
+        IEXIT,
         FUNCTION,
         ICALL,
         LATTR,
