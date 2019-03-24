@@ -46,7 +46,11 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}},
 
             {Symbol::keyword,     {Symbol::PRINT, Symbol::ID}},
+            {Symbol::keyword,     {Symbol::PRINT, Symbol::LITERAL}},
+
             {Symbol::keyword,     {Symbol::EXIT, Symbol::LITERAL}},
+            {Symbol::keyword,     {Symbol::EXIT, Symbol::ID}},
+
             {Symbol::keyword,     {Symbol::RETURN, Symbol::LITERAL}},
             {Symbol::keyword,     {Symbol::RETURN, Symbol::ID}},
 
