@@ -60,7 +60,7 @@ void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
             case OperatorId::IPRINT:
                 OpGenerators::iPrint(it, *this);
                 break;
-            case OperatorId::EXIT:
+            case OperatorId::IEXIT:
                 OpGenerators::exit(it, *this);
                 break;
             default:
