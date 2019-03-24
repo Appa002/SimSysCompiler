@@ -8,7 +8,6 @@
 #include <Lexical/Tokens/EOSToken.h>
 #include <errors.h>
 #include <Logger/Logger.h>
-#include <SymbolTable.h>
 
 #include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/IdToken.h>
@@ -26,6 +25,300 @@
 #include <Lexical/Tokens/CommaToken.h>
 #include <Lexical/Tokens/ReturnToken.h>
 
+bool contains(const std::string &str, std::vector<std::string> options){
+    for(auto const & option : options){
+        if(str == option)
+            return true;
+    }
+    return false;
+}
+
+bool contains(char c, std::vector<std::string> options){
+    for(auto const & option : options){
+        if(c == option[0])
+            return true;
+    }
+    return false;
+}
+
+void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
+    if(pos >= document.size())
+        return;
+
+    std::vector<std::string> keyOptions = {
+            "fn", "var", "exit", "print", "\0", "return"
+    };
+
+    if(shallCheckIndent) {
+        int newDepth = readUntilNextLine(pos);
+        if (newDepth > depth)
+            tokens.push_back(new IndentToken());
+        else if (newDepth < depth)
+            tokens.push_back(new ExtentToken());
+        depth = newDepth;
+    }
+    buffer += document.at(pos);
+    if(contains(buffer, keyOptions)){
+
+        if("fn" == buffer){
+            tokens.push_back(new FunctionToken());
+            buffer.clear();
+            fn(pos + 1);
+            return;
+        }
+        else if ("var" == buffer){
+            tokens.push_back(new VarToken());
+            buffer.clear();
+            var(pos + 1);
+            return;
+
+        }else if ("exit" == buffer){
+            tokens.push_back(new ExitToken());
+            buffer.clear();
+            exit(pos + 1);
+            return;
+
+        }else if ("print" == buffer) {
+            tokens.push_back(new PrintToken());
+            buffer.clear();
+            print(pos + 1);
+            return;
+        }else if ("return" == buffer){
+            tokens.push_back(new ReturnToken());
+            buffer.clear();
+            ret(pos + 1);
+            return;
+        } else if ("\0" == buffer){
+            return;
+        }
+    }else{
+        if(pos < document.size())
+            start(pos + 1);
+        else
+            return;
+    }
+}
+
+void ACC::LexicalAnalysis::ret(size_t pos) {
+    readUntilNextLine(pos);
+
+    matchAsLongAs(pos,
+                  [&](){return !contains(document.at(pos), {";", " ", "\n", "\r"});},
+                  [&](){
+                      buffer += document.at(pos);
+                  });
+
+    if(inTable(buffer))
+        tokens.push_back(new IdToken(buffer));
+    else{
+        if(isNumber(buffer))
+            tokens.push_back(new LiteralToken(buffer));
+        else
+            throw std::runtime_error("Unknown variable: `" + buffer + "`, at: " + std::to_string(pos));
+    }
+
+    readUntilNextLine(pos);
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing `;` after print statements, at: " + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+    pos++;
+    buffer.clear();
+    start(pos, true);
+}
+
+void ACC::LexicalAnalysis::var(size_t pos) {
+    // var a = öflksajdflä;
+
+    readUntilNextLine(pos);
+
+    matchAsLongAs(pos,
+                  [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
+                  [&](){
+                      buffer += document.at(pos);
+    });
+
+    if(inTable(buffer))
+        throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
+
+    tokens.push_back(new DeclToken(buffer));
+    table.emplace(buffer, Symbol::DECL);
+
+    readUntilNextLine(pos);
+    if(document.at(pos) != '=')
+        throw std::runtime_error("Can't declare variable without defining it, at: " + std::to_string(pos));
+
+    tokens.push_back(new AssignToken());
+
+    buffer.clear();
+    pos++;
+    var_rhs(pos);
+}
+
+void ACC::LexicalAnalysis::var_rhs(size_t pos) {
+
+    while((readUntilNextLine(pos), document.at(pos)) != ';'){
+        bool matched = matchAsLongAs(pos,
+                      [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
+                      [&](){
+                          buffer += document.at(pos);
+        });
+
+        if(matched)
+            pos--;
+
+        if(isNumber(buffer))
+            tokens.push_back(new LiteralToken(buffer));
+        else if (inTable(buffer))
+            tokens.push_back(new IdToken(buffer));
+        else if (document.at(pos) == '(')
+            tokens.push_back(new BracketToken(BracketKind::OPEN));
+        else if (document.at(pos) == ')')
+            tokens.push_back(new BracketToken(BracketKind::CLOSED));
+        else if (document.at(pos) == '+')
+            tokens.push_back(new MathOperatorToken(MathOperators::PLUS));
+        else if (document.at(pos) == '-')
+            tokens.push_back(new MathOperatorToken(MathOperators::MINUS));
+        else if (document.at(pos) == '*')
+            tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
+        else if (document.at(pos) == '/')
+            tokens.push_back(new MathOperatorToken(MathOperators::DIVISION));
+        else
+            throw std::runtime_error("Unknown symbol `"+buffer+"`, at: " + std::to_string(pos));
+
+        buffer.clear();
+        if(pos + 1 < document.size()){
+            pos++;
+        }else
+            throw std::runtime_error("Expected ; at end of variable definition, at: " + std::to_string(pos));
+    }
+
+    if(document.at(pos) != ';')
+        throw std::runtime_error("Expected ; at end of variable definition, at: " + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+    buffer.clear();
+    pos++;
+    start(pos, true);
+}
+
+void ACC::LexicalAnalysis::fn(size_t pos) {
+    skipAll(' ', pos);
+
+    matchAsLongAs(pos,
+            [&](){return !contains(document.at(pos), {"(", " "});},
+            [&](){
+        buffer += document.at(pos);
+    });
+
+    tokens.push_back(new DeclToken(buffer));
+    table.emplace(buffer, Symbol::FUNCTION);
+
+    buffer.clear();
+
+    if(matchIgnoreW('(', pos))
+        tokens.push_back(new BracketToken(BracketKind::OPEN));
+    else
+        throw std::runtime_error("Expected parameter list after function declaration; missing `(`, at: " + std::to_string(pos));
+
+    pos++;
+    while(pos < document.size() && document.at(pos - 1) != ')'){
+        while(pos < document.size()  && !contains(document.at(pos), {",", ")"})){
+            if(document.at(pos) == ' '){
+                ++pos;
+                continue;
+            }
+
+            buffer += document.at(pos);
+            ++pos;
+        }
+        if(pos >= document.size())
+            throw std::runtime_error("Expected declaration in parameter list, at: " + std::to_string(pos));
+
+        tokens.push_back(new DeclToken(buffer));
+        table.emplace(buffer, Symbol::DECL);
+
+        if(document.at(pos) == ',')
+            tokens.push_back(new CommaToken());
+        buffer.clear();
+        pos++;
+    }
+    if(pos >= document.size())
+        throw std::runtime_error("Expected declaration in parameter list, at: " + std::to_string(pos));
+
+
+    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+
+
+    if(matchIgnoreW(':', pos))
+        tokens.push_back(new ColonToken());
+    else
+        throw std::runtime_error("Expected `:` in function definition at: " + std::to_string(pos));
+
+    pos++;
+    buffer.clear();
+    start(pos, true);
+}
+
+void ACC::LexicalAnalysis::print(size_t pos) {
+    readUntilNextLine(pos);
+
+    matchAsLongAs(pos,
+                  [&](){return !contains(document.at(pos), {";", " ", "\n", "\r"});},
+                  [&](){
+                      buffer += document.at(pos);
+    });
+
+    if(inTable(buffer))
+        tokens.push_back(new IdToken(buffer));
+    else{
+        if(isNumber(buffer))
+            tokens.push_back(new LiteralToken(buffer));
+        else
+            throw std::runtime_error("Unknown variable: `" + buffer + "`, at: " + std::to_string(pos));
+    }
+
+    readUntilNextLine(pos);
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing `;` after print statements, at: " + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+    pos++;
+    buffer.clear();
+    start(pos, true);
+}
+
+void ACC::LexicalAnalysis::exit(size_t pos) {
+    readUntilNextLine(pos);
+
+    matchAsLongAs(pos,
+                  [&](){return !contains(document.at(pos), {";", " ", "\n", "\r"});},
+                  [&](){
+                      buffer += document.at(pos);
+    });
+
+    if(inTable(buffer))
+        tokens.push_back(new IdToken(buffer));
+    else{
+        if(isNumber(buffer))
+            tokens.push_back(new LiteralToken(buffer));
+        else
+            throw std::runtime_error("Unknown variable: `" + buffer + "`, at: " + std::to_string(pos));
+    }
+
+    readUntilNextLine(pos);
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing `;` after exit statements, at: " + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+    pos++;
+    buffer.clear();
+    start(pos, true);
+}
+
 ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     refCount++;
     std::ifstream fs;
@@ -36,7 +329,7 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     LOG() << this->document << std::endl;
 
     preProcessDocument();
-    process();
+    start(0);
 }
 
 ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
@@ -47,162 +340,19 @@ ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
 }
 
 
-void ACC::LexicalAnalysis::process() {
-    if(processed)
-        throw repeated_step_error_t("The file has already been analysed!");
-    LOG.createHeading("Starting Lexical Analysis...");
-    processed = true;
-
-    std::string buffer;
-    for(auto itr = document.begin(); itr != document.end(); ) {
-        if(*itr == ' '){
-            itr++;
-            continue;
-        }
-        if(isNumber(*itr)){ // is c a number
-            for(;isNumber(*itr); itr++)
-                buffer += *itr;
-            LOG() << Log::Colour::Magenta << "Detected Literal: ";
-            LOG() << buffer << std::endl;
-            tokens.push_back(new LiteralToken(buffer));
-            buffer.clear();
-        }else{
-            bool isInTable = false;
-            for(;itr != document.end(); itr++){
-                if(inTable(buffer)) {
-                    isInTable = true;
-                    break;
-                }
-                if(*itr == ' ')
-                    break;
-                buffer += *itr;
-            }
-            if(!isInTable){ //not in table
-
-                if(buffer.at(buffer.size() - 1) == ',' || buffer.at(buffer.size() - 1) == '('){
-                     buffer.erase(buffer.size() - 1, 1);
-                     itr--;
-                }
-
-                LOG() << Log::Colour::Magenta << "Not in table: ";
-                LOG() << buffer << std::endl;
-                SymbolTable::get()->emplace(buffer, Symbol::DECL);
-                tokens.push_back(new DeclToken(buffer));
-                buffer.clear();
-            }
-            else{ // in table
-                LOG() << Log::Colour::Magenta << "In Table: ";
-                LOG() << buffer << std::endl;
-                switch(SymbolTable::get()->at(buffer)){
-                    case Symbol::empty:break;
-                    case Symbol::ID:break;
-                    case Symbol::none_terminals_start:break;
-                    case Symbol::LITERAL:break;
-                    case Symbol::expr:break;
-                    case Symbol::declaration:break;
-                    case Symbol::assignment:break;
-                    case Symbol::keyword:break;
-                    case Symbol::stmt:break;
-                    case Symbol::start:break;
-                    case Symbol::function:break;
-                    case Symbol::paramsDecl:break;
-                    case Symbol::paramsList:break;
-                    case Symbol::call:break;
-
-                    case Symbol::VAR:
-                        tokens.push_back(new VarToken());
-                        break;
-                    case Symbol::BRACKET:
-                        tokens.push_back(new BracketToken(buffer == "(" ? (BracketKind::OPEN) : (BracketKind::CLOSED)));
-                        break;
-                    case Symbol::MATH_OPERATOR:
-                        if(buffer == "+")
-                            tokens.push_back(new MathOperatorToken(MathOperators::PLUS));
-                        else if (buffer == "-")
-                            tokens.push_back(new MathOperatorToken(MathOperators::MINUS));
-                        else if (buffer == "*")
-                            tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
-                        else if (buffer == "/")
-                            tokens.push_back(new MathOperatorToken(MathOperators::DIVISION));
-                        break;
-                    case Symbol::PRINT:
-                        tokens.push_back(new PrintToken());
-                        break;
-                    case Symbol::EOS:
-                        tokens.push_back(new EOSToken());
-                        break;
-                    case Symbol::ASSIGN:
-                        tokens.push_back(new AssignToken());
-                        break;
-                    case Symbol::DECL:
-                        tokens.push_back(new IdToken(buffer));
-                        break;
-                    case Symbol::EXIT:
-                        tokens.push_back(new ExitToken());
-                        break;
-                    case Symbol::INDENT:
-                        tokens.push_back(new IndentToken());
-                        break;
-                    case Symbol::EXTENT:
-                        tokens.push_back(new ExtentToken());
-                        break;
-                    case Symbol::FUNCTION:
-                        tokens.push_back(new FunctionToken());
-                        break;
-                    case Symbol::COLON:
-                        tokens.push_back(new ColonToken());
-                        break;
-                    case Symbol::COMMA:
-                        tokens.push_back(new CommaToken());
-                        break;
-                    case Symbol::RETURN:
-                        tokens.push_back(new ReturnToken());
-                        break;
-
-                }
-                buffer.clear();
-            }
-        }
-    }
-}
 
 ACC::LexicalAnalysis::~LexicalAnalysis() {
     refCount--;
     if(refCount != 0)
         return;
 
-    SymbolTable::get()->del();
     for(const auto& it : tokens)
         delete it;
 }
 
 
 void ACC::LexicalAnalysis::preProcessDocument() {
-    int lastDepth = 0;
-    for(long i = 0; i < document.size(); i++){
-        if(document.at(i) == '\n') {
-            document.erase(i, 1);
-
-            int depth = 0;
-
-            for(; document.at(i) == ' '; i++) {
-                depth++;
-            }
-
-            if(depth > lastDepth) {
-                std::string str;
-                str += (char)0xFF;
-                document.insert(i, str);
-            }else if(depth < lastDepth){
-                std::string str;
-                str += (char)0xFA;
-                document.insert(i, str);
-            }
-            lastDepth = depth;
-        }
-    }
-
-    document += ' ';
+    document += "\nexit 0;";
 }
 
 void ACC::LexicalAnalysis::printToken() {
@@ -225,9 +375,68 @@ const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {
 }
 
 bool ACC::LexicalAnalysis::inTable(std::string idf) {
-    return SymbolTable::get()->find(idf) != SymbolTable::get()->end();
+    return table.find(idf) != table.end();
 }
 
 bool ACC::LexicalAnalysis::isNumber(char c) {
     return (int)c >= 48 && (int)c <=57;
 }
+
+bool ACC::LexicalAnalysis::isNumber(std::string str) {
+    if(str.empty())
+        return false;
+    for(auto const & c : str)
+        if(!isNumber(c))
+            return false;
+    return true;
+}
+
+bool ACC::LexicalAnalysis::matchIgnoreW(char c, size_t& pos){
+    while(document.at(pos) == ' '){
+        pos++;
+        if(pos >= document.size())
+            return false;
+    }
+
+    return document.at(pos) == c;
+}
+
+void ACC::LexicalAnalysis::skipAll(char c, size_t& pos) {
+    while(pos < document.size() && document.at(pos) == c)
+        pos++;
+}
+
+int ACC::LexicalAnalysis::readUntilNextLine(size_t& pos){
+    if(pos >= document.size())
+        return 0;
+
+    bool shallCount = false;
+    int newGap = 0;
+
+    while(contains(document.at(pos), {" ", "\n", "\r"})){
+        if(document.at(pos) == '\n'){
+            shallCount = true;
+            newGap = 0;
+        }else if(document.at(pos) == ' ')
+            newGap++;
+        ++pos;
+    }
+    return newGap;
+}
+
+bool
+ACC::LexicalAnalysis::matchAsLongAs(size_t &pos, std::function<bool(void)> condition, std::function<void(void)> body) {
+    bool b = false;
+    while(condition()){
+        body();
+        if(pos + 1  >= document.size())
+            return false;
+        else
+            pos++;
+        b = true;
+    }
+    return b;
+}
+
+
+
