@@ -89,12 +89,58 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             ret(pos + 1);
             return;
         }
-    }else{
+    }
+    else if (inTable(buffer)) {
+        tokens.push_back(new IdToken(buffer));
+        buffer.clear();
+        call(pos + 1);
+        return;
+    }
+    else{
         if(pos < document.size())
             start(pos + 1);
         else
             return;
     }
+}
+
+void ACC::LexicalAnalysis::call(size_t pos){
+    readUntilNextLine(pos);
+    if(matchIgnoreW('(', pos))
+        tokens.push_back(new BracketToken(BracketKind::OPEN));
+    else
+        throw std::runtime_error("Call must be followed by parameter list, at: " + std::to_string(pos));
+
+
+    pos++;
+    while(pos < document.size() && document.at(pos - 1) != ')'){
+        try {
+            expr(pos, {",", ")"});
+        }catch (std::runtime_error&){
+            throw std::runtime_error("Expected expression in parameter list, at: " + std::to_string(pos));
+        }
+
+        if(pos >= document.size())
+            throw std::runtime_error("Expected expression in parameter list, at: " + std::to_string(pos));
+
+
+        if(document.at(pos) == ',')
+            tokens.push_back(new CommaToken());
+        buffer.clear();
+        pos++;
+    }
+
+    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing `;` after call statements, at: " + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+    pos++;
+    buffer.clear();
+    start(pos, true);
+
 }
 
 void ACC::LexicalAnalysis::ret(size_t pos) {
@@ -151,12 +197,21 @@ void ACC::LexicalAnalysis::var(size_t pos) {
 
     buffer.clear();
     pos++;
-    var_rhs(pos);
+    expr(pos, {";"});
+
+
+    if(document.at(pos) != ';')
+        throw std::runtime_error("Expected ; at end of variable definition, at: " + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+    buffer.clear();
+    pos++;
+    start(pos, true);
 }
 
-void ACC::LexicalAnalysis::var_rhs(size_t pos) {
+void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens) {
 
-    while((readUntilNextLine(pos), document.at(pos)) != ';'){
+    while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
                       [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
                       [&](){
@@ -191,14 +246,6 @@ void ACC::LexicalAnalysis::var_rhs(size_t pos) {
         }else
             throw std::runtime_error("Expected ; at end of variable definition, at: " + std::to_string(pos));
     }
-
-    if(document.at(pos) != ';')
-        throw std::runtime_error("Expected ; at end of variable definition, at: " + std::to_string(pos));
-
-    tokens.push_back(new EOSToken());
-    buffer.clear();
-    pos++;
-    start(pos, true);
 }
 
 void ACC::LexicalAnalysis::fn(size_t pos) {

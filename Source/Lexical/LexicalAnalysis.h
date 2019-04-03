@@ -35,8 +35,9 @@ namespace ACC {
         void print(size_t pos);
         void exit(size_t pos);
         void var(size_t pos);
-        void var_rhs(size_t pos);
+        void expr(size_t& pos, std::vector<std::string> exitTokens);
         void ret(size_t pos);
+        void call(size_t pos);
 
 
     public:
