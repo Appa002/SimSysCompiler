@@ -46,8 +46,6 @@ namespace ACC {
     using ptr_t = uint64_t;
     using offset_t = signed long;
     struct Location{
-        using accessInfo_t = std::variant<Register, offset_t, ptr_t, nullptr_t>;
-
         Location() = default;
 
         explicit Location(AccessMethod aAccessMethod) : accessMethod(aAccessMethod) {}
@@ -56,7 +54,7 @@ namespace ACC {
         Register regInfo = Register(0);
         offset_t offsetInfo = 0;
         ptr_t heapInfo = 0;
-        std::string constant;
+        char constant;
     };
 }
 
