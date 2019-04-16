@@ -43,6 +43,14 @@ void ACC::AssemblyFunction::mov(std::string target, std::string source, std::str
         writeLine("mov " + target + ", " + source + " ; " + comment);
 }
 
+std::string ACC::AssemblyFunction::generateCode() {
+    std::string out;
+    out += "mov rbp, rsp\n";
+    out += "sub rsp, "+ std::to_string(requiredStackSize) +"\n";
+    out += code;
+    return out;
+}
+
 std::string ACC::sizeToString(ACC::SizeDefinition size) {
     switch (size){
         case SizeDefinition::dowrd:
@@ -54,4 +62,5 @@ std::string ACC::sizeToString(ACC::SizeDefinition size) {
         case SizeDefinition::byte:
             return "byte";
     }
+    return "";
 }

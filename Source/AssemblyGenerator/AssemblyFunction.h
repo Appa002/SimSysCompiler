@@ -22,6 +22,8 @@ namespace ACC {
     public:
         std::string code;
         std::string symbol;
+        uint32_t curBpOffset = 0;
+        uint32_t requiredStackSize = 0;
 
     public:
         AssemblyFunction() = default;
@@ -32,6 +34,8 @@ namespace ACC {
         void mov(std::string target, std::string source, std::string comment = "");
         void mov(std::string target, std::string source, SizeDefinition size, bool ptr = false,
                  std::string comment = "");
+
+        std::string generateCode();
 
 
 
