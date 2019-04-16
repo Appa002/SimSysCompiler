@@ -116,8 +116,9 @@ void ACC::LexicalAnalysis::call(size_t pos){
     while(pos < document.size() && document.at(pos - 1) != ')'){
         try {
             expr(pos, {",", ")"});
-        }catch (std::runtime_error&){
-            throw std::runtime_error("Expected expression in parameter list, at: " + std::to_string(pos));
+        }catch (std::runtime_error& e){
+            throw std::runtime_error("Expected expression in parameter list, at: " + std::to_string(pos) + "\n"
+                                    "expression failed with: " + e.what());
         }
 
         if(pos >= document.size())
@@ -213,7 +214,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
-                      [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
+                      [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ","});},
                       [&](){
                           buffer += document.at(pos);
         });
