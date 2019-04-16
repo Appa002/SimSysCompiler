@@ -10,6 +10,8 @@
 #include <vector>
 #include <sstream>
 #include <ios>
+#include <Stack.h>
+#include <AssemblyGenerator/Location.h>
 
 /*! Expresses the parameter \p value as an x86 worthy hex value
  * (The return value doesn't contain the `0x` or `h` suffix/prefix).
@@ -17,6 +19,17 @@
  * @param value The value to convert.
  * @return String that represents the parameter \p value.*/
 std::string toHex (int value);
+
+ACC::Stack<size_t> generateStructureStack(const std::string &structure);
+
+size_t getStructureStackSize (ACC::Stack<size_t> s);
+
+/*! Converts a number to a sequence of letters representing that number;
+ * every digit get represented by a letter i.e. `0 = a; 1 = b ... 9 = j`.
+ * E.g.: `123` would become `bcd`. */
+std::string numberToLetterSequence(long number);
+
+std::string registerToString(ACC::Register reg);
 
 /*! Splits up an object (\p itrAble) of arbitrary type `T` at every 4th element; calls function f with a vector containing
  * the 4 elements from the last split.
