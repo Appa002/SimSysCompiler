@@ -19,6 +19,7 @@ namespace ACC {
         STACK_OFFSET,
         SBP_OFFSET,
         HEAP,
+        CONSTANT,
         NONE
     };
 
@@ -43,17 +44,19 @@ namespace ACC {
     };
 
     using ptr_t = uint64_t;
-    using offset_t = uint64_t ;
-
-    struct Snippet {
+    using offset_t = signed long;
+    struct Location{
         using accessInfo_t = std::variant<Register, offset_t, ptr_t, nullptr_t>;
-        
-        Snippet() = default;
-        Snippet(AccessMethod accessMethod, accessInfo_t accessInfo)
-            : accessMethod(accessMethod), accessInfo(accessInfo){}
+
+        Location() = default;
+
+        explicit Location(AccessMethod aAccessMethod) : accessMethod(aAccessMethod) {}
 
         AccessMethod accessMethod = AccessMethod::NONE;
-        accessInfo_t accessInfo;
+        Register regInfo = Register(0);
+        offset_t offsetInfo = 0;
+        ptr_t heapInfo = 0;
+        std::string constant;
     };
 }
 
