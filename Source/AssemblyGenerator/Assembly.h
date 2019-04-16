@@ -7,7 +7,7 @@
 
 #include <string>
 #include <IntermediateCodeGenerator/IntermediateCode.h>
-#include <AssemblyGenerator/Snippet.h>
+#include <AssemblyGenerator/Location.h>
 #include "AssemblyFunction.h"
 #include <Stack.h>
 
@@ -20,7 +20,9 @@ namespace ACC {
         size_t textSectionPos = 0;
         size_t dataSectionPos = 0;
 
-        std::unordered_map<temporary, Snippet> registerTable;
+        Stack<size_t> generateStructureStack(const std::string& structure);
+
+        std::unordered_map<temporary, Location> registerTable;
         std::unordered_map<std::string, AssemblyFunction> functionTable;
 
     public:
@@ -32,20 +34,22 @@ namespace ACC {
 
         size_t writeToText(std::string text, size_t pos);
         size_t writeToText(std::string text);
+        std::string getTextSection();
 
         size_t writeToData(std::string text, size_t pos);
         size_t writeToData(std::string text);
-
-        std::string combinedOutput();
-        std::string getTextSection();
         std::string getDataSection();
 
-        Snippet fetchSnippet(temporary reg);
-        void emplaceSnippet(temporary reg, Snippet const & snippet);
+        std::string combinedOutput();
+
+        Location fetchLocation(temporary reg);
+        void emplaceLocation(temporary reg, Location const &snippet);
 
         AssemblyFunction& fetchFunction(std::string sym);
         AssemblyFunction& fetchFunction();
         AssemblyFunction& emplaceFunction(std::string sym);
+
+        void createStructure(Location where, std::string structure, std::vector<Location> data);
 
 
     };
