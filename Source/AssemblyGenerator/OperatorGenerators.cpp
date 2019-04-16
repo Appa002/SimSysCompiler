@@ -3,6 +3,7 @@
 //
 
 #include "OperatorGenerators.h"
+#include <utils.h>
 
 /*
  * operator layout:
@@ -22,47 +23,23 @@
  * mov rdx, <size of ascii representation>
  * syscall
  * */
-
-
-std::string toHex (int value){
-    std::stringstream stream;
-    stream << std::hex << value;
-    std::string str = stream.str();
-    if(str.size() == 1)
-        str = "0" + str;
-    return str;
-}
-
 void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
-    std::string value = std::to_string(op->lhs);
     auto& targetFunction = assembly.fetchFunction();
-
-
+    std::string value = std::to_string(op->lhs);
     value += "\n";
 
-    targetFunction.writeLine("sub rsp, "+ std::to_string(value.size()) + " ; reserve n bytes of data on the stack");
-    targetFunction.mov("rax", "1", "sys_write");
-
-    targetFunction.writeLine("mov rax, 1 ; sys_write");
-    targetFunction.writeLine("mov rdi, 1 ; stdout");
-
-    std::string data = "mov dword [rsp], 0x";
-
-    size_t i = 0;
-    size_t total = 0;
-    size_t offset = data.size();
-    for (char it : value) {
-        if(i == 4){
-            total++;
-            data += "\nmov dword [rsp + "+std::to_string(4 * total) +"], 0x";
-            offset = data.size();
-            i = 0;
+    std::vector<Location> snippets;
+    dWordAlignT<std::string, char>(value, [&](std::vector<char> packet){
+        for(auto itr = packet.rbegin(); itr != packet.rend(); ++itr){
+            Location l(AccessMethod::CONSTANT);
+            l.constant = *itr;
+            snippets.push_back(l);
         }
+    });
 
-        data.insert(offset, toHex((unsigned) it));
-        i++;
-    }
-    targetFunction.writeLine(data);
+    assembly.createStructure(Location(AccessMethod::STACK_TOP), std::to_string(value.size()), snippets);
+    targetFunction.mov("rax", "1", "sys_write");
+    targetFunction.writeLine("mov rdi, 1 ; stdout");
     targetFunction.writeLine("mov rsi, rsp");
     targetFunction.writeLine("mov rdx, " + std::to_string(value.size()));
     targetFunction.writeLine("syscall");
