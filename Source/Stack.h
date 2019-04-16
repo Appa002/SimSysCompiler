@@ -17,7 +17,7 @@ namespace ACC {
         Stack() = default;
 
         void push(T element);
-        void pop();
+        T pop();
         T& peek(size_t offset = 0);
         size_t size();
         void destroy();
@@ -33,12 +33,14 @@ namespace ACC {
     }
 
     template<class T>
-    void Stack<T>::pop() {
+    T Stack<T>::pop() {
+        T thing = internal.at(internal.size() - 1);
         internal.pop_back();
+        return thing;
     }
 
     template<class T>
-    T &Stack<T>::peek(size_t offset) {
+    T &Stack<T>::peek(size_t offset)  {
         return internal.at(internal.size() - offset - 1);
     }
 
@@ -58,7 +60,7 @@ namespace ACC {
     }
 
     template<class T>
-    typename std::vector<T>::iterator Stack<T>::end() {
+    typename std::vector<T>::iterator Stack<T>::end()  {
         return internal.end();
     }
 
@@ -66,7 +68,6 @@ namespace ACC {
     void Stack<T>::destroy() {
         internal.clear();
     }
-
 
 }
 
