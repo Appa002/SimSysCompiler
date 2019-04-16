@@ -16,7 +16,6 @@ ACC::Dependency ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
         auto op = new Operator(OperatorId::LATTR, (temporary)i, 0, var.temp);
 
         op->opLhs =fnOp;
-        op->opResult = var.op;
 
         code.pushOp(op);
     }

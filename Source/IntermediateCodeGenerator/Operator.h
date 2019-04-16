@@ -51,7 +51,6 @@ namespace ACC{
 
         Operator* opLhs = nullptr;
         Operator* opRhs = nullptr;
-        Operator* opResult = nullptr;
 
         void printDependency(std::string indent, bool isLast) const;
         std::string asString() const;

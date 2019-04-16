@@ -15,7 +15,6 @@ ACC::Dependency ACC::ReturnTokenGenerator::generate(ACC::Code &code) {
 
         auto op = new Operator(OperatorId::RETURN, var.temp, 0, 0);
         op->opLhs = var.op;
-        var.op->opResult = op;
         code.pushOp(op);
         return {};
     }

@@ -11,9 +11,6 @@ ACC::Dependency ACC::AddTokenGenerator::generate(ACC::Code &code) {
 
     auto op = new Operator(OperatorId::ADD, lhs.temp, rhs.temp, out.temp);
 
-    lhs.op->opResult = op;
-    rhs.op->opResult = op;
-
     out.op = op;
     op->opLhs = lhs.op;
     op->opRhs = rhs.op;

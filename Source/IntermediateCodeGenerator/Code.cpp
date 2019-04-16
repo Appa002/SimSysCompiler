@@ -72,8 +72,7 @@ void ACC::Code::removeUnary(size_t idx) {
                 next->opRhs = op->opLhs;
             }
 
-            if(op->opLhs)
-                op->opLhs->opResult = next;
+            if(op->opLhs);
         }
     }
 
