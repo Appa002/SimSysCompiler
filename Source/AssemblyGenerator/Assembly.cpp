@@ -1,5 +1,8 @@
 #include <utility>
+
+#include <utility>
 #include <utils.h>
+#include <AssemblyGenerator/DataStructureMovement.h>
 
 //
 // Created by a_mod on 02.03.2019.
@@ -126,25 +129,7 @@ void ACC::Assembly::createStructure(ACC::Location where, std::string structure, 
 
     if (where.accessMethod == AccessMethod::STACK_TOP) {
         fn.requiredStackSize += stackSize;
-
-        std::string str = "mov dword [rsp], 0x";
-        size_t count = 0;
-
-        for (size_t i = 0; i < stackSize; i++) {
-            if (data[i].accessMethod == AccessMethod::CONSTANT) {
-                size_t offset = str.size();
-                if (count == 4) {
-                    str += "\nmov dword [rsp + " + std::to_string(i) + "], 0x";
-                    offset = str.size();
-                    count = 0;
-                }
-
-                str.insert(offset, toHex((unsigned)data.at((unsigned)i).constant[0]));
-                count++;
-            }
-        }
-        fn.writeLine(str);
-
+        fn.writeLine(Movs::c2st(std::move(data)));
     }
 }
 
