@@ -1,5 +1,3 @@
-#include <utility>
-
 //
 // Created by a_mod on 02.03.2019.
 //
@@ -11,6 +9,8 @@
 
 #include <string>
 #include <variant>
+#include <utility>
+#include <stdexcept>
 
 namespace ACC {
     enum class AccessMethod{
@@ -51,10 +51,10 @@ namespace ACC {
         explicit Location(AccessMethod aAccessMethod) : accessMethod(aAccessMethod) {}
 
         AccessMethod accessMethod = AccessMethod::NONE;
-        Register regInfo = Register(0);
+        Register regInfo = Register::NONE;
         offset_t offsetInfo = 0;
         ptr_t heapInfo = 0;
-        char constant;
+        std::string constant;
     };
 }
 
