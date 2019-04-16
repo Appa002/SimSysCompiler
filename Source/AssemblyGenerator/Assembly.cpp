@@ -56,8 +56,7 @@ std::string ACC::Assembly::getDataSection() {
 void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
     writeToText("section .text \n");
     writeToData("section .data \n");
-    emplaceFunction("_start");
-    functionStack.push("_start");
+    emplaceFunction("_start"); // Underscore is amended automatically
 
     for (auto it : const_cast<Code &>(ir.getCode())) {
         switch (it->id) {
@@ -67,8 +66,23 @@ void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
             case OperatorId::IEXIT:
                 OpGenerators::exit(it, *this);
                 break;
-            case OperatorId::IADD:
-                OpGenerators::exit(it, *this);
+            case OperatorId::LATTR:
+                OpGenerators::lattr(it, *this);
+                break;
+            case OperatorId::PRINT:
+                OpGenerators::print(it, *this);
+                break;
+            case OperatorId::IRETURN:
+                OpGenerators::ireturn(it, *this);
+                break;
+            case OperatorId::ISATTR:
+                OpGenerators::isattr(it, *this);
+                break;
+            case OperatorId::ICALL:
+                OpGenerators::icall(it, *this);
+                break;
+            case OperatorId::FUNCTION:
+                OpGenerators::function(it, *this);
                 break;
             default:
                 break;
@@ -104,11 +118,13 @@ ACC::AssemblyFunction &ACC::Assembly::fetchFunction(std::string sym) {
     if (functionTable.find(sym) != functionTable.cend())
         return functionTable.at(sym);
 
-    throw std::runtime_error("Can't find function with symbole: \"" + sym + "\"");
+    throw std::runtime_error("Can't find function with symbol: \"" + sym + "\"");
 }
 
 ACC::AssemblyFunction &ACC::Assembly::emplaceFunction(std::string sym) {
-    return functionTable[sym] = AssemblyFunction(sym);
+    functionTable[sym] = AssemblyFunction(sym);
+    functionStack.push(sym);
+    return functionTable[sym];
 }
 
 ACC::AssemblyFunction &ACC::Assembly::fetchFunction() {
@@ -116,50 +132,94 @@ ACC::AssemblyFunction &ACC::Assembly::fetchFunction() {
 }
 
 void ACC::Assembly::createStructure(ACC::Location where, std::string structure, std::vector<ACC::Location> data) {
-    auto getStackSize = [](Stack<size_t> s) {
-        size_t val = s.pop();
-        for (const auto &ele : s) {
-            val = val * ele;
-        }
-        return val;
-    };
-
     auto &fn = fetchFunction();
-    size_t stackSize = getStackSize(generateStructureStack(structure));
+    auto structureStack = generateStructureStack(structure);
+    size_t stackSize = getStructureStackSize(structureStack);
 
     if (where.accessMethod == AccessMethod::STACK_TOP) {
         fn.requiredStackSize += stackSize;
-        fn.writeLine(Movs::c2st(std::move(data)));
+        for (const auto &d : data) {
+            if (d.accessMethod == AccessMethod::CONSTANT){
+                fn.writeLine(Movs::c2st(d));
+                structureStack.pop();
+            }
+
+            if (d.accessMethod == AccessMethod::SBP_OFFSET)
+                fn.writeLine(Movs::bp2st(d, structureStack));
+        }
+
+    } else if (where.accessMethod == AccessMethod::SBP_OFFSET) {
+        if(where.offsetInfo >= 0)
+            fn.requiredStackSize += stackSize;
+
+        for (const auto &d : data) {
+            if (d.accessMethod == AccessMethod::CONSTANT){
+                fn.writeLine(Movs::c2bp(d, where));
+                structureStack.pop();
+            }
+
+            if(d.accessMethod == AccessMethod::REGISTER){
+                structureStack.pop();
+                fn.writeLine(Movs::r2bp(where, d));
+            }
+        }
+    } else if(where.accessMethod == AccessMethod::STACK_OFFSET){
+        if(where.offsetInfo >= 0)
+            fn.requiredStackSize += stackSize;
+        for (const auto& d : data){
+            if (d.accessMethod == AccessMethod::CONSTANT){
+                fn.writeLine(Movs::c2so(d, where));
+                structureStack.pop();
+            }
+        }
     }
 }
 
+/**
+ *  auto &fn = fetchFunction();
+    auto structureStack = generateStructureStack(structure);
+    size_t stackSize = getStructureStackSize(structureStack);
 
-ACC::Stack<size_t> ACC::Assembly::generateStructureStack(const std::string &structure) {
-    size_t pos = 0;
-    auto next = [&]() {
-        while (pos < structure.size() && structure[pos] == ' ')
-            pos++;
-        return pos < structure.size();
-    };
+    if (where.accessMethod == AccessMethod::STACK_TOP) {
+        fn.requiredStackSize += stackSize;
+        std::vector<ACC::Location> packet;
+        bool constant = false;
+        for (auto d : data) {
+            if (d.accessMethod == AccessMethod::CONSTANT){
+                packet.push_back(d);
+                constant = true;
+            }
+            else if (constant){
+                fn.writeLine(Movs::c2st(packet));
+                structureStack.pop();
+                packet.clear();
+                constant = false;
+            }
 
-    auto readNum = [&]() {
-        std::string out;
-        for (; (int) structure[pos] >= 0x30 && (int) structure[pos] <= 0x39 && pos < structure.size(); ++pos)
-            out += structure[pos];
-        return std::stoi(out);
-    };
+            if (d.accessMethod == AccessMethod::SBP_OFFSET)
+                fn.writeLine(Movs::bp2st(d, structureStack));
+        }
 
-    ACC::Stack<size_t> stack;
+    } else if (where.accessMethod == AccessMethod::SBP_OFFSET) {
+        if(where.offsetInfo >= 0)
+            fn.requiredStackSize += stackSize;
+        std::vector<ACC::Location> packet;
+        for (auto d : data) {
+            if (d.accessMethod == AccessMethod::CONSTANT)
+                packet.push_back(d);
+            else {
+                fn.writeLine(Movs::c2bp(packet, where));
+                structureStack.pop();
+                packet.clear();
+            }
 
-    // 5 3 2 1
-
-    while (pos < structure.size()) {
-        next();
-        int num = readNum();
-        stack.push(static_cast<size_t>(num));
+            if(d.accessMethod == AccessMethod::REGISTER){
+                structureStack.pop();
+                fn.writeLine(Movs::r2bp(where, d));
+            }
+        }
     }
+ */
 
 
-    return stack;
 
-}
