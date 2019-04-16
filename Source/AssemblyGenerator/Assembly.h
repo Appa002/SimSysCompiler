@@ -20,7 +20,6 @@ namespace ACC {
         size_t textSectionPos = 0;
         size_t dataSectionPos = 0;
 
-        Stack<size_t> generateStructureStack(const std::string& structure);
 
         std::unordered_map<temporary, Location> registerTable;
         std::unordered_map<std::string, AssemblyFunction> functionTable;
