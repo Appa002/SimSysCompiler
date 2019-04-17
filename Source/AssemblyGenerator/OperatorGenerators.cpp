@@ -99,12 +99,15 @@ void ACC::OpGenerators::print(ACC::Operator *op, ACC::Assembly &assembly) {
 
     if(subjectLocation.accessMethod == AccessMethod::SBP_OFFSET){
         assembly.createStructure(Location(AccessMethod::STACK_TOP), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
-        targetFunction.mov("rax", "1", "sys_write");
-        targetFunction.writeLine("mov rdi, 1 ; stdout");
-        targetFunction.writeLine("mov rsi, rsp");
-        targetFunction.writeLine("mov rdx, 1");
-        targetFunction.writeLine("syscall");
+    }else if (subjectLocation.accessMethod == AccessMethod::REGISTER){
+        assembly.createStructure(Location(AccessMethod::STACK_TOP), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
     }
+
+    targetFunction.mov("rax", "1", "sys_write");
+    targetFunction.writeLine("mov rdi, 1 ; stdout");
+    targetFunction.writeLine("mov rsi, rsp");
+    targetFunction.writeLine("mov rdx, 1");
+    targetFunction.writeLine("syscall");
 
 }
 
@@ -126,4 +129,7 @@ void ACC::OpGenerators::ireturn(ACC::Operator *op, ACC::Assembly &assembly) {
 void ACC::OpGenerators::icall(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& func = assembly.fetchFunction();
     func.writeLine("call " + numberToLetterSequence(op->lhs));
+    Location location(AccessMethod::REGISTER);
+    location.regInfo = Register::rax;
+    assembly.emplaceLocation(op->result, location);
 }

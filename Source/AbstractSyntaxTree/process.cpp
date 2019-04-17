@@ -16,7 +16,13 @@ ACC::ASTNode *ACC::process(const ACC::ParseNode * node) {
         else
             return rule;
     }
-    throw std::runtime_error("Production is not contained in abstract syntax tree rules.");
+
+    std::string production = data::symbolToString(node->symbol) + " :=";
+    for (auto child : node->children){
+        production += " " + data::symbolToString(child->symbol);
+    }
+
+    throw std::runtime_error("Production is not contained in abstract syntax tree rules. \n" + production);
  }
 
  bool ACC::matches(const ACC::ParseNode *node, const Rule &rule) {

@@ -282,8 +282,10 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
         if(pos >= document.size())
             throw std::runtime_error("Expected declaration in parameter list, at: " + std::to_string(pos));
 
-        tokens.push_back(new DeclToken(buffer));
-        table.emplace(buffer, Symbol::DECL);
+        if(!buffer.empty()){
+            tokens.push_back(new DeclToken(buffer));
+            table.emplace(buffer, Symbol::DECL);
+        }
 
         if(document.at(pos) == ',')
             tokens.push_back(new CommaToken());

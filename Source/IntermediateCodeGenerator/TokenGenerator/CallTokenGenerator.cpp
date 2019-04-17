@@ -6,8 +6,10 @@ ACC::CallTokenGenerator::CallTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
 ACC::Dependency ACC::CallTokenGenerator::generate(ACC::Code &code) {
     FunctionId& fn = code.getFnSymbol(node->children[0]->str);
+    Dependency return_var = code.createTemporary();
 
-    auto op = new Operator(OperatorId::ICALL, fn.id, 0, 0);
+    auto op = new Operator(OperatorId::ICALL, fn.id, 0, return_var.temp);
+    return_var.op = op;
     op->opLhs = fn.op;
 
     for(size_t i = 1; i < node->children.size(); i++){
@@ -24,5 +26,5 @@ ACC::Dependency ACC::CallTokenGenerator::generate(ACC::Code &code) {
 
     code.pushOp(op);
 
-    return {};
+    return return_var;
 }

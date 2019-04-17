@@ -61,7 +61,7 @@ std::string ACC::Operator::asString() const {
             return std::string("function, " + std::to_string(lhs));
 
         case OperatorId::ICALL:
-            return std::string("icall, " + std::to_string(lhs));
+            return std::string("icall, " + printAsTemporary(result) + ", " + std::to_string(lhs));
 
         case OperatorId::LATTR:
             return std::string("lattr, " + printAsTemporary(result) + ", " + std::to_string(lhs));

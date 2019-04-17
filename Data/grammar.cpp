@@ -17,24 +17,26 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS}},
-            {Symbol::start,       {Symbol::call, Symbol::EOS}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT, Symbol::start}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS, Symbol::start}},
-            {Symbol::start,       {Symbol::call, Symbol::EOS, Symbol::start}},
 
 
+
+            {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET,
+                                          Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
             {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl, Symbol::BRACKET,
                                    Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
+
             {Symbol::paramsDecl,  {Symbol::DECL}},
             {Symbol::paramsDecl,  {Symbol::DECL, Symbol::COMMA, Symbol::paramsDecl}},
 
-            {Symbol::call,        {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}},
-            {Symbol::call,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
 
+            {Symbol::call,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}}, // id()
+            {Symbol::call,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
 
             {Symbol::paramsList,  {Symbol::expr}},
             {Symbol::paramsList,  {Symbol::expr, Symbol::COMMA, Symbol::paramsList}},
@@ -52,6 +54,8 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::expr,        {Symbol::LITERAL}}, // E ::= A-Za-z0-9
             {Symbol::expr,        {Symbol::ID}}, // E ::= A-Za-z0-9
+            {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}}, // id()
+            {Symbol::expr,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
             {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, // (E)
             {Symbol::expr,        {Symbol::expr,    Symbol::MATH_OPERATOR, Symbol::expr}} // E-E
     };

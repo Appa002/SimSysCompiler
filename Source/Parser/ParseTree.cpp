@@ -51,13 +51,13 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
             if (!isNoneterminal(expected)) {
                 if (expected == (*iItr)->id) {
                     node->children.push_back(new ParseNode((*iItr)->id, *iItr));
-                    LOG() << std::string(gap, ' ') << "Matched noneterminal: " << (*iItr)->getIdentifier() << std::endl;
+                    LOG() << std::string(gap, ' ') << "Matched terminal: " << (*iItr)->getIdentifier() << std::endl;
                     iItr++;
                 } else {
                     killChildren(node);
                     iItr = old;
                     LOG() << std::string(gap, ' ') << "-----" << std::endl;
-                    LOG() << std::string(gap, ' ') << "Noneterminal: " << (*iItr)->getIdentifier() << std::endl;
+                    LOG() << std::string(gap, ' ') << "Terminal: " << (*iItr)->getIdentifier() << std::endl;
                     LOG() << std::string(gap, ' ') << "Input: " << input.createStdString() << std::endl;
                     LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
                     LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (noneterminal wasn't the same in the production and the input)" << std::endl;
@@ -65,7 +65,7 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
                 }
             } else {
                 auto terminal = *pItr;
-                LOG() << std::string(gap, ' ') << "Terminal in production: " << data::symbolToString(terminal) << std::endl;
+                LOG() << std::string(gap, ' ') << "Noneterminal in production: " << data::symbolToString(terminal) << std::endl;
                 ++pItr;
 
 
