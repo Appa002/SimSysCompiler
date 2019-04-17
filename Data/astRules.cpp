@@ -121,14 +121,8 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::ASSIGN, vec);
         }},
 
-        {{Symbol::keyword, {Symbol::PRINT, Symbol::ID}}, [](auto children){
-            return new ASTNode(AstOperator::PRINT,
-                    {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym)});
-        }},
-
-        {{Symbol::keyword, {Symbol::PRINT, Symbol::LITERAL}}, [](auto children){
-            return new ASTNode(AstOperator::PRINT,
-                               {new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(children[1]->token)->literal)});
+        {{Symbol::keyword, {Symbol::PRINT, Symbol::expr}}, [](auto children){
+            return new ASTNode(AstOperator::PRINT, {process(children[1])});
         }},
 
         {{Symbol::keyword, {Symbol::EXIT, Symbol::LITERAL}}, [](auto children){
