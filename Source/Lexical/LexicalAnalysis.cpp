@@ -326,19 +326,10 @@ void ACC::LexicalAnalysis::print(size_t pos) {
 void ACC::LexicalAnalysis::exit(size_t pos) {
     readUntilNextLine(pos);
 
-    matchAsLongAs(pos,
-                  [&](){return !contains(document.at(pos), {";", " ", "\n", "\r"});},
-                  [&](){
-                      buffer += document.at(pos);
-    });
-
-    if(inTable(buffer))
-        tokens.push_back(new IdToken(buffer));
-    else{
-        if(isNumber(buffer))
-            tokens.push_back(new LiteralToken(buffer));
-        else
-            throw std::runtime_error("Unknown variable: `" + buffer + "`, at: " + std::to_string(pos));
+    try {
+        expr(pos, {";"});
+    }catch (std::runtime_error& e){
+        throw std::runtime_error("Not an expression, at: " + std::to_string(pos) + "\n" + e.what());
     }
 
     readUntilNextLine(pos);

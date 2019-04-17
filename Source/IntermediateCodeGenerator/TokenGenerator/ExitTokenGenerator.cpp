@@ -11,7 +11,7 @@ ACC::Dependency ACC::ExitTokenGenerator::generate(ACC::Code &code) {
         code.pushOp(op);
 
     } else{ // its a exit with an variable e.g.: " var a = 10; exit a; "
-        Dependency& var = code.getVarSymbol(node->children[0]->str);
+        Dependency var = node->children[0]->asExpr()->generate(code);
         auto op = new Operator(OperatorId::EXIT, var.temp, 0, 0);
         op->opLhs = var.op;
         code.pushOp(op);
