@@ -28,16 +28,15 @@ void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
     std::string value = std::to_string(op->lhs);
     value += "\n";
 
-    std::vector<Location> snippets;
+    Location location(AccessMethod::CONSTANT);
+
     dWordAlignT<std::string, char>(value, [&](std::vector<char> packet){
         for(auto itr = packet.rbegin(); itr != packet.rend(); ++itr){
-            Location l(AccessMethod::CONSTANT);
-            l.constant = *itr;
-            snippets.push_back(l);
+            location.constant += *itr;
         }
     });
 
-    assembly.createStructure(Location(AccessMethod::STACK_TOP), std::to_string(value.size()), snippets);
+    assembly.createStructure(Location(AccessMethod::STACK_TOP), std::to_string(value.size()), {location});
     targetFunction.mov("rax", "1", "sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
     targetFunction.writeLine("mov rsi, rsp");
