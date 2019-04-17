@@ -146,6 +146,11 @@ void ACC::Assembly::createStructure(ACC::Location where, std::string structure, 
 
             if (d.accessMethod == AccessMethod::SBP_OFFSET)
                 fn.writeLine(Movs::bp2st(d, structureStack));
+
+            if(d.accessMethod == AccessMethod::REGISTER){
+                fn.writeLine(Movs::r2st(d));
+                structureStack.pop();
+            }
         }
 
     } else if (where.accessMethod == AccessMethod::SBP_OFFSET) {

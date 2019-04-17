@@ -23,5 +23,7 @@ namespace ACC {
         std::string r2bp(Location where, Location reg);
 
         std::string c2so(Location constant, Location where);
+
+        std::string r2st(Location reg);
     }
 }

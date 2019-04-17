@@ -96,3 +96,9 @@ std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
     return str;
 }
 
+std::string ACC::Movs::r2st(ACC::Location reg) {
+    // TODO: Utterly ignores sizes.
+
+    return "mov [rsp], " + registerToString(reg.regInfo);
+}
+

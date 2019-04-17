@@ -90,6 +90,16 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::FUNCTION, vec);
         }},
 
+        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET,
+                                    Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children){
+
+            std::vector<ASTNode*> vec;
+            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
+            vec.push_back(process(children[6]));
+
+            return new ASTNode(AstOperator::FUNCTION, vec);
+        }},
+
         {{Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}}, [](auto children){
 
             std::vector<ASTNode*> vec;
@@ -144,7 +154,26 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::RETURN,
                                {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym)});
         }},
+        {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children) {
+            return new ASTNode(AstOperator::CALL,
+                               {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
+        }},
 
+        {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children) {
+            std::vector<ASTNode*> vec;
+            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+
+            ParseNode* params = children[2];
+            while(params != nullptr){
+                vec.push_back(process(params->children[0]));
+                if(params->children.size() == 3)
+                    params = params->children[2];
+                else
+                    params = nullptr;
+            }
+
+            return new ASTNode(AstOperator::CALL, vec);
+        }},
 
         {{Symbol::expr, {Symbol::LITERAL}}, [](std::vector < ACC::ParseNode * > children) {
             return new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(children[0]->token)->literal);
