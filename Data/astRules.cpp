@@ -97,18 +97,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
             ParseNode* params = children[2];
             while(params != nullptr){
-                switch(params->children[0]->symbol) {
-                    case (Symbol::ID):
-                        vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(params->children[0]->token)->sym));
-                        break;
-                    case (Symbol::LITERAL):
-                        vec.push_back(new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(params->children[0]->token)->literal));
-                        break;
-
-                    default:
-                        throw std::runtime_error("Parameter List of a call, contains neither ID token, nor LITERAL token");
-                }
-
+                vec.push_back(process(params->children[0]));
                 if(params->children.size() == 3)
                     params = params->children[2];
                 else

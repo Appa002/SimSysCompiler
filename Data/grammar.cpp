@@ -36,11 +36,8 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::call,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
 
 
-            {Symbol::paramsList,  {Symbol::ID}},
-            {Symbol::paramsList,  {Symbol::ID, Symbol::COMMA, Symbol::paramsList}},
-
-            {Symbol::paramsList,  {Symbol::LITERAL}},
-            {Symbol::paramsList,  {Symbol::LITERAL, Symbol::COMMA, Symbol::paramsList}},
+            {Symbol::paramsList,  {Symbol::expr}},
+            {Symbol::paramsList,  {Symbol::expr, Symbol::COMMA, Symbol::paramsList}},
 
 
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}},
