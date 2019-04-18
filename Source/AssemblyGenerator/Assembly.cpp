@@ -87,6 +87,12 @@ void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
             case OperatorId::FUNCTION:
                 OpGenerators::function(it, *this);
                 break;
+            case OperatorId::ADD:
+                OpGenerators::add(it, *this);
+                break;
+            case OperatorId::ICOPY:
+                OpGenerators::icopy(it, *this);
+                break;
             default:
                 break;
         }

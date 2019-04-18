@@ -21,6 +21,8 @@ namespace ACC::OpGenerators{
     void ireturn(Operator* op, Assembly &assembly);
     void ret (Operator* op, Assembly& assembly);
     void icall(Operator* op, Assembly &assembly);
+    void add(Operator* op, Assembly &assembly);
+    void icopy(Operator* op, Assembly &assembly);
 
 }
 

@@ -125,8 +125,15 @@ void ACC::OpGenerators::ireturn(ACC::Operator *op, ACC::Assembly &assembly) {
 void ACC::OpGenerators::icall(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& func = assembly.fetchFunction();
     func.writeLine("call " + numberToLetterSequence(op->lhs));
-    Location location(AccessMethod::REGISTER);
-    location.regInfo = Register::rax;
+    Location returnLocation(AccessMethod::REGISTER);
+    returnLocation.regInfo = Register::rax;
+
+    Location location(AccessMethod::SBP_OFFSET);
+    location.offsetInfo = -(offset_t)func.curBpOffset;
+    func.curBpOffset += 8;
+
+
+    assembly.createStructure(location, "1", {returnLocation});
     assembly.emplaceLocation(op->result, location);
 }
 
@@ -143,4 +150,41 @@ void ACC::OpGenerators::ret(ACC::Operator *op, ACC::Assembly &assembly) {
 
     func.writeLine("ret");
     assembly.emplaceFunction(assembly.functionStack.peek(1));
+}
+
+void ACC::OpGenerators::add(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& fn = assembly.fetchFunction();
+    Location lhs = assembly.fetchLocation(op->lhs);
+    Location rhs = assembly.fetchLocation(op->rhs);
+
+    Location rax(AccessMethod::REGISTER);
+    rax.regInfo = Register::rax;
+
+    Location rbx(AccessMethod::REGISTER);
+    rbx.regInfo = Register::rbx;
+
+    assembly.createStructure(rax, "1", {lhs});
+    assembly.createStructure(rbx, "1", {rhs});
+    fn.writeLine("add rax, rbx");
+
+    Location result(AccessMethod::SBP_OFFSET);
+    result.offsetInfo = -(offset_t)fn.curBpOffset;
+    fn.curBpOffset += 8;
+
+    assembly.createStructure(result, "1", {rax});
+    assembly.emplaceLocation(op->result, result);
+}
+
+void ACC::OpGenerators::icopy(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& fn = assembly.fetchFunction();
+    Location result(AccessMethod::SBP_OFFSET);
+    result.offsetInfo = -(offset_t)fn.curBpOffset;
+    fn.curBpOffset += 8;
+
+    Location lhs(AccessMethod::CONSTANT);
+    lhs.constant = (char)op->lhs;
+
+    assembly.createStructure(result, "1", {lhs});
+    assembly.emplaceLocation(op->result, result);
+
 }

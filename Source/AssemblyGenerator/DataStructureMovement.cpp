@@ -34,12 +34,16 @@ std::string ACC::Movs::bp2st(ACC::Location where, Stack<size_t> &structure) {
         throw std::runtime_error("Called data structure movement method for movement of data stored as an offset from "
                                  "the stack base pointer with a `Location` object not containing such an structure.");
 
-    std::string out;
     auto offset = where.offsetInfo;
+    auto sign = std::string(offset >= 0 ? ("+") : ("-"));
+    if(offset < 0)
+        offset *= -1;
+
+    std::string out;
     size_t size = structure.pop();
 
     for(size_t i = 0; i < size; i++){
-        out += "\nmov byte al, [rbp + "+std::to_string(offset)+"]";
+        out += "\nmov byte al, [rbp"+sign+std::to_string(offset)+"]";
         out += "\nmov byte [rsp + "+std::to_string(i)+"], al";
         offset += 1;
     }
@@ -72,8 +76,11 @@ std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
 
 std::string ACC::Movs::r2bp(ACC::Location where, ACC::Location reg) {
     // TODO: Utterly ignores sizes.
-
-    return "mov [rbp + " + std::to_string(where.offsetInfo) + "], "+registerToString(reg.regInfo);
+    auto offset = where.offsetInfo;
+    auto sign = std::string(offset >= 0 ? ("+") : ("-"));
+    if(offset < 0)
+        offset *= -1;
+    return "mov [rbp"+ sign + std::to_string(offset) + "], "+registerToString(reg.regInfo);
 }
 
 std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
