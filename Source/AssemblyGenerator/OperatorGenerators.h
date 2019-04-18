@@ -12,14 +12,15 @@
 
 namespace ACC::OpGenerators{
     void iPrint (Operator* op, Assembly& assembly);
+    void print (Operator* op, Assembly& assembly);
     void exit (Operator* op, Assembly& assembly);
     void iAdd(Operator *op, Assembly &assembly);
     void function(Operator* op, Assembly& assembly);
     void isattr(Operator *op, Assembly &assembly);
     void lattr(Operator *op, Assembly &assembly);
     void ireturn(Operator* op, Assembly &assembly);
+    void ret (Operator* op, Assembly& assembly);
     void icall(Operator* op, Assembly &assembly);
-    void print(Operator* op, Assembly& assembly);
 
 }
 

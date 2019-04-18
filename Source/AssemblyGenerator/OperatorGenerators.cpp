@@ -97,11 +97,7 @@ void ACC::OpGenerators::print(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& targetFunction = assembly.fetchFunction();
     auto subjectLocation = assembly.fetchLocation(op->lhs);
 
-    if(subjectLocation.accessMethod == AccessMethod::SBP_OFFSET){
-        assembly.createStructure(Location(AccessMethod::STACK_TOP), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
-    }else if (subjectLocation.accessMethod == AccessMethod::REGISTER){
-        assembly.createStructure(Location(AccessMethod::STACK_TOP), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
-    }
+    assembly.createStructure(Location(AccessMethod::STACK_TOP), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
 
     targetFunction.mov("rax", "1", "sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
@@ -132,4 +128,19 @@ void ACC::OpGenerators::icall(ACC::Operator *op, ACC::Assembly &assembly) {
     Location location(AccessMethod::REGISTER);
     location.regInfo = Register::rax;
     assembly.emplaceLocation(op->result, location);
+}
+
+void ACC::OpGenerators::ret(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& func = assembly.fetchFunction();
+    func.writeLine("add rsp, "+std::to_string(func.requiredStackSize));
+
+    Location subjectLocation = assembly.fetchLocation(op->lhs);
+
+    Location rax(AccessMethod::REGISTER);
+    rax.regInfo = Register::rax;
+
+    assembly.createStructure(rax, "1", {subjectLocation});
+
+    func.writeLine("ret");
+    assembly.emplaceFunction(assembly.functionStack.peek(1));
 }

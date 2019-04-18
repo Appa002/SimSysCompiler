@@ -49,6 +49,8 @@ std::string ACC::Movs::bp2st(ACC::Location where, Stack<size_t> &structure) {
 std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
     auto bpOffset = where.offsetInfo;
     auto sign = std::string(bpOffset >= 0 ? ("+") : ("-"));
+    if(bpOffset < 0)
+        bpOffset *= -1;
     std::string str = "mov dword [rbp "+sign+" "+std::to_string(bpOffset)+"], 0x";
     size_t count = 0;
     std::string value = constant.constant;
@@ -77,6 +79,8 @@ std::string ACC::Movs::r2bp(ACC::Location where, ACC::Location reg) {
 std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
     auto spOffset = where.offsetInfo;
     auto sign = std::string(spOffset >= 0 ? ("+") : ("-"));
+    if(spOffset < 0)
+        spOffset *= -1;
 
     std::string str = "mov dword [rsp " + sign + " " + std::to_string(spOffset)+"], 0x";
     size_t count = 0;
@@ -100,5 +104,14 @@ std::string ACC::Movs::r2st(ACC::Location reg) {
     // TODO: Utterly ignores sizes.
 
     return "mov [rsp], " + registerToString(reg.regInfo);
+}
+
+std::string ACC::Movs::bp2r(ACC::Location where, ACC::Location reg) {
+    auto bpOffset = where.offsetInfo;
+    auto sign = std::string(bpOffset >= 0 ? ("+") : ("-"));
+    if(bpOffset < 0)
+        bpOffset *= -1;
+
+    return "mov "+registerToString(reg.regInfo)+", [rbp" + sign + std::to_string(bpOffset) + "]";
 }
 

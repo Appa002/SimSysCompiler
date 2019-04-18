@@ -75,6 +75,9 @@ void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
             case OperatorId::IRETURN:
                 OpGenerators::ireturn(it, *this);
                 break;
+            case OperatorId::RETURN:
+                OpGenerators::ret(it, *this);
+                break;
             case OperatorId::ISATTR:
                 OpGenerators::isattr(it, *this);
                 break;
@@ -177,54 +180,12 @@ void ACC::Assembly::createStructure(ACC::Location where, std::string structure, 
                 structureStack.pop();
             }
         }
+    } else if(where.accessMethod == AccessMethod::REGISTER){
+        for (const auto& d : data){
+            if(d.accessMethod == AccessMethod::SBP_OFFSET){
+                fn.writeLine(Movs::bp2r(d, where));
+                structureStack.pop();
+            }
+        }
     }
 }
-
-/**
- *  auto &fn = fetchFunction();
-    auto structureStack = generateStructureStack(structure);
-    size_t stackSize = getStructureStackSize(structureStack);
-
-    if (where.accessMethod == AccessMethod::STACK_TOP) {
-        fn.requiredStackSize += stackSize;
-        std::vector<ACC::Location> packet;
-        bool constant = false;
-        for (auto d : data) {
-            if (d.accessMethod == AccessMethod::CONSTANT){
-                packet.push_back(d);
-                constant = true;
-            }
-            else if (constant){
-                fn.writeLine(Movs::c2st(packet));
-                structureStack.pop();
-                packet.clear();
-                constant = false;
-            }
-
-            if (d.accessMethod == AccessMethod::SBP_OFFSET)
-                fn.writeLine(Movs::bp2st(d, structureStack));
-        }
-
-    } else if (where.accessMethod == AccessMethod::SBP_OFFSET) {
-        if(where.offsetInfo >= 0)
-            fn.requiredStackSize += stackSize;
-        std::vector<ACC::Location> packet;
-        for (auto d : data) {
-            if (d.accessMethod == AccessMethod::CONSTANT)
-                packet.push_back(d);
-            else {
-                fn.writeLine(Movs::c2bp(packet, where));
-                structureStack.pop();
-                packet.clear();
-            }
-
-            if(d.accessMethod == AccessMethod::REGISTER){
-                structureStack.pop();
-                fn.writeLine(Movs::r2bp(where, d));
-            }
-        }
-    }
- */
-
-
-
