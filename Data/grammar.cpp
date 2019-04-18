@@ -45,11 +45,8 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}},
 
             {Symbol::keyword,     {Symbol::PRINT, Symbol::expr}},
-
             {Symbol::keyword,     {Symbol::EXIT, Symbol::expr}},
-
-            {Symbol::keyword,     {Symbol::RETURN, Symbol::LITERAL}},
-            {Symbol::keyword,     {Symbol::RETURN, Symbol::ID}},
+            {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
 
             {Symbol::expr,        {Symbol::LITERAL}}, // E ::= A-Za-z0-9
             {Symbol::expr,        {Symbol::ID}}, // E ::= A-Za-z0-9

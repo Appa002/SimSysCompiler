@@ -140,15 +140,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                                {process(children[1])});
         }},
 
-
-        {{Symbol::keyword, {Symbol::RETURN, Symbol::LITERAL}}, [](auto children){
+        {{Symbol::keyword, {Symbol::RETURN, Symbol::expr}}, [](auto children){
             return new ASTNode(AstOperator::RETURN,
-                               {new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(children[1]->token)->literal)});
-        }},
-
-        {{Symbol::keyword, {Symbol::RETURN, Symbol::ID}}, [](auto children){
-            return new ASTNode(AstOperator::RETURN,
-                               {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym)});
+                               {process(children[1])});
         }},
         {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children) {
             return new ASTNode(AstOperator::CALL,

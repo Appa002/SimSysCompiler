@@ -10,8 +10,8 @@ ACC::Dependency ACC::ReturnTokenGenerator::generate(ACC::Code &code) {
         code.pushOp(op);
         return {};
 
-    }else if (node->children[0]->op == AstOperator::ID){
-        Dependency& var = code.getVarSymbol(node->children[0]->str);
+    }else {
+        Dependency var = node->children[0]->asExpr()->generate(code);
 
         auto op = new Operator(OperatorId::RETURN, var.temp, 0, 0);
         op->opLhs = var.op;
