@@ -17,10 +17,12 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS}},
+            {Symbol::start,       {Symbol::call, Symbol::EOS}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT, Symbol::start}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS, Symbol::start}},
+            {Symbol::start,       {Symbol::call, Symbol::EOS, Symbol::start}},
 
 
 
