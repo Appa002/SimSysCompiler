@@ -116,7 +116,7 @@ void ACC::Assembly::writeToFile(std::string path) {
 ACC::Location ACC::Assembly::fetchLocation(ACC::temporary reg) {
     if (registerTable.find(reg) != registerTable.cend())
         return registerTable.at(reg);
-    return Location(AccessMethod::NONE);
+    return Location::none();
 }
 
 void ACC::Assembly::emplaceLocation(ACC::temporary reg, const ACC::Location &snippet) {

@@ -28,15 +28,15 @@ void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
     std::string value = std::to_string(op->lhs);
     value += "\n";
 
-    Location location(AccessMethod::CONSTANT);
+    Location location = Location::constant("");
 
     dWordAlignT<std::string, char>(value, [&](std::vector<char> packet){
         for(auto itr = packet.rbegin(); itr != packet.rend(); ++itr){
-            location.constant += *itr;
+            location.constantInfo += *itr;
         }
     });
 
-    assembly.createStructure(Location(AccessMethod::STACK_TOP), std::to_string(value.size()), {location});
+    assembly.createStructure(Location::stackTop(), std::to_string(value.size()), {location});
     targetFunction.mov("rax", "1", "sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
     targetFunction.writeLine("mov rsi, rsp");
@@ -64,12 +64,10 @@ add rax, rhs
     targetFunction.mov("rax", lhs);
     targetFunction.writeLine("add rax, " + rhs);
 
-    Location snippet(AccessMethod::SBP_OFFSET);
-    snippet.offsetInfo = assembly.fetchFunction().curBpOffset;
-    assembly.fetchFunction().curBpOffset += 1;
+    Location snippet = Location::baseOffset(targetFunction.curBpOffset);
+    targetFunction.curBpOffset += 1;
 
-    Location store(AccessMethod::REGISTER);
-    store.regInfo = Register ::rax;
+    Location store = Location::reg(Register::rax);
 
     assembly.createStructure(snippet, "1", {store});
 
@@ -84,12 +82,9 @@ void ACC::OpGenerators::function(ACC::Operator *op, ACC::Assembly &assembly) {
 void ACC::OpGenerators::isattr(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& func = assembly.fetchFunction();
 
-    Location constant(AccessMethod::CONSTANT);
-    constant.constant = (unsigned char)op->lhs;
+    Location constant = Location::constant((unsigned char)op->lhs);
 
-    Location w(AccessMethod::STACK_OFFSET);
-    w.offsetInfo = op->rhs - 1;
-
+    Location w = Location::stackOffset(op->rhs - 1);
     assembly.createStructure(w, "1", {constant});
 }
 
@@ -97,7 +92,7 @@ void ACC::OpGenerators::print(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& targetFunction = assembly.fetchFunction();
     auto subjectLocation = assembly.fetchLocation(op->lhs);
 
-    assembly.createStructure(Location(AccessMethod::STACK_TOP), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
+    assembly.createStructure(Location::stackTop(), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
 
     targetFunction.mov("rax", "1", "sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
@@ -109,8 +104,7 @@ void ACC::OpGenerators::print(ACC::Operator *op, ACC::Assembly &assembly) {
 
 void ACC::OpGenerators::lattr(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& func = assembly.fetchFunction();
-    Location location(AccessMethod::SBP_OFFSET);
-    location.offsetInfo = (op->lhs - 1) + 8; //TODO: Assumes data to be 1 byte wide
+    Location location = Location::baseOffset((op->lhs - 1) + 8); //TODO: Assumes data to be 1 byte wide
     assembly.emplaceLocation(op->lhs, location);
 }
 
@@ -125,11 +119,9 @@ void ACC::OpGenerators::ireturn(ACC::Operator *op, ACC::Assembly &assembly) {
 void ACC::OpGenerators::icall(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& func = assembly.fetchFunction();
     func.writeLine("call " + numberToLetterSequence(op->lhs));
-    Location returnLocation(AccessMethod::REGISTER);
-    returnLocation.regInfo = Register::rax;
+    Location returnLocation = Location::reg(Register::rax);
 
-    Location location(AccessMethod::SBP_OFFSET);
-    location.offsetInfo = -(offset_t)func.curBpOffset;
+    Location location = Location::baseOffset(-(offset_t)func.curBpOffset);
     func.curBpOffset += 8;
 
 
@@ -143,8 +135,7 @@ void ACC::OpGenerators::ret(ACC::Operator *op, ACC::Assembly &assembly) {
 
     Location subjectLocation = assembly.fetchLocation(op->lhs);
 
-    Location rax(AccessMethod::REGISTER);
-    rax.regInfo = Register::rax;
+    Location rax = Location::reg(Register::rax);
 
     assembly.createStructure(rax, "1", {subjectLocation});
 
@@ -157,18 +148,15 @@ void ACC::OpGenerators::add(ACC::Operator *op, ACC::Assembly &assembly) {
     Location lhs = assembly.fetchLocation(op->lhs);
     Location rhs = assembly.fetchLocation(op->rhs);
 
-    Location rax(AccessMethod::REGISTER);
-    rax.regInfo = Register::rax;
+    Location rax = Location::reg(Register::rax);
+    Location rbx = Location::reg(Register::rbx);
 
-    Location rbx(AccessMethod::REGISTER);
-    rbx.regInfo = Register::rbx;
 
     assembly.createStructure(rax, "1", {lhs});
     assembly.createStructure(rbx, "1", {rhs});
     fn.writeLine("add rax, rbx");
 
-    Location result(AccessMethod::SBP_OFFSET);
-    result.offsetInfo = -(offset_t)fn.curBpOffset;
+    Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
     fn.curBpOffset += 8;
 
     assembly.createStructure(result, "1", {rax});
@@ -177,12 +165,10 @@ void ACC::OpGenerators::add(ACC::Operator *op, ACC::Assembly &assembly) {
 
 void ACC::OpGenerators::icopy(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& fn = assembly.fetchFunction();
-    Location result(AccessMethod::SBP_OFFSET);
-    result.offsetInfo = -(offset_t)fn.curBpOffset;
+    Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
     fn.curBpOffset += 8;
 
-    Location lhs(AccessMethod::CONSTANT);
-    lhs.constant = (char)op->lhs;
+    Location lhs = Location::constant((unsigned char)op->lhs);
 
     assembly.createStructure(result, "1", {lhs});
     assembly.emplaceLocation(op->result, result);

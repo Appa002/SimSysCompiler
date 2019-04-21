@@ -11,7 +11,7 @@ std::string ACC::Movs::c2st(Location constant){
                                  "not containing constants.");
 
 
-    std::string value = constant.constant;
+    std::string value = constant.constantInfo;
     std::string str = "mov dword [rsp], 0x";
     size_t count = 0;
 
@@ -57,7 +57,7 @@ std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
         bpOffset *= -1;
     std::string str = "mov dword [rbp "+sign+" "+std::to_string(bpOffset)+"], 0x";
     size_t count = 0;
-    std::string value = constant.constant;
+    std::string value = constant.constantInfo;
 
     for (size_t i = 0; i < value.size(); i++) {
         size_t offset = str.size();
@@ -91,7 +91,7 @@ std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
 
     std::string str = "mov dword [rsp " + sign + " " + std::to_string(spOffset)+"], 0x";
     size_t count = 0;
-    std::string value = constant.constant;
+    std::string value = constant.constantInfo;
 
     for (size_t i = 0; i < value.size(); i++) {
         size_t offset = str.size();
