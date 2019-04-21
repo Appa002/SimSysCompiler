@@ -65,7 +65,8 @@ add rax, rhs
     targetFunction.writeLine("add rax, " + rhs);
 
     Location snippet = Location::baseOffset(targetFunction.curBpOffset);
-    targetFunction.curBpOffset += 1;
+    targetFunction.curBpOffset += 8;
+    targetFunction.requiredStackSize += 8;
 
     Location store = Location::reg(Register::rax);
 
@@ -123,6 +124,7 @@ void ACC::OpGenerators::icall(ACC::Operator *op, ACC::Assembly &assembly) {
 
     Location location = Location::baseOffset(-(offset_t)func.curBpOffset);
     func.curBpOffset += 8;
+    func.requiredStackSize += 8;
 
 
     func.createStructure(location, "1", {returnLocation});
@@ -158,6 +160,7 @@ void ACC::OpGenerators::add(ACC::Operator *op, ACC::Assembly &assembly) {
 
     Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
     fn.curBpOffset += 8;
+    fn.requiredStackSize += 8;
 
     fn.createStructure(result, "1", {rax});
     assembly.emplaceLocation(op->result, result);
@@ -167,10 +170,131 @@ void ACC::OpGenerators::icopy(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& fn = assembly.fetchFunction();
     Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
     fn.curBpOffset += 8;
+    fn.requiredStackSize += 8;
+
 
     Location lhs = Location::constant((unsigned char)op->lhs);
 
     fn.createStructure(result, "1", {lhs});
     assembly.emplaceLocation(op->result, result);
 
+}
+
+void ACC::OpGenerators::iSubtract(ACC::Operator *op, ACC::Assembly &assembly) {
+    std::string lhs = std::to_string(op->lhs);
+    std::string rhs = std::to_string(op->rhs);
+    auto& targetFunction = assembly.fetchFunction();
+
+    targetFunction.mov("rax", lhs);
+    targetFunction.writeLine("sub rax, " + rhs);
+
+    Location snippet = Location::baseOffset(targetFunction.curBpOffset);
+    targetFunction.curBpOffset += 8;
+    targetFunction.requiredStackSize += 8;
+
+
+    Location store = Location::reg(Register::rax);
+
+    targetFunction.createStructure(snippet, "1", {store});
+
+    assembly.emplaceLocation(op->result, snippet);
+}
+
+void ACC::OpGenerators::subtract(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& fn = assembly.fetchFunction();
+    Location lhs = assembly.fetchLocation(op->lhs);
+    Location rhs = assembly.fetchLocation(op->rhs);
+
+    Location rax = Location::reg(Register::rax);
+    Location rbx = Location::reg(Register::rbx);
+
+
+    fn.createStructure(rax, "1", {lhs});
+    fn.createStructure(rbx, "1", {rhs});
+    fn.writeLine("sub rax, rbx");
+
+    Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
+    fn.curBpOffset += 8;
+    fn.requiredStackSize += 8;
+
+    fn.createStructure(result, "1", {rax});
+    assembly.emplaceLocation(op->result, result);
+}
+
+void ACC::OpGenerators::multiply(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& fn = assembly.fetchFunction();
+    Location lhs = assembly.fetchLocation(op->lhs);
+    Location rhs = assembly.fetchLocation(op->rhs);
+
+    Location rax = Location::reg(Register::rax);
+    Location rbx = Location::reg(Register::rbx);
+
+
+    fn.createStructure(rax, "1", {lhs});
+    fn.createStructure(rbx, "1", {rhs});
+    fn.writeLine("imul rax, rbx");
+
+    Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
+    fn.curBpOffset += 8;
+    fn.requiredStackSize += 8;
+
+    fn.createStructure(result, "1", {rax});
+    assembly.emplaceLocation(op->result, result);
+}
+
+void ACC::OpGenerators::imultiply(ACC::Operator *op, ACC::Assembly &assembly) {
+    std::string lhs = std::to_string(op->lhs);
+    std::string rhs = std::to_string(op->rhs);
+    auto& targetFunction = assembly.fetchFunction();
+
+    targetFunction.mov("rax", lhs);
+    targetFunction.writeLine("imul rax, " + rhs);
+
+    Location snippet = Location::baseOffset(targetFunction.curBpOffset);
+    targetFunction.curBpOffset += 8;
+    targetFunction.requiredStackSize += 8;
+    Location store = Location::reg(Register::rax);
+
+    targetFunction.createStructure(snippet, "1", {store});
+
+    assembly.emplaceLocation(op->result, snippet);
+}
+
+void ACC::OpGenerators::idivide(ACC::Operator *op, ACC::Assembly &assembly) {
+    std::string lhs = std::to_string(op->lhs);
+    std::string rhs = std::to_string(op->rhs);
+    auto& targetFunction = assembly.fetchFunction();
+
+    targetFunction.mov("rax", lhs);
+    targetFunction.writeLine("div rax, " + rhs);
+
+    Location snippet = Location::baseOffset(targetFunction.curBpOffset);
+    targetFunction.curBpOffset += 8;
+    targetFunction.requiredStackSize += 8;
+
+    Location store = Location::reg(Register::rax);
+
+    targetFunction.createStructure(snippet, "1", {store});
+    assembly.emplaceLocation(op->result, snippet);
+}
+
+void ACC::OpGenerators::divide(ACC::Operator *op, ACC::Assembly &assembly) {
+    auto& fn = assembly.fetchFunction();
+    Location lhs = assembly.fetchLocation(op->lhs);
+    Location rhs = assembly.fetchLocation(op->rhs);
+
+    Location rax = Location::reg(Register::rax);
+    Location rbx = Location::reg(Register::rbx);
+
+
+    fn.createStructure(rax, "1", {lhs});
+    fn.createStructure(rbx, "1", {rhs});
+    fn.writeLine("div rax, rbx");
+
+    Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
+    fn.curBpOffset += 8;
+    fn.requiredStackSize += 8;
+
+    fn.createStructure(result, "1", {rax});
+    assembly.emplaceLocation(op->result, result);
 }

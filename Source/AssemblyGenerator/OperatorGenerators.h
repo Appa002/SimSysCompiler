@@ -15,6 +15,9 @@ namespace ACC::OpGenerators{
     void print (Operator* op, Assembly& assembly);
     void exit (Operator* op, Assembly& assembly);
     void iAdd(Operator *op, Assembly &assembly);
+    void iSubtract(Operator *op, Assembly &assembly);
+    void imultiply(Operator *op, Assembly &assembly);
+    void idivide(Operator *op, Assembly &assembly);
     void function(Operator* op, Assembly& assembly);
     void isattr(Operator *op, Assembly &assembly);
     void lattr(Operator *op, Assembly &assembly);
@@ -22,6 +25,9 @@ namespace ACC::OpGenerators{
     void ret (Operator* op, Assembly& assembly);
     void icall(Operator* op, Assembly &assembly);
     void add(Operator* op, Assembly &assembly);
+    void subtract(Operator* op, Assembly &assembly);
+    void multiply(Operator *op, Assembly &assembly);
+    void divide(Operator *op, Assembly &assembly);
     void icopy(Operator* op, Assembly &assembly);
 
 }
