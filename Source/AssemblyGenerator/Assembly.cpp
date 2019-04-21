@@ -93,6 +93,27 @@ void ACC::Assembly::generate(const ACC::IntermediateCode &ir) {
             case OperatorId::ICOPY:
                 OpGenerators::icopy(it, *this);
                 break;
+            case OperatorId::IADD:
+                OpGenerators::iAdd(it, *this);
+                break;
+            case OperatorId::SUBTRACT:
+                OpGenerators::iSubtract(it, *this);
+                break;
+            case OperatorId::ISUBTRACT:
+                OpGenerators::iSubtract(it, *this);
+                break;
+            case OperatorId::MULTIPLY:
+                OpGenerators::multiply(it, *this);
+                break;
+            case OperatorId::IMULTIPLY:
+                OpGenerators::imultiply(it, *this);
+                break;
+            case OperatorId::DIVIDE:
+                OpGenerators::divide(it, *this);
+                break;
+            case OperatorId::IDIVIDE:
+                OpGenerators::idivide(it, *this);
+                break;
             default:
                 break;
         }
