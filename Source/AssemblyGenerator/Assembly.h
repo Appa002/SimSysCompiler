@@ -48,7 +48,6 @@ namespace ACC {
         AssemblyFunction& fetchFunction();
         AssemblyFunction& emplaceFunction(std::string sym);
 
-        void createStructure(Location where, std::string structure, std::vector<Location> data);
 
 
     };

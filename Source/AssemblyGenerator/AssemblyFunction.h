@@ -6,6 +6,8 @@
 #define SIMSYSCOMPILER_ASSEMBLYFUNCTION_H
 
 #include <string>
+#include <AssemblyGenerator/Location.h>
+#include <vector>
 
 namespace ACC {
 
@@ -37,8 +39,7 @@ namespace ACC {
 
         std::string generateCode();
 
-
-
+        void createStructure(Location where, std::string structure, std::vector<Location> data);
 
     };
 }

@@ -36,7 +36,7 @@ void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
         }
     });
 
-    assembly.createStructure(Location::stackTop(), std::to_string(value.size()), {location});
+    targetFunction.createStructure(Location::stackTop(), std::to_string(value.size()), {location});
     targetFunction.mov("rax", "1", "sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
     targetFunction.writeLine("mov rsi, rsp");
@@ -69,7 +69,7 @@ add rax, rhs
 
     Location store = Location::reg(Register::rax);
 
-    assembly.createStructure(snippet, "1", {store});
+    targetFunction.createStructure(snippet, "1", {store});
 
     assembly.emplaceLocation(op->result, snippet);
 
@@ -85,14 +85,14 @@ void ACC::OpGenerators::isattr(ACC::Operator *op, ACC::Assembly &assembly) {
     Location constant = Location::constant((unsigned char)op->lhs);
 
     Location w = Location::stackOffset(op->rhs - 1);
-    assembly.createStructure(w, "1", {constant});
+    func.createStructure(w, "1", {constant});
 }
 
 void ACC::OpGenerators::print(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& targetFunction = assembly.fetchFunction();
     auto subjectLocation = assembly.fetchLocation(op->lhs);
 
-    assembly.createStructure(Location::stackTop(), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
+    targetFunction.createStructure(Location::stackTop(), "1", {subjectLocation}); // TODO: Assumes data to be 1 byte wide
 
     targetFunction.mov("rax", "1", "sys_write");
     targetFunction.writeLine("mov rdi, 1 ; stdout");
@@ -125,7 +125,7 @@ void ACC::OpGenerators::icall(ACC::Operator *op, ACC::Assembly &assembly) {
     func.curBpOffset += 8;
 
 
-    assembly.createStructure(location, "1", {returnLocation});
+    func.createStructure(location, "1", {returnLocation});
     assembly.emplaceLocation(op->result, location);
 }
 
@@ -137,7 +137,7 @@ void ACC::OpGenerators::ret(ACC::Operator *op, ACC::Assembly &assembly) {
 
     Location rax = Location::reg(Register::rax);
 
-    assembly.createStructure(rax, "1", {subjectLocation});
+    func.createStructure(rax, "1", {subjectLocation});
 
     func.writeLine("ret");
     assembly.emplaceFunction(assembly.functionStack.peek(1));
@@ -152,14 +152,14 @@ void ACC::OpGenerators::add(ACC::Operator *op, ACC::Assembly &assembly) {
     Location rbx = Location::reg(Register::rbx);
 
 
-    assembly.createStructure(rax, "1", {lhs});
-    assembly.createStructure(rbx, "1", {rhs});
+    fn.createStructure(rax, "1", {lhs});
+    fn.createStructure(rbx, "1", {rhs});
     fn.writeLine("add rax, rbx");
 
     Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
     fn.curBpOffset += 8;
 
-    assembly.createStructure(result, "1", {rax});
+    fn.createStructure(result, "1", {rax});
     assembly.emplaceLocation(op->result, result);
 }
 
@@ -170,7 +170,7 @@ void ACC::OpGenerators::icopy(ACC::Operator *op, ACC::Assembly &assembly) {
 
     Location lhs = Location::constant((unsigned char)op->lhs);
 
-    assembly.createStructure(result, "1", {lhs});
+    fn.createStructure(result, "1", {lhs});
     assembly.emplaceLocation(op->result, result);
 
 }
