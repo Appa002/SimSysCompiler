@@ -24,7 +24,7 @@ namespace ACC {
     public:
         std::string code;
         std::string symbol;
-        uint32_t curBpOffset = 0;
+        uint32_t curBpOffset = 8;
         uint32_t requiredStackSize = 0;
 
     public:
