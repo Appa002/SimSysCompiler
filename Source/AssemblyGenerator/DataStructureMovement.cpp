@@ -5,8 +5,8 @@
 #include "DataStructureMovement.h"
 #include <utils.h>
 
-std::string ACC::Movs::c2st(Location constant){
-    if(constant.accessMethod != AccessMethod::CONSTANT)
+std::string ACC::Movs::imm2st(Location immediat){
+    if(immediat.accessMethod != AccessMethod::IMMEDIAT)
         throw std::runtime_error("Called data structure movement method for movement of constants with `Location` objects"
                                  "not containing constants.");
 
@@ -14,7 +14,7 @@ std::string ACC::Movs::c2st(Location constant){
     std::string str = "mov dword [rsp], 0x";
     size_t count = 0;
 
-    for (size_t i = 0; i < constant.constantInfo.size(); i++) {
+    for (size_t i = 0; i < immediat.immediatInfo.size(); i++) {
             size_t offset = str.size();
             if (count == 4) {
                 str += "\nmov dword [rsp + " + std::to_string(i) + "], 0x";
@@ -22,7 +22,7 @@ std::string ACC::Movs::c2st(Location constant){
                 count = 0;
             }
 
-            str.insert(offset, toHex(constant.constantInfo.at(i)));
+            str.insert(offset, toHex(immediat.immediatInfo.at(i)));
             count++;
     }
     return str;
@@ -49,7 +49,7 @@ std::string ACC::Movs::bp2st(ACC::Location where, Stack<size_t> &structure) {
     return out;
 }
 
-std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
+std::string ACC::Movs::imm2bp(Location immediat, ACC::Location where) {
     auto bpOffset = where.offsetInfo;
     auto sign = std::string(bpOffset >= 0 ? ("+") : ("-"));
     if(bpOffset < 0)
@@ -57,7 +57,7 @@ std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
     std::string str = "mov dword [rbp "+sign+" "+std::to_string(bpOffset)+"], 0x";
     size_t count = 0;
 
-    for (size_t i = 0; i < constant.constantInfo.size(); i++) {
+    for (size_t i = 0; i < immediat.immediatInfo.size(); i++) {
         size_t offset = str.size();
         if (count == 4) {
             str += "\nmov dword [rbp "+sign+" "+std::to_string(bpOffset + i)+"], 0x";
@@ -65,7 +65,7 @@ std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
             count = 0;
         }
 
-        str.insert(offset, toHex(constant.constantInfo.at(i)));
+        str.insert(offset, toHex(immediat.immediatInfo.at(i)));
         count++;
     }
 
@@ -81,7 +81,7 @@ std::string ACC::Movs::r2bp(ACC::Location where, ACC::Location reg) {
     return "mov [rbp"+ sign + std::to_string(offset) + "], "+registerToString(reg.regInfo);
 }
 
-std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
+std::string ACC::Movs::imm2so(ACC::Location immediat, ACC::Location where) {
     auto spOffset = where.offsetInfo;
     auto sign = std::string(spOffset >= 0 ? ("+") : ("-"));
     if(spOffset < 0)
@@ -90,7 +90,7 @@ std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
     std::string str = "mov dword [rsp " + sign + " " + std::to_string(spOffset)+"], 0x";
     size_t count = 0;
 
-    for (size_t i = 0; i < constant.constantInfo.size(); i++) {
+    for (size_t i = 0; i < immediat.immediatInfo.size(); i++) {
         size_t offset = str.size();
         if (count == 4) {
             str += "\nmov dword [rsp " + sign +" "+std::to_string(spOffset + i)+"], 0x";
@@ -98,7 +98,7 @@ std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
             count = 0;
         }
 
-        str.insert(offset, toHex(constant.constantInfo.at(i)));
+        str.insert(offset, toHex(immediat.immediatInfo.at(i)));
         count++;
     }
     return str;
