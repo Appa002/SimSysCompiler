@@ -73,7 +73,7 @@ void ACC::AssemblyFunction::createStructure(ACC::Location where, std::string str
     if (where.accessMethod == AccessMethod::STACK_TOP) {
         this->requiredStackSize += stackSize;
         for (const auto &d : data) {
-            if (d.accessMethod == AccessMethod::CONSTANT){
+            if (d.accessMethod == AccessMethod::IMMEDIAT){
                 this->writeLine(Movs::imm2st(d));
                 structureStack.pop();
             }
@@ -92,7 +92,7 @@ void ACC::AssemblyFunction::createStructure(ACC::Location where, std::string str
             this->requiredStackSize += stackSize;
 
         for (const auto &d : data) {
-            if (d.accessMethod == AccessMethod::CONSTANT){
+            if (d.accessMethod == AccessMethod::IMMEDIAT){
                 this->writeLine(Movs::imm2bp(d, where));
                 structureStack.pop();
             }
@@ -106,7 +106,7 @@ void ACC::AssemblyFunction::createStructure(ACC::Location where, std::string str
         if(where.offsetInfo >= 0)
             this->requiredStackSize += stackSize;
         for (const auto& d : data){
-            if (d.accessMethod == AccessMethod::CONSTANT){
+            if (d.accessMethod == AccessMethod::IMMEDIAT){
                 this->writeLine(Movs::imm2so(d, where));
                 structureStack.pop();
             }
