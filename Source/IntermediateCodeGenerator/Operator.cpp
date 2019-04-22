@@ -115,3 +115,6 @@ Operator::Operator(OperatorId id, address lhs, address rhs, temporary result)  :
 }
 
 
+bool ACC::isImmediat(OperatorId opid) {
+    return opid > OperatorId::imm_start;
+}

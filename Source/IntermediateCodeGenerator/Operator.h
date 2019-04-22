@@ -15,28 +15,32 @@ namespace ACC{
 
     enum class OperatorId{
         ADD,
-        IADD,
         SUBTRACT,
-        ISUBTRACT,
         MULTIPLY,
-        IMULTIPLY,
         DIVIDE,
-        IDIVIDE,
         COPY,
-        ICOPY,
         PRINT,
-        IPRINT,
         EXIT,
-        IEXIT,
         FUNCTION,
-        ICALL,
         LATTR,
         SATTR,
-        ISATTR,
         RETURN,
-        IRETURN
 
+        imm_start,
+
+        IADD,
+        ISUBTRACT,
+        IMULTIPLY,
+        IDIVIDE,
+        ICOPY,
+        IPRINT,
+        IEXIT,
+        ICALL,
+        ISATTR,
+        IRETURN
     };
+
+    bool isImmediat(OperatorId opid);
 
     struct Operator{
     private:
