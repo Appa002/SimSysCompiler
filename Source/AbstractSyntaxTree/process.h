@@ -12,7 +12,7 @@
 namespace ACC{
     Rule getRule(const ParseNode* node);
     bool matches(const ParseNode* node, const Rule& rule);
-    ASTNode* process(const ParseNode* node);
+    ACC::ASTNode *process(const ACC::ParseNode *node, ACC::ASTNode *carry = nullptr);
 }
 
 

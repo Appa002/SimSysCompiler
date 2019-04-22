@@ -10,7 +10,7 @@
 #include <AbstractSyntaxTree/ASTNode.h>
 
 namespace ACC{
-    using ruleExecuter_t = std::function<ACC::ASTNode*(std::vector<ACC::ParseNode*>)>;
+    using ruleExecuter_t = std::function<ACC::ASTNode*(std::vector<ACC::ParseNode*>, ACC::ASTNode*)>;
 
     struct Rule {
         Rule() = delete;
@@ -18,7 +18,7 @@ namespace ACC{
         Rule(const Production& p, const ruleExecuter_t& f);
 
         const Production production;
-        ASTNode* apply(std::vector<ParseNode*> children) const;
+        ASTNode* apply(std::vector<ParseNode*> children, ASTNode* carry) const;
 
     private:
         const ruleExecuter_t func;

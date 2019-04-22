@@ -4,9 +4,9 @@
 
 #include "process.h"
 
-ACC::ASTNode *ACC::process(const ACC::ParseNode * node) {
+ACC::ASTNode *ACC::process(const ACC::ParseNode *node, ACC::ASTNode *carry) {
     Rule r = getRule(node);
-    return r.apply(node->children);
+    return r.apply(node->children, carry);
 }
 
  ACC::Rule ACC::getRule(const ACC::ParseNode* node) {

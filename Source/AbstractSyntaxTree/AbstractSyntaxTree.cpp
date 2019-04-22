@@ -8,7 +8,7 @@
 #include <Logger/Logger.h>
 
 ACC::AbstractSyntaxTree::AbstractSyntaxTree(ACC::ParseTree parseTree) {
-    root = process(parseTree.getRoot());
+    root = process(parseTree.getRoot(), nullptr);
     refCount++;
 }
 

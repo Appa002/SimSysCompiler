@@ -11,6 +11,6 @@ ACC::Rule::Rule(const ACC::Production &p, const ACC::ruleExecuter_t &f) : produc
 
 }
 
-ACC::ASTNode *ACC::Rule::apply(std::vector<ACC::ParseNode *> children) const {
-    return func(std::move(children));
+ACC::ASTNode *ACC::Rule::apply(std::vector<ACC::ParseNode *> children, ASTNode* carry) const {
+    return func(std::move(children), carry);
 }
