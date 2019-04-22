@@ -13,6 +13,7 @@
 #include <variant>
 #include <utility>
 #include <stdexcept>
+#include <GeneralDataStore.h>
 
 namespace ACC {
     enum class AccessMethod{
@@ -63,15 +64,10 @@ namespace ACC {
             return Location(AccessMethod::STACK_TOP);
         }
 
-        static Location constant(std::string const & str){
+        template <class T>
+        static Location constant(T c){
             auto l = Location(AccessMethod::CONSTANT);
-            l.constantInfo = str;
-            return l;
-        }
-
-        static Location constant(unsigned char c){
-            auto l = Location(AccessMethod::CONSTANT);
-            l.constantInfo = c;
+            l.constantInfo.storeT<T>(c);
             return l;
         }
 
@@ -102,7 +98,8 @@ namespace ACC {
         Register regInfo = Register::NONE;
         offset_t offsetInfo = 0;
         ptr_t heapInfo = 0;
-        std::string constantInfo;
+        // std::string constantInfo;
+        GeneralDataStore constantInfo;
     };
 }
 

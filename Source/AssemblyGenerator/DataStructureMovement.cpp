@@ -11,11 +11,10 @@ std::string ACC::Movs::c2st(Location constant){
                                  "not containing constants.");
 
 
-    std::string value = constant.constantInfo;
     std::string str = "mov dword [rsp], 0x";
     size_t count = 0;
 
-    for (size_t i = 0; i < value.size(); i++) {
+    for (size_t i = 0; i < constant.constantInfo.size(); i++) {
             size_t offset = str.size();
             if (count == 4) {
                 str += "\nmov dword [rsp + " + std::to_string(i) + "], 0x";
@@ -23,7 +22,7 @@ std::string ACC::Movs::c2st(Location constant){
                 count = 0;
             }
 
-            str.insert(offset, toHex((unsigned)value.at(i)));
+            str.insert(offset, toHex(constant.constantInfo.at(i)));
             count++;
     }
     return str;
@@ -57,9 +56,8 @@ std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
         bpOffset *= -1;
     std::string str = "mov dword [rbp "+sign+" "+std::to_string(bpOffset)+"], 0x";
     size_t count = 0;
-    std::string value = constant.constantInfo;
 
-    for (size_t i = 0; i < value.size(); i++) {
+    for (size_t i = 0; i < constant.constantInfo.size(); i++) {
         size_t offset = str.size();
         if (count == 4) {
             str += "\nmov dword [rbp "+sign+" "+std::to_string(bpOffset + i)+"], 0x";
@@ -67,7 +65,7 @@ std::string ACC::Movs::c2bp(Location constant, ACC::Location where) {
             count = 0;
         }
 
-        str.insert(offset, toHex((unsigned)value.at(i)));
+        str.insert(offset, toHex(constant.constantInfo.at(i)));
         count++;
     }
 
@@ -91,9 +89,8 @@ std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
 
     std::string str = "mov dword [rsp " + sign + " " + std::to_string(spOffset)+"], 0x";
     size_t count = 0;
-    std::string value = constant.constantInfo;
 
-    for (size_t i = 0; i < value.size(); i++) {
+    for (size_t i = 0; i < constant.constantInfo.size(); i++) {
         size_t offset = str.size();
         if (count == 4) {
             str += "\nmov dword [rsp " + sign +" "+std::to_string(spOffset + i)+"], 0x";
@@ -101,7 +98,7 @@ std::string ACC::Movs::c2so(ACC::Location constant, ACC::Location where) {
             count = 0;
         }
 
-        str.insert(offset, toHex((unsigned)value.at(i)));
+        str.insert(offset, toHex(constant.constantInfo.at(i)));
         count++;
     }
     return str;

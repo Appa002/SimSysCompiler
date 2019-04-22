@@ -28,13 +28,17 @@ void ACC::OpGenerators::iPrint(ACC::Operator *op, Assembly& assembly) {
     std::string value = std::to_string(op->lhs);
     value += "\n";
 
-    Location location = Location::constant("");
+    Location location = Location::constant<std::string>("");
+
+    std::string valueForAssembly;
 
     dWordAlignT<std::string, char>(value, [&](std::vector<char> packet){
         for(auto itr = packet.rbegin(); itr != packet.rend(); ++itr){
-            location.constantInfo += *itr;
+            valueForAssembly += *itr;
         }
     });
+
+    location.constantInfo.storeT(valueForAssembly);
 
     targetFunction.createStructure(Location::stackTop(), std::to_string(value.size()), {location});
     targetFunction.mov("rax", "1", "sys_write");
@@ -83,7 +87,16 @@ void ACC::OpGenerators::function(ACC::Operator *op, ACC::Assembly &assembly) {
 void ACC::OpGenerators::isattr(ACC::Operator *op, ACC::Assembly &assembly) {
     auto& func = assembly.fetchFunction();
 
-    Location constant = Location::constant((unsigned char)op->lhs);
+    Location constant;
+    if(op->lhs <= 0xFF) // Fits in a byte
+       constant = Location::constant((uint8_t)op->lhs);
+    else if(op->lhs <= 0xFFff) // Fits in 16 bit
+        constant = Location::constant((uint16_t)op->lhs);
+    else if(op->lhs <= 0xFFffFF) // Fits in 32 bit
+        constant = Location::constant((uint32_t)op->lhs);
+    else // 64 bit number
+        constant = Location::constant((uint64_t)op->lhs);
+
 
     Location w = Location::stackOffset(op->rhs - 1);
     func.createStructure(w, "1", {constant});
@@ -172,8 +185,16 @@ void ACC::OpGenerators::icopy(ACC::Operator *op, ACC::Assembly &assembly) {
     fn.curBpOffset += 8;
     fn.requiredStackSize += 8;
 
+    Location lhs;
+    if(op->lhs <= 0xFF) // Fits in a byte
+        lhs = Location::constant((uint8_t)op->lhs);
+    else if(op->lhs <= 0xFFff) // Fits in 16 bit
+        lhs = Location::constant((uint16_t)op->lhs);
+    else if(op->lhs <= 0xFFffFF) // Fits in 32 bit
+        lhs = Location::constant((uint32_t)op->lhs);
+    else // 64 bit number
+        lhs = Location::constant((uint64_t)op->lhs);
 
-    Location lhs = Location::constant((unsigned char)op->lhs);
 
     fn.createStructure(result, "1", {lhs});
     assembly.emplaceLocation(op->result, result);
@@ -265,8 +286,17 @@ void ACC::OpGenerators::idivide(ACC::Operator *op, ACC::Assembly &assembly) {
     std::string rhs = std::to_string(op->rhs);
     auto& targetFunction = assembly.fetchFunction();
 
+    /*
+     * ;;; edx:eax / ecx
+mov edx, 0;
+mov eax, 250
+mov ecx, 25
+div ecx*/
+
+    targetFunction.mov("rdx", "0");
     targetFunction.mov("rax", lhs);
-    targetFunction.writeLine("div rax, " + rhs);
+    targetFunction.mov("rcx", rhs);
+    targetFunction.writeLine("div rcx");
 
     Location snippet = Location::baseOffset(targetFunction.curBpOffset);
     targetFunction.curBpOffset += 8;
@@ -284,12 +314,14 @@ void ACC::OpGenerators::divide(ACC::Operator *op, ACC::Assembly &assembly) {
     Location rhs = assembly.fetchLocation(op->rhs);
 
     Location rax = Location::reg(Register::rax);
-    Location rbx = Location::reg(Register::rbx);
+    Location rcx = Location::reg(Register::rcx);
 
 
     fn.createStructure(rax, "1", {lhs});
-    fn.createStructure(rbx, "1", {rhs});
-    fn.writeLine("div rax, rbx");
+    fn.createStructure(rcx, "1", {rhs});
+    fn.mov("rdx", "0");
+
+    fn.writeLine("div rcx");
 
     Location result = Location::baseOffset(-(offset_t)fn.curBpOffset);
     fn.curBpOffset += 8;

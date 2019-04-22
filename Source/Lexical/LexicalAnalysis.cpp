@@ -229,6 +229,8 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
             tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
         else if (document.at(pos) == '/')
             tokens.push_back(new MathOperatorToken(MathOperators::DIVISION));
+        else if (document.at(pos) == ',')
+            tokens.push_back(new CommaToken());
         else
             throw std::runtime_error("Unknown symbol `"+buffer+"`, at: " + std::to_string(pos));
 
