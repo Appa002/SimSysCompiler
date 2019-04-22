@@ -50,12 +50,22 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::keyword,     {Symbol::EXIT, Symbol::expr}},
             {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
 
-            {Symbol::expr,        {Symbol::LITERAL}}, // E ::= A-Za-z0-9
-            {Symbol::expr,        {Symbol::ID}}, // E ::= A-Za-z0-9
-            {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}}, // id()
+            {Symbol::expr,        {Symbol::LITERAL}},
+            {Symbol::expr,        {Symbol::LITERAL, Symbol::expr}},
+
+            {Symbol::expr,        {Symbol::ID}},
+            {Symbol::expr,        {Symbol::ID, Symbol::expr}},
+
+            {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
+            {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}},
+
             {Symbol::expr,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
-            {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, // (E)
-            {Symbol::expr,        {Symbol::expr,    Symbol::MATH_OPERATOR, Symbol::expr}} // E-E
+            {Symbol::expr,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET, Symbol::expr}},
+
+            {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}},
+            {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::expr}},
+
+            {Symbol::expr,        {Symbol::MATH_OPERATOR, Symbol::expr}}
     };
 }
 
