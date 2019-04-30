@@ -1,4 +1,4 @@
-
+#include <Logger/Logger.h>
 #include <astRules.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <AbstractSyntaxTree/process.h>
@@ -104,8 +104,14 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::ASSIGN, vec);
         }},
 
+        {{Symbol::keyword, {Symbol::PRINT, Symbol::expr, Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr)};
+            return new ASTNode(AstOperator::PRINT, vec);
+        }},
+
         {{Symbol::keyword, {Symbol::PRINT, Symbol::expr}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::PRINT, {process(children[1], nullptr)});
+            auto vec = {process(children[1], nullptr), new ASTNode(AstOperator::NONE)};
+            return new ASTNode(AstOperator::PRINT, vec);
         }},
 
         {{Symbol::keyword, {Symbol::EXIT, Symbol::expr}}, [](auto children, auto carry){
@@ -162,11 +168,17 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
         {{Symbol::expr, {Symbol::LITERAL}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            return new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(children[0]->token)->literal);
+            auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
+            ASTNodeDataType type = asLiteralToken->kind ==
+                    LiteralKind::NUMBER ? (ASTNodeDataType::NUMBER) : (ASTNodeDataType::STRING);
+            return new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, type);
         }},
 
         {{Symbol::expr, {Symbol::LITERAL, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            auto literal = new ASTNode(AstOperator::LITERAL, dynamic_cast<LiteralToken*>(children[0]->token)->literal);
+            auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
+            ASTNodeDataType type = asLiteralToken->kind ==
+                                   LiteralKind::NUMBER ? (ASTNodeDataType::NUMBER) : (ASTNodeDataType::STRING);
+            auto literal = new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, type);
             return process(children[1], literal);
         }},
 
