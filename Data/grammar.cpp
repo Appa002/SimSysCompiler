@@ -46,15 +46,11 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}},
 
+            {Symbol::keyword,     {Symbol::PRINT, Symbol::expr, Symbol::COMMA, Symbol::expr}},
             {Symbol::keyword,     {Symbol::PRINT, Symbol::expr}},
             {Symbol::keyword,     {Symbol::EXIT, Symbol::expr}},
             {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
 
-            {Symbol::expr,        {Symbol::LITERAL}},
-            {Symbol::expr,        {Symbol::LITERAL, Symbol::expr}},
-
-            {Symbol::expr,        {Symbol::ID}},
-            {Symbol::expr,        {Symbol::ID, Symbol::expr}},
 
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}},
@@ -64,6 +60,12 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}},
             {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::expr}},
+
+            {Symbol::expr,        {Symbol::LITERAL}},
+            {Symbol::expr,        {Symbol::LITERAL, Symbol::expr}},
+
+            {Symbol::expr,        {Symbol::ID}},
+            {Symbol::expr,        {Symbol::ID, Symbol::expr}},
 
             {Symbol::expr,        {Symbol::MATH_OPERATOR, Symbol::expr}}
     };
@@ -84,7 +86,7 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
         case Symbol::PRINT:
             return "print";
         case Symbol::LITERAL:
-            return "literal";
+            return "data";
         case Symbol::EOS:
             return "end of statement";
         case Symbol::none_terminals_start:
