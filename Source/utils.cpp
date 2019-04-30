@@ -3,7 +3,7 @@
 #include "utils.h"
 
 
-std::string toHex(int value) {
+std::string toHex(int64_t value) {
     std::stringstream stream;
     stream << std::hex << value;
     std::string str = stream.str();
@@ -48,46 +48,6 @@ size_t getStructureStackSize (ACC::Stack<size_t> s) {
         val = val + ele;
     }
     return val;
-}
-
-std::string registerToString(ACC::Register reg) {
-    switch (reg){
-        case ACC::Register::rax:
-            return "rax";
-        case ACC::Register::rbx:
-            return "rbx";
-        case ACC::Register::rcx:
-            return "rcx";
-        case ACC::Register::rdx:
-            return "rdx";
-        case ACC::Register::rbp:
-            return "rbp";
-        case ACC::Register::rsi:
-            return "rsi";
-        case ACC::Register::rdi:
-            return "rdi";
-        case ACC::Register::rsp:
-            return "rsp";
-        case ACC::Register::r8:
-            return "r8";
-        case ACC::Register::r9:
-            return "r9";
-        case ACC::Register::r10:
-            return "r10";
-        case ACC::Register::r11:
-            return "r11";
-        case ACC::Register::r12:
-            return "r12";
-        case ACC::Register::r13:
-            return "r13";
-        case ACC::Register::r14:
-            return "r14";
-        case ACC::Register::r15:
-            return "r15";
-        case ACC::Register::NONE:
-            throw std::runtime_error("Converting register to string which is Register::NONE.");
-    }
-    return "";
 }
 
 std::string numberToLetterSequence(long number) {

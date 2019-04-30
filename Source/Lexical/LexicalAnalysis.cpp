@@ -205,7 +205,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
-                      [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ","});},
+                      [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ","});},
                       [&](){
                           buffer += document.at(pos);
         });
@@ -214,7 +214,9 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
             pos--;
 
         if(isNumber(buffer))
-            tokens.push_back(new LiteralToken(buffer));
+            tokens.push_back(new LiteralToken(std::stoul(buffer), LiteralKind::NUMBER));
+        else if(document.at(pos) == '"')
+            parseStringLiteral(pos);
         else if (inTable(buffer))
             tokens.push_back(new IdToken(buffer));
         else if (document.at(pos) == '(')
@@ -452,6 +454,48 @@ ACC::LexicalAnalysis::matchAsLongAs(size_t &pos, std::function<bool(void)> condi
         b = true;
     }
     return b;
+}
+
+void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
+    readUntilNextLine(pos);
+    if(document.at(pos) != '"')
+        throw std::runtime_error("String literal not starting with `\"`");
+
+    std::string buffer;
+
+    pos++;
+    bool valid = matchAsLongAs(pos,
+            [&](){return document.at(pos) != '"';},
+            [&](){
+        if(document.at(pos) == '\\'){
+            pos++;
+            if(document.at(pos) == 'n')
+                buffer += '\n';
+            else if(document.at(pos) == '\\')
+                buffer += '\\';
+            else if(document.at(pos) == 'r')
+                buffer += '\r';
+            else if(document.at(pos) == '"')
+                buffer += '"';
+            else if(document.at(pos) == 'a')
+                buffer += '\a';
+            else if(document.at(pos) == 'c'){
+                buffer += "\033[31;1m";
+            }
+            else
+                throw std::runtime_error("Escape sequence with out escapee, at: " + std::to_string(pos));
+
+        }else
+            buffer += document.at(pos);
+    });
+
+    if(!valid)
+        throw std::runtime_error("Invalid string, at: " + std::to_string(pos));
+
+    if(document.at(pos) != '"')
+        throw std::runtime_error("String literal not ending with `\"`, at:" + std::to_string(pos));
+
+    tokens.push_back(new LiteralToken(buffer, LiteralKind::STRING));
 }
 
 

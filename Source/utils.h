@@ -11,14 +11,13 @@
 #include <sstream>
 #include <ios>
 #include <Stack.h>
-#include <AssemblyGenerator/Location.h>
 
 /*! Expresses the parameter \p value as an x86 worthy hex value
  * (The return value doesn't contain the `0x` or `h` suffix/prefix).
  * Every byte of the parameter \p value is expressed with to hex digits (e.g.: (int) 0 becomes (hex) 00)
  * @param value The value to convert.
  * @return String that represents the parameter \p value.*/
-std::string toHex (int value);
+std::string toHex(int64_t value);
 
 ACC::Stack<size_t> generateStructureStack(const std::string &structure);
 
@@ -29,7 +28,8 @@ size_t getStructureStackSize (ACC::Stack<size_t> s);
  * E.g.: `123` would become `bcd`. */
 std::string numberToLetterSequence(long number);
 
-std::string registerToString(ACC::Register reg);
+
+
 
 /*! Splits up an object (\p itrAble) of arbitrary type `T` at every 4th element; calls function f with a vector containing
  * the 4 elements from the last split.
@@ -56,13 +56,13 @@ void dWordAlignT(T itrAble, std::function<void(std::vector<ELM>)> f){
             if(itrAble.size() >= i)
                 exitOnAligned = false;
         }
-        packet.push_back(itrAble[i]);
+        packet.push_back(itrAble.at(i));
     }
 
     if(!exitOnAligned){
         std::vector<ELM> danglingPacket;
         for(size_t i = lastIdx; i < itrAble.size(); i++){
-            danglingPacket.push_back(itrAble[i]);
+            danglingPacket.push_back(itrAble.at(i));
         }
         f(danglingPacket);
     }

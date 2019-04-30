@@ -7,11 +7,11 @@
 
 
 template<>
-std::string ACC::GeneralDataStore::asT<std::string>(size_t idx) {
+std::string ACC::GeneralDataStore::asT<std::string>(size_t idx) const {
     if (idx >= internalStore.size())
         throw std::runtime_error("Index out of range");
 
-    char *vecPtr = reinterpret_cast<char *>(&internalStore[idx]);
+    const char *vecPtr = reinterpret_cast<const char *>(&internalStore[idx]);
     return std::string(vecPtr, internalStore.size() - idx);
 }
 
@@ -22,10 +22,14 @@ void ACC::GeneralDataStore::storeT<std::string>(std::string data) {
     data.copy(vecPtr, data.size());
 }
 
-size_t ACC::GeneralDataStore::size()  {
+size_t ACC::GeneralDataStore::size() const {
     return internalStore.size();
 }
 
-uint8_t ACC::GeneralDataStore::at(size_t idx) {
+uint8_t ACC::GeneralDataStore::at(size_t idx) const {
     return internalStore[idx];
+}
+
+void ACC::GeneralDataStore::push(uint8_t value) {
+    internalStore.push_back(value);
 }

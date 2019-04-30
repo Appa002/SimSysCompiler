@@ -4,10 +4,7 @@
 #include <Parser/ParseTree.h>
 #include <Logger/Logger.h>
 #include <AbstractSyntaxTree/AbstractSyntaxTree.h>
-#include <IntermediateCodeGenerator/Operator.h>
-#include <IntermediateCodeGenerator/IntermediateCode.h>
-#include <IntermediateCodeGenerator/Optimizaions/Optimizations.h>
-#include <AssemblyGenerator/Assembly.h>
+#include <Assembly/Assembly.h>
 
 using namespace ACC;
 
@@ -46,7 +43,6 @@ void runToolchainLinux(std::string filePath){
 
 }
 
-
 int main() {
     LOG.silence(false);
     auto l = LexicalAnalysis("./test.txt");
@@ -55,13 +51,9 @@ int main() {
     p.getRoot()->print();
     auto a = AbstractSyntaxTree(p);
     a.print();
-    auto i = IntermediateCode(a);
+    auto i = Assembly(a);
     i.print();
-    i.optimize();
-    auto ass = Assembly();
-    ass.generate(i);
-    ass.print();
-    ass.writeToFile();
+    i.writeToFile("./a.asm");
 
     runToolchainLinux("./a");
 

@@ -1,32 +1,56 @@
 #include <utility>
+
+#include <utility>
+
+#include <utility>
 #include "ASTNode.h"
 #include <AbstractSyntaxTree/process.h>
-#include <IntermediateCodeGenerator/Stmt.h>
-#include <IntermediateCodeGenerator/Expr.h>
+#include <Assembly/Stmt.h>
+#include <Assembly/Expr.h>
 #include <Logger/Logger.h>
 
-#include <IntermediateCodeGenerator/TokenGenerator/AddTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/SubtractTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/LiteralTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/SeqTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/AssignTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/IdTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/PrintTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/ExitTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/DivisionTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/MultiplicationTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/FunctionTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/ReturnTokenGenerator.h>
-#include <IntermediateCodeGenerator/TokenGenerator/CallTokenGenerator.h>
+#include <Assembly/TokenGenerator/AddTokenGenerator.h>
+#include <Assembly/TokenGenerator/SubtractTokenGenerator.h>
+#include <Assembly/TokenGenerator/LiteralTokenGenerator.h>
+#include <Assembly/TokenGenerator/SeqTokenGenerator.h>
+#include <Assembly/TokenGenerator/AssignTokenGenerator.h>
+#include <Assembly/TokenGenerator/IdTokenGenerator.h>
+#include <Assembly/TokenGenerator/PrintTokenGenerator.h>
+#include <Assembly/TokenGenerator/ExitTokenGenerator.h>
+#include <Assembly/TokenGenerator/DivisionTokenGenerator.h>
+#include <Assembly/TokenGenerator/MultiplicationTokenGenerator.h>
+#include <Assembly/TokenGenerator/FunctionTokenGenerator.h>
+#include <Assembly/TokenGenerator/ReturnTokenGenerator.h>
+#include <Assembly/TokenGenerator/CallTokenGenerator.h>
+#include <Lexical/Tokens/LiteralToken.h>
+#include <GeneralDataStore.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;
     this->children = std::move(children);
 }
 
-ACC::ASTNode::ASTNode(AstOperator op, std::string str) {
+
+
+ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, ACC::ASTNodeDataType type) {
     this->op = op;
-    this->str = std::move(str);
+    this->data = std::move(literal);
+    this->dataKind = type;
+}
+
+
+ACC::ASTNode::ASTNode(AstOperator op, std::string str) {
+    if(op == AstOperator::LITERAL)
+        throw std::runtime_error("Initialise literals with a general store");
+    this->op = op;
+    this->dataKind = ASTNodeDataType::ID;
+    this->data.storeT(std::move(str));
+}
+
+ACC::ASTNode::ASTNode(AstOperator op) {
+    if(op != AstOperator::NONE)
+        throw std::runtime_error("Single argument constructor for `ASTNode` can only be used for `AstOperator::None`");
+    this->op = op;
 }
 
 void ACC::ASTNode::_print(std::string indent, bool isLast) const {
@@ -54,14 +78,24 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "+";
         case AstOperator::MINUS:
             return "-";
-        case AstOperator::LITERAL:
-            return str;
+        case AstOperator::LITERAL:{
+            if(dataKind == ASTNodeDataType ::NUMBER)
+                return "Lit: " + std::to_string(data.createNumber());
+            else if(dataKind == ASTNodeDataType::STRING)
+                return std::string("Lit: ") + "\"" + data.asT<std::string>() +"\"";
+            else
+                return std::string("Lit (Not stored with correct type): \"") + data.asT<std::string>() +"\"";
+        }
         case AstOperator::SEQ:
             return "SEQ";
         case AstOperator::ASSIGN:
             return "assign";
         case AstOperator::ID:
-            return str;
+            if(dataKind == ASTNodeDataType::ID)
+                return std::string("ID: ") + data.asT<std::string>(0);
+            else
+                return std::string("ID (Not stored with correct type): ") + data.asT<std::string>(0);
+
         case AstOperator::PRINT:
             return "print";
         case AstOperator::EXIT:
@@ -76,6 +110,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "call";
         case AstOperator::RETURN:
             return "return";
+        case AstOperator::NONE:
+            return "none";
     }
     return "";
 }
@@ -110,6 +146,8 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new CallTokenGenerator(this));
         case AstOperator::RETURN:
             return std::unique_ptr<Expr>(new ReturnTokenGenerator(this));
+        case AstOperator::NONE:
+            throw std::runtime_error("Operator `none` can't be interpreted as an expression.");
     }
     return std::unique_ptr<Expr>(nullptr);
 }
@@ -119,3 +157,4 @@ ACC::ASTNode::~ASTNode() {
         delete child;
     }
 }
+

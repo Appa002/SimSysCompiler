@@ -8,6 +8,7 @@
 #include <initializer_list>
 #include <Parser/ParseNode.h>
 #include <memory>
+#include <GeneralDataStore.h>
 
 enum class AstOperator{
     PLUS,
@@ -22,12 +23,19 @@ enum class AstOperator{
     EXIT,
     FUNCTION,
     CALL,
-    RETURN
+    RETURN,
+    NONE
 };
 
 namespace ACC {
     class Expr;
     class Stmt;
+
+    enum class ASTNodeDataType{
+        NUMBER,
+        STRING,
+        ID
+    };
 
     class ASTNode {
     private:
@@ -36,14 +44,17 @@ namespace ACC {
         void _print(std::string indent, bool isLast) const;
 
         ASTNode(AstOperator op, std::vector<ASTNode*> children);
+        ASTNode(AstOperator op, GeneralDataStore literal, ASTNodeDataType type);
         ASTNode(AstOperator op, std::string str);
+        explicit ASTNode(AstOperator op);
         ~ASTNode();
 
         std::unique_ptr<Expr> asExpr();
         std::vector<ASTNode*> children;
 
         AstOperator op;
-        std::string str;
+        GeneralDataStore data;
+        ASTNodeDataType dataKind = ASTNodeDataType::ID;
     };
 
 }

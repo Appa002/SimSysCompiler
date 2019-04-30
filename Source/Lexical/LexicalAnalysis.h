@@ -25,6 +25,7 @@ namespace ACC {
         bool inTable(std::string idf);
         bool isNumber(char c);
         bool isNumber(std::string str);
+
         bool matchIgnoreW(char c, size_t& pos);
         void skipAll(char c, size_t& pos);
         int readUntilNextLine(size_t& pos);
@@ -38,6 +39,7 @@ namespace ACC {
         void expr(size_t& pos, std::vector<std::string> exitTokens);
         void ret(size_t pos);
         void call(size_t pos);
+        void parseStringLiteral(size_t &pos);
 
 
     public:

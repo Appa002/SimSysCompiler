@@ -49,6 +49,11 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
             auto expected = *pItr;
 
             if (!isNoneterminal(expected)) {
+                if(iItr == input.end()){
+                    LOG() << std::string(gap, ' ') << "Reached end of input whilst matching" << std::endl;
+                    killChildren(node);
+                    iItr = old;
+                }
                 if (expected == (*iItr)->id) {
                     node->children.push_back(new ParseNode((*iItr)->id, *iItr));
                     LOG() << std::string(gap, ' ') << "Matched terminal: " << (*iItr)->getIdentifier() << std::endl;
