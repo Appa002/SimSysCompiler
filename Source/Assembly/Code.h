@@ -20,16 +20,19 @@ namespace ACC{
     };
 
     enum class Register;
+    class Code;
 
     struct Structure{
         Structure() = default;
         explicit Structure(StructureType type) : type(type) {};
 
-        std::function<std::string (void)> copyToStack;
-        std::function<std::string (void)> copyAddressToStack;
-        std::function<std::string (std::string)> copyToRegister;
-        std::function<std::string (std::string)> copyAddressToRegister;
-        std::function<std::string ()> rawValue;
+        std::function<std::string (Code&)> copyToStack;
+        std::function<std::string (Code&)> copyAddressToStack;
+        std::function<std::string (std::string, Code&)> copyToRegister;
+        std::function<std::string (std::string, Code&)> copyAddressToRegister;
+        std::function<std::string (int32_t , Code&)> copyToBpOffset;
+        std::function<std::string (int32_t, Code&)> copyAddressToBpOffset;
+        std::function<std::string (Code&)> rawValue;
 
         StructureType type = StructureType::NA;
         size_t size = 0;
