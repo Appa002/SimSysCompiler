@@ -13,7 +13,6 @@ ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
     }
 
     fn.writeLine("call " + node->children[0]->data.asT<std::string>());
-    code.reserveRegister(Register::rA);
 
     auto out = Structure(StructureType::elementary);
     out.copyToRegister = [](std::string reg, Code& c){
