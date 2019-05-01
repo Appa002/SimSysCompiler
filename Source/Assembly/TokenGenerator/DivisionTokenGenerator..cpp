@@ -19,25 +19,33 @@ ACC::Structure ACC::DivisionTokenGenerator::generate(ACC::Code &code) {
     fn.writeLine("mov rdx, 0");
 
     if(lhs.type == StructureType::elementary){
-        fn.writeLine(lhs.copyToRegister("rax"));
+        fn.writeLine(lhs.copyToRegister("rax", code));
     }
 
     if(rhs.type == StructureType::elementary){
-        fn.writeLine(rhs.copyToRegister("rcx"));
+        fn.writeLine(rhs.copyToRegister("rcx", code));
     }
 
     fn.writeLine("div rcx");
 
     auto return_struct = Structure(StructureType::elementary);
 
-    return_struct.copyToRegister = [=](std::string reg){
+    return_struct.copyToRegister = [=](std::string reg, Code& c){
         if(reg != "rax")
             return "mov " + reg + ", rax";
         return std::string();
     };
 
-    return_struct.copyToStack = [=](){
+    return_struct.copyToStack = [=](Code& c){
         return "mov qword [rsp], rax";
+    };
+
+    return_struct.copyToBpOffset = [=](int32_t offset, Code& c){
+        std::string sign = offset < 0 ? ("-") : ("+");
+        if(offset < 0) offset *= -1;
+        std::string offstr = std::to_string(offset);
+
+        return "mov qword [rbp " + sign + offstr + "], rax";
     };
 
 

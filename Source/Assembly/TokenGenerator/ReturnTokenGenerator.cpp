@@ -9,8 +9,9 @@ ACC::Structure ACC::ReturnTokenGenerator::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
 
     fn.writeLine("add rsp, " + std::to_string(fn.curBpOffset - 1));
-    if(returnValue.type == StructureType::elementary)
-        fn.writeLine(returnValue.copyToRegister("rax"));
+    if(returnValue.type == StructureType::elementary){
+        fn.writeLine(returnValue.copyToRegister("rax", code));
+    }
     else{} // TODO: Implement.
 
     fn.writeLine("pop rbp");

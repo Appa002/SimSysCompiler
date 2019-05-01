@@ -27,13 +27,17 @@ ACC::Structure ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
         }
     }
 
-    return_struct.copyToRegister = [=](std::string reg){
+    return_struct.copyToRegister = [=](std::string reg, Code& c){
         return "mov " + reg + ", " + literalAsString;
     };
 
     GeneralDataStore store = node->data;
-    return_struct.copyToStack = [=](){
+    return_struct.copyToStack = [=](Code& c){
         return Movs::imm2st(store);
+    };
+
+    return_struct.copyToBpOffset = [=](int32_t offset, Code& c){
+        return Movs::imm2bp(store, offset);
     };
 
     return return_struct;

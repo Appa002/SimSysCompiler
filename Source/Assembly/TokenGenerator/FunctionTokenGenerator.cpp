@@ -14,19 +14,32 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
 
         std::string offset = std::to_string(16 + 8 * (i- 1));
 
-        structure.copyAddressToRegister = [=](std::string reg){
+        structure.copyAddressToRegister = [=](std::string reg, Code& c){
             return "lea " + reg + ", [rbp + "+offset+"]";
         };
-        structure.copyAddressToStack = [=](){
+        structure.copyAddressToStack = [=](Code& c){
             return "sub rsp, 8\n"
                    "lea [rsp], [rbp + "+offset+"]";
         };
-        structure.copyToRegister = [=](std::string reg){
+        structure.copyToRegister = [=](std::string reg, Code& c){
             return "mov " + reg + "[rbp + "+offset+"]";
         };
-        structure.copyToStack = [=](){
+        structure.copyToStack = [=](Code& c){
             return "mov rax, [rbp + "+offset+"]\n"
                    "mov [rsp], rax";
+        };
+
+        structure.copyToBpOffset = [=](int32_t off, Code& c){
+            Register reg = c.getFreeRegister();
+            std::string regStr = registerToString(8, reg);
+            c.freeRegister(reg);
+
+            std::string sign = off < 0 ? ("-") : ("+");
+            if(off < 0) off *= -1;
+            std::string offstr = std::to_string(off);
+
+            return "mov " + regStr + "[rbp + " + offset +"]\n"
+                   "mov qword [rbp " + sign + offstr + "], " + regStr;
         };
 
         code.emplaceVarSymbol(node->children[i]->data.asT<std::string>(), structure);
