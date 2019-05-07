@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <TypeId.h>
 #include <functional>
 #include <Stack.h>
 
@@ -37,6 +38,8 @@ namespace ACC{
         StructureType type = StructureType::NA;
         size_t size = 0;
         std::vector<Register> registerUsed;
+        TypeId typeId = 0;
+        std::vector<Structure> fields;
     };
 
     struct Fn{
@@ -46,6 +49,8 @@ namespace ACC{
 
         void writeLine(std::string const & line);
         std::string generate();
+        std::vector<TypeId> argsType;
+        TypeId returnType = 0;
     };
 
     enum class Register{
