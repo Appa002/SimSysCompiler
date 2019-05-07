@@ -26,6 +26,7 @@ namespace ACC {
         COLON,
         COMMA,
         RETURN,
+        TYPE,
 
         none_terminals_start,
 
