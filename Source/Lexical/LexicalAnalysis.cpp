@@ -2,6 +2,7 @@
 // Created by a_mod on 06.01.2019.
 //
 
+#include <Lexical/Tokens/TypeToken.h>
 #include "LexicalAnalysis.h"
 #include <fstream>
 #include <iostream>
@@ -90,7 +91,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             return;
         }
     }
-    else if (inTable(buffer)) {
+    else if (isVariable(buffer)) {
         tokens.push_back(new IdToken(buffer));
         buffer.clear();
         call(pos + 1);
@@ -170,16 +171,23 @@ void ACC::LexicalAnalysis::var(size_t pos) {
     readUntilNextLine(pos);
 
     matchAsLongAs(pos,
-                  [&](){return !contains(document.at(pos), {";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
+                  [&](){return !contains(document.at(pos), {";", " ", ":", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
                   [&](){
                       buffer += document.at(pos);
     });
 
-    if(inTable(buffer))
+    if(isVariable(buffer))
         throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
 
     tokens.push_back(new DeclToken(buffer));
-    table.emplace(buffer, Symbol::DECL);
+    variableTable.emplace(buffer, Symbol::DECL);
+
+    if(!matchIgnoreW(':', pos))
+        throw std::runtime_error("Variable declaration requires type, at: " + std::to_string(pos));
+
+    buffer.clear();
+    pos++;
+    type(pos);
 
     readUntilNextLine(pos);
     if(document.at(pos) != '=')
@@ -201,6 +209,25 @@ void ACC::LexicalAnalysis::var(size_t pos) {
     start(pos, true);
 }
 
+
+void ACC::LexicalAnalysis::type(size_t &pos) {
+    readUntilNextLine(pos);
+    bool matched = matchAsLongAs(pos,
+                                 [&](){return !contains(document.at(pos), {"\"", ";", " ", "=", "(", ")", "+", "-", "*", "/", ","});},
+                                 [&](){
+                                     buffer += document.at(pos);
+    });
+    if(!matched)
+        throw std::runtime_error("Syntax error, at: " + std::to_string(pos));
+
+    auto id = isType(buffer); //TODO: Matches stuff like char just fine, but Array(char) doesn't work.
+    if(id == TypeId(0))
+        throw std::runtime_error("Unknown type, at: " + std::to_string(pos));
+
+    tokens.push_back(new TypeToken(buffer, id));
+}
+
+
 void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens) {
 
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
@@ -213,11 +240,12 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
         if(matched)
             pos--;
 
+
         if(isNumber(buffer))
             tokens.push_back(new LiteralToken(std::stoul(buffer), LiteralKind::NUMBER));
         else if(document.at(pos) == '"')
             parseStringLiteral(pos);
-        else if (inTable(buffer))
+        else if (isVariable(buffer))
             tokens.push_back(new IdToken(buffer));
         else if (document.at(pos) == '(')
             tokens.push_back(new BracketToken(BracketKind::OPEN));
@@ -254,7 +282,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
     });
 
     tokens.push_back(new DeclToken(buffer));
-    table.emplace(buffer, Symbol::FUNCTION);
+    variableTable.emplace(buffer, Symbol::FUNCTION);
 
     buffer.clear();
 
@@ -279,7 +307,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
 
         if(!buffer.empty()){
             tokens.push_back(new DeclToken(buffer));
-            table.emplace(buffer, Symbol::DECL);
+            variableTable.emplace(buffer, Symbol::DECL);
         }
 
         if(document.at(pos) == ',')
@@ -344,6 +372,12 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
+    typesTable["num"] = TypeId(1);
+    typesTable["char"] = TypeId(2);
+    typesTable["pNum"] = TypeId(3);
+    typesTable["pChar"] = TypeId(4);
+
+
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
 
@@ -392,8 +426,8 @@ const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {
     return tokens;
 }
 
-bool ACC::LexicalAnalysis::inTable(std::string idf) {
-    return table.find(idf) != table.end();
+bool ACC::LexicalAnalysis::isVariable(std::string idf) {
+    return variableTable.find(idf) != variableTable.end();
 }
 
 bool ACC::LexicalAnalysis::isNumber(char c) {
@@ -498,5 +532,10 @@ void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
     tokens.push_back(new LiteralToken(buffer, LiteralKind::STRING));
 }
 
+ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
+    if (typesTable.find(str) != typesTable.cend())
+        return typesTable.at(str);
+    return 0;
+}
 
 

@@ -3,6 +3,8 @@
 #include <utility>
 
 #include <utility>
+
+#include <utility>
 #include "ASTNode.h"
 #include <AbstractSyntaxTree/process.h>
 #include <Assembly/Stmt.h>
@@ -45,6 +47,12 @@ ACC::ASTNode::ASTNode(AstOperator op, std::string str) {
     this->op = op;
     this->dataKind = ASTNodeDataType::ID;
     this->data.storeT(std::move(str));
+}
+
+ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore store) {
+    this->op = op;
+    this->dataKind = ASTNodeDataType::OTHER;
+    this->data = std::move(store);
 }
 
 ACC::ASTNode::ASTNode(AstOperator op) {
@@ -112,6 +120,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "return";
         case AstOperator::NONE:
             return "none";
+        case AstOperator::TYPE_DEF:
+            return "type def; id: " + std::to_string(data.createNumber());
     }
     return "";
 }

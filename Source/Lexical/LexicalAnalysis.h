@@ -8,6 +8,7 @@
 #include <Lexical/IToken.h>
 #include <functional>
 #include <unordered_map>
+#include <TypeId.h>
 
 namespace ACC {
     class LexicalAnalysis{
@@ -19,12 +20,14 @@ namespace ACC {
         std::string document;
         int refCount = 0;
         bool processed = false;
-        std::unordered_map<std::string, Symbol> table;
+        std::unordered_map<std::string, Symbol> variableTable;
+        std::unordered_map<std::string, TypeId> typesTable;
 
         void preProcessDocument();
-        bool inTable(std::string idf);
+        bool isVariable(std::string idf);
         bool isNumber(char c);
         bool isNumber(std::string str);
+        TypeId isType(std::string str);
 
         bool matchIgnoreW(char c, size_t& pos);
         void skipAll(char c, size_t& pos);
@@ -39,6 +42,7 @@ namespace ACC {
         void expr(size_t& pos, std::vector<std::string> exitTokens);
         void ret(size_t pos);
         void call(size_t pos);
+        void type(size_t& pos);
         void parseStringLiteral(size_t &pos);
 
 

@@ -8,6 +8,7 @@
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/PrintToken.h>
 #include <Lexical/Tokens/DeclToken.h>
+#include <Lexical/Tokens/TypeToken.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -92,15 +93,17 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
 
         {{Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](auto children, auto carry){
-           return new ASTNode(AstOperator::CALL,
-                   {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
+            std::vector<ASTNode*> vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)};
+             return new ASTNode(AstOperator::CALL, vec);
         }},
 
 
 
-        {{Symbol::assignment, {Symbol::VAR, Symbol::DECL, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+        {{Symbol::assignment, {Symbol::VAR, Symbol::DECL, Symbol::TYPE, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            GeneralDataStore store = GeneralDataStore::create(dynamic_cast<TypeToken*>(children[2]->token)->typeId);
             auto vec = {new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym),
-                        process(children[3], nullptr)};
+                        new ASTNode(AstOperator::TYPE_DEF, store),
+                        process(children[4], nullptr)};
             return new ASTNode(AstOperator::ASSIGN, vec);
         }},
 

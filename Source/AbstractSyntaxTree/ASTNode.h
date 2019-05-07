@@ -24,6 +24,7 @@ enum class AstOperator{
     FUNCTION,
     CALL,
     RETURN,
+    TYPE_DEF,
     NONE
 };
 
@@ -34,6 +35,7 @@ namespace ACC {
     enum class ASTNodeDataType{
         NUMBER,
         STRING,
+        OTHER,
         ID
     };
 
@@ -46,6 +48,7 @@ namespace ACC {
         ASTNode(AstOperator op, std::vector<ASTNode*> children);
         ASTNode(AstOperator op, GeneralDataStore literal, ASTNodeDataType type);
         ASTNode(AstOperator op, std::string str);
+        ASTNode(AstOperator op,  GeneralDataStore store);
         explicit ASTNode(AstOperator op);
         ~ASTNode();
 
