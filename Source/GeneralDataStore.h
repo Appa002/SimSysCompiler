@@ -17,8 +17,10 @@ namespace ACC {
         GeneralDataStore() = default;
 
         template <class T>
-        explicit GeneralDataStore(T elem){
-            storeT<T>(elem);
+        static GeneralDataStore create(T elem){
+            GeneralDataStore s;
+            s.storeT<T>(elem);
+            return s;
         }
 
         uint8_t at(size_t idx) const;
