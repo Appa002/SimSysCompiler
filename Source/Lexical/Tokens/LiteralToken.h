@@ -12,20 +12,18 @@
 #include <Lexical/IToken.h>
 #include <GeneralDataStore.h>
 #include <utils.h>
+#include <TypeId.h>
+#include <builtinTypes.h>
 
 namespace ACC{
-    enum class LiteralKind{
-        NUMBER,
-        STRING
-    };
 
     struct LiteralToken : public IToken{
-        LiteralToken(std::string l, LiteralKind k) : IToken(), kind(k) {
+        LiteralToken(std::string l, TypeId k) : IToken(), type(k) {
             id = Symbol::LITERAL;
             literal.storeT(std::move(l));
         };
 
-        LiteralToken(uint64_t l, LiteralKind k) : IToken(), kind(k) {
+        LiteralToken(uint64_t l, TypeId k) : IToken(), type(k) {
             id = Symbol::LITERAL;
             if(l <= 0xFF)
                 literal.storeT((uint8_t)l);
@@ -38,20 +36,31 @@ namespace ACC{
         };
 
         GeneralDataStore literal;
-        LiteralKind kind;
+        TypeId type;
 
 
         std::string getIdentifier() override {
-            std::string data = (kind == LiteralKind::NUMBER) ?
-                    "0x" + toHex(literal.asT<uint64_t>()) : literal.asT<std::string>();
+            if(type == BuiltIns::charType || type == BuiltIns::numType){
+                return "Literal (Elementary): 0x" + toHex(literal.createNumber());
+            }
+            else if(type == BuiltIns::ptrCharType){
+                return "Literal (Complex): " + literal.asT<std::string>() +"\"";
+            }
+            else{
+                std::string data = "[ ";
+                for(size_t i = 0; i < literal.size(); i++){
+                    data += " `" + toHex(literal.at(i)) + "`";
+                    if(i + 1 < literal.size())
+                        data += ",";
+                }
+                data += " ]";
 
-            std::string kindStr = (kind == LiteralKind::NUMBER) ? ("number") : ("string");
-
-            return "Literal "+ kindStr +" (" + data + ")";
+                return "Literal (Complex): " + data;
+            }
         }
 
         friend inline bool operator==(LiteralToken const & lhs, LiteralToken const & rhs){
-            bool out = lhs.kind == rhs.kind;
+            bool out = lhs.type == rhs.type;
             return out && lhs.literal == rhs.literal;
         }
     };
