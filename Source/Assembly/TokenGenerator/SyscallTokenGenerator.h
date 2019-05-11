@@ -10,9 +10,9 @@
 
 
 namespace ACC{
-    struct PrintTokenGenerator : public Expr{
+    struct SyscallTokenGenerator : public Expr{
         Structure generate(ACC::Code &code) override;
-        explicit PrintTokenGenerator(ASTNode* node);
+        explicit SyscallTokenGenerator(ASTNode* node);
 
     };
 }

@@ -36,7 +36,7 @@ namespace ACC {
 
         void start (size_t pos, bool shallCheckIndent = false);
         void fn(size_t pos);
-        void print(size_t pos);
+        void syscall(size_t pos);
         void exit(size_t pos);
         void var(size_t pos);
         void expr(size_t& pos, std::vector<std::string> exitTokens);

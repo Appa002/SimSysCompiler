@@ -15,7 +15,7 @@
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/BracketToken.h>
 #include <Lexical/Tokens/MathOperatorToken.h>
-#include <Lexical/Tokens/PrintToken.h>
+#include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/AssignToken.h>
 #include <Lexical/Tokens/DeclToken.h>
 #include <Lexical/Tokens/ExitToken.h>
@@ -48,7 +48,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "print", "return"
+            "fn", "var", "exit", "syscall", "return"
     };
 
     if(shallCheckIndent) {
@@ -80,10 +80,10 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             exit(pos + 1);
             return;
 
-        }else if ("print" == buffer) {
-            tokens.push_back(new PrintToken());
+        }else if ("syscall" == buffer) {
+            tokens.push_back(new SyscallToken());
             buffer.clear();
-            print(pos + 1);
+            syscall(pos + 1);
             return;
         }else if ("return" == buffer){
             tokens.push_back(new ReturnToken());
@@ -360,7 +360,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
     start(pos, true);
 }
 
-void ACC::LexicalAnalysis::print(size_t pos) {
+void ACC::LexicalAnalysis::syscall(size_t pos) {
     expr(pos, {";"});
 
     readUntilNextLine(pos);

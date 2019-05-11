@@ -10,13 +10,13 @@
 #include <Lexical/IToken.h>
 
 namespace ACC{
-    struct PrintToken : public IToken{
-        PrintToken() : IToken() {this->id = Symbol::PRINT;}
+    struct SyscallToken : public IToken{
+        SyscallToken() : IToken() {this->id = Symbol::SYSCALL;}
         std::string getIdentifier() override{
-            return "print";
+            return "syscall";
         }
 
-        friend inline bool operator==(PrintToken const & lhs, PrintToken const & rhs){
+        friend inline bool operator==(SyscallToken const & lhs, SyscallToken const & rhs){
             return true;
         }
     };

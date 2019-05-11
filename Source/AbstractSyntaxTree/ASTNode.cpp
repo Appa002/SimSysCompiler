@@ -17,7 +17,7 @@
 #include <Assembly/TokenGenerator/SeqTokenGenerator.h>
 #include <Assembly/TokenGenerator/AssignTokenGenerator.h>
 #include <Assembly/TokenGenerator/IdTokenGenerator.h>
-#include <Assembly/TokenGenerator/PrintTokenGenerator.h>
+#include <Assembly/TokenGenerator/SyscallTokenGenerator.h>
 #include <Assembly/TokenGenerator/ExitTokenGenerator.h>
 #include <Assembly/TokenGenerator/DivisionTokenGenerator.h>
 #include <Assembly/TokenGenerator/MultiplicationTokenGenerator.h>
@@ -111,8 +111,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "assign";
         case AstOperator::ID:
             return std::string("ID: ") + data.asT<std::string>(0);
-        case AstOperator::PRINT:
-            return "print";
+        case AstOperator::SYSCALL:
+            return "syscall";
         case AstOperator::EXIT:
             return "exit";
         case AstOperator::MULTIPLICATION:
@@ -152,8 +152,8 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new AssignTokenGenerator(this));
         case AstOperator::ID:
             return std::unique_ptr<Expr>(new IdTokenGenerator(this));
-        case AstOperator::PRINT:
-            return std::unique_ptr<Expr>(new PrintTokenGenerator(this));
+        case AstOperator::SYSCALL:
+            return std::unique_ptr<Expr>(new SyscallTokenGenerator(this));
         case AstOperator::EXIT:
             return std::unique_ptr<Expr>(new ExitTokenGenerator(this));
         case AstOperator::MULTIPLICATION:

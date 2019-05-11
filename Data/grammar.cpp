@@ -46,8 +46,14 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::assignment,  {Symbol::VAR, Symbol::DECL, Symbol::TYPE, Symbol::ASSIGN, Symbol::expr}},
 
-            {Symbol::keyword,     {Symbol::PRINT, Symbol::expr, Symbol::COMMA, Symbol::expr}},
-            {Symbol::keyword,     {Symbol::PRINT, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+
             {Symbol::keyword,     {Symbol::EXIT, Symbol::expr}},
             {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
 
@@ -83,8 +89,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "bracket";
         case Symbol::MATH_OPERATOR:
             return "math operator";
-        case Symbol::PRINT:
-            return "print";
+        case Symbol::SYSCALL:
+            return "syscall";
         case Symbol::LITERAL:
             return "data";
         case Symbol::EOS:

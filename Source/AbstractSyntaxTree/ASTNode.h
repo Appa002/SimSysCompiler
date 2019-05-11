@@ -20,7 +20,7 @@ enum class AstOperator{
     SEQ,
     ASSIGN,
     ID,
-    PRINT,
+    SYSCALL,
     EXIT,
     FUNCTION,
     CALL,
@@ -33,13 +33,6 @@ enum class AstOperator{
 namespace ACC {
     class Expr;
     class Stmt;
-
-    enum class ASTNodeDataType{
-        NUMBER,
-        STRING,
-        OTHER,
-        ID
-    };
 
     class ASTNode {
     private:

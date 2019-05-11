@@ -6,7 +6,7 @@
 #include <Lexical/Tokens/MathOperatorToken.h>
 #include <Parser/Production.h>
 #include <Lexical/Tokens/IdToken.h>
-#include <Lexical/Tokens/PrintToken.h>
+#include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/DeclToken.h>
 #include <Lexical/Tokens/TypeToken.h>
 
@@ -121,14 +121,56 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::ASSIGN, vec);
         }},
 
-        {{Symbol::keyword, {Symbol::PRINT, Symbol::expr, Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
-            auto vec = {process(children[1], nullptr), process(children[3], nullptr)};
-            return new ASTNode(AstOperator::PRINT, vec);
+
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
+                            Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
+                            Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
+                    ,process(children[7], nullptr), process(children[9], nullptr), process(children[11], nullptr),
+                    process(children[13], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
         }},
 
-        {{Symbol::keyword, {Symbol::PRINT, Symbol::expr}}, [](auto children, auto carry){
-            auto vec = {process(children[1], nullptr), new ASTNode(AstOperator::__NONE)};
-            return new ASTNode(AstOperator::PRINT, vec);
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
+                            Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+         [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
+                    , process(children[7], nullptr), process(children[9], nullptr), process(children[11], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
+        }},
+
+
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
+                            Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
+                    , process(children[7], nullptr), process(children[9], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
+        }},
+
+
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
+                            Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
+                    , process(children[7], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
+        }},
+
+
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
+         [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
+        }},
+
+
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[3], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
+        }},
+
+        {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr)};
+            return new ASTNode(AstOperator::SYSCALL, vec);
         }},
 
         {{Symbol::keyword, {Symbol::EXIT, Symbol::expr}}, [](auto children, auto carry){
