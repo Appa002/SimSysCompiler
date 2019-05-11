@@ -38,7 +38,7 @@ namespace ACC{
         StructureType type = StructureType::NA;
         size_t size = 0;
         std::vector<Register> registerUsed;
-        TypeId typeId = 0;
+        TypeId typeId = TypeId(0, 0);
         std::vector<Structure> fields;
     };
 
@@ -50,7 +50,7 @@ namespace ACC{
         void writeLine(std::string const & line);
         std::string generate();
         std::vector<TypeId> argsType;
-        TypeId returnType = 0;
+        TypeId returnType = TypeId(0, 0);
     };
 
     enum class Register{
