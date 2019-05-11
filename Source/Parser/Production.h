@@ -15,7 +15,7 @@ namespace ACC {
         ID,
         BRACKET,
         MATH_OPERATOR,
-        PRINT,
+        SYSCALL,
         LITERAL,
         ASSIGN,
         EOS,
