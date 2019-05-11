@@ -132,6 +132,16 @@ void ACC::Log::Logger::logToFile(ACC::Log::LogLevel level, std::string str) {
     if(!file.is_open())
         return;
 
+    for(size_t i = 0; i < str.size(); i++){
+        if(str[i] == '<'){
+            str.erase(i, 1);
+            str.insert(i, "&lt;");
+        } else if (str[i] == '>'){
+                str.erase(i, 1);
+                str.insert(i, "&gt;");
+        }
+    }
+
     switch (colour){
         case Colour::Blue:
             str = R"(<b style="color: #253df7;">)" + str;
