@@ -15,6 +15,9 @@ namespace ACC{
 
         explicit AssignTokenGenerator(ASTNode* node);
 
+    private:
+        ACC::Structure handleElementary(ACC::Code &code, std::string id, TypeId type, Structure expr);
+
     };
 }
 
