@@ -17,10 +17,10 @@ namespace ACC{
         TypeToken(std::string str, TypeId typeId) : type(std::move(str)), typeId(typeId) {this->id = Symbol::TYPE;}
 
         std::string type;
-        TypeId typeId = TypeId(0);
+        TypeId typeId = TypeId(0, 0);
 
         std::string getIdentifier() override{
-            return "Type \'" + type + "\' Id: " + std::to_string(typeId.toInt());
+            return "Type \'" + type + "\' Id: " + std::to_string(typeId.getId());
         }
 
         friend inline bool operator==(TypeToken const & lhs, TypeToken const & rhs){
