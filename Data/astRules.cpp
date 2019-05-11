@@ -45,31 +45,45 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
 
         {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl, Symbol::BRACKET,
-                                       Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+                             Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
             vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
 
+            vec.push_back(new ASTNode(AstOperator::TYPE_DEF,
+                                      GeneralDataStore::create(dynamic_cast<TypeToken*>(children[5]->token)->typeId)));
+
+
             auto params = children[3];
             while(params != nullptr){
-                vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(params->children[0]->token)->sym));
-                if(params->children.size() == 3)
-                    params = params->children[2];
+                auto paramsVec = {
+                        new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(params->children[0]->token)->sym),
+                        new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(
+                                dynamic_cast<TypeToken*>(params->children[1]->token)->typeId))
+
+                };
+                vec.push_back(new ASTNode(AstOperator::__CONTAINER, paramsVec));
+
+                if(params->children.size() == 4)
+                    params = params->children[3];
                 else
                     params = nullptr;
             }
 
-            vec.push_back(process(children[7], nullptr));
+            vec.push_back(process(children[8], nullptr));
 
             return new ASTNode(AstOperator::FUNCTION, vec);
         }},
 
-        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET,
+        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET, Symbol::TYPE,
                                     Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
             vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
-            vec.push_back(process(children[6], nullptr));
+            vec.push_back(new ASTNode(AstOperator::TYPE_DEF,
+                    GeneralDataStore::create(dynamic_cast<TypeToken*>(children[4]->token)->typeId)));
+
+            vec.push_back(process(children[7], nullptr));
 
             return new ASTNode(AstOperator::FUNCTION, vec);
         }},
@@ -113,7 +127,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
         {{Symbol::keyword, {Symbol::PRINT, Symbol::expr}}, [](auto children, auto carry){
-            auto vec = {process(children[1], nullptr), new ASTNode(AstOperator::NONE)};
+            auto vec = {process(children[1], nullptr), new ASTNode(AstOperator::__NONE)};
             return new ASTNode(AstOperator::PRINT, vec);
         }},
 
@@ -172,16 +186,12 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
         {{Symbol::expr, {Symbol::LITERAL}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
-            ASTNodeDataType type = asLiteralToken->kind ==
-                    LiteralKind::NUMBER ? (ASTNodeDataType::NUMBER) : (ASTNodeDataType::STRING);
-            return new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, type);
+            return new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
         }},
 
         {{Symbol::expr, {Symbol::LITERAL, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
-            ASTNodeDataType type = asLiteralToken->kind ==
-                                   LiteralKind::NUMBER ? (ASTNodeDataType::NUMBER) : (ASTNodeDataType::STRING);
-            auto literal = new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, type);
+            auto literal = new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
             return process(children[1], literal);
         }},
 

@@ -26,15 +26,15 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
 
 
-            {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET,
+            {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET, Symbol::TYPE,
                                           Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
             {Symbol::function,    {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl, Symbol::BRACKET,
-                                   Symbol::COLON, Symbol::INDENT, Symbol::start}},
+                                        Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
 
-            {Symbol::paramsDecl,  {Symbol::DECL}},
-            {Symbol::paramsDecl,  {Symbol::DECL, Symbol::COMMA, Symbol::paramsDecl}},
+            {Symbol::paramsDecl,  {Symbol::DECL, Symbol::TYPE}},
+            {Symbol::paramsDecl,  {Symbol::DECL, Symbol::TYPE, Symbol::COMMA, Symbol::paramsDecl}},
 
 
             {Symbol::call,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}}, // id()

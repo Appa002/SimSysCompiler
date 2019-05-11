@@ -25,6 +25,7 @@
 #include <Lexical/Tokens/ExtentToken.h>
 #include <Lexical/Tokens/CommaToken.h>
 #include <Lexical/Tokens/ReturnToken.h>
+#include <builtinTypes.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -209,24 +210,45 @@ void ACC::LexicalAnalysis::var(size_t pos) {
     start(pos, true);
 }
 
-
 void ACC::LexicalAnalysis::type(size_t &pos) {
+    buffer.clear();
     readUntilNextLine(pos);
     bool matched = matchAsLongAs(pos,
-                                 [&](){return !contains(document.at(pos), {"\"", ";", " ", "=", "(", ")", "+", "-", "*", "/", ","});},
+                                 [&](){return !contains(document.at(pos), {"<", ">",
+                                     "[", "]", "\"", ";", " ", "=", "(", ")", "+", "-", "*", "/", ",", ":"});},
                                  [&](){
                                      buffer += document.at(pos);
     });
     if(!matched)
         throw std::runtime_error("Syntax error, at: " + std::to_string(pos));
 
-    auto id = isType(buffer); //TODO: Matches stuff like char just fine, but Array(char) doesn't work.
-    if(id == TypeId(0))
+    TypeId id;
+
+    if(isType(buffer) == TypeId(0,0) && matchIgnoreW('<', pos)){
+        pos++;
+        readUntilNextLine(pos);
+        std::string typeName;
+        matched = matchAsLongAs(pos,
+                [&](){return !contains(document.at(pos), {"<", ">",
+                                                          "[", "]", "\"", ";", " ", "=", "(", ")", "+", "-", "*", "/", ",", ":"});},
+                [&](){
+                    typeName += document.at(pos);
+        });
+
+        if(!matched)
+            throw std::runtime_error("Syntax error, at: " + std::to_string(pos));
+        pos++;
+
+        if(buffer == "ptr")
+            id = isType(typeName + "*"); //TODO: Better way to refer to special types
+    }else
+        id = isType(buffer);
+
+    if(id.getId() == 0)
         throw std::runtime_error("Unknown type, at: " + std::to_string(pos));
 
     tokens.push_back(new TypeToken(buffer, id));
 }
-
 
 void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens) {
 
@@ -242,7 +264,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
 
         if(isNumber(buffer))
-            tokens.push_back(new LiteralToken(std::stoul(buffer), LiteralKind::NUMBER));
+            tokens.push_back(new LiteralToken(std::stoul(buffer), BuiltIns::numType));
         else if(document.at(pos) == '"')
             parseStringLiteral(pos);
         else if (isVariable(buffer))
@@ -293,7 +315,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
 
     pos++;
     while(pos < document.size() && document.at(pos - 1) != ')'){
-        while(pos < document.size()  && !contains(document.at(pos), {",", ")"})){
+        while(pos < document.size()  && !contains(document.at(pos), {":", "," ,")"})){
             if(document.at(pos) == ' '){
                 ++pos;
                 continue;
@@ -308,6 +330,8 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
         if(!buffer.empty()){
             tokens.push_back(new DeclToken(buffer));
             variableTable.emplace(buffer, Symbol::DECL);
+            pos++;
+            type(pos);
         }
 
         if(document.at(pos) == ',')
@@ -321,6 +345,10 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
 
     tokens.push_back(new BracketToken(BracketKind::CLOSED));
 
+    if(!matchIgnoreW(':', pos))
+        throw std::runtime_error("Expected return type after function definition, at: " + std::to_string(pos));
+    pos++;
+    type(pos);
 
     if(matchIgnoreW(':', pos))
         tokens.push_back(new ColonToken());
@@ -372,11 +400,10 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
-    typesTable["num"] = TypeId(1);
-    typesTable["char"] = TypeId(2);
-    typesTable["pNum"] = TypeId(3);
-    typesTable["pChar"] = TypeId(4);
-
+    typesTable["num"] = BuiltIns::numType;
+    typesTable["char"] = BuiltIns::charType;
+    typesTable["num*"] = BuiltIns::ptrNumType;
+    typesTable["char*"] = BuiltIns::ptrCharType;
 
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
@@ -529,13 +556,13 @@ void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
     if(document.at(pos) != '"')
         throw std::runtime_error("String literal not ending with `\"`, at:" + std::to_string(pos));
 
-    tokens.push_back(new LiteralToken(buffer, LiteralKind::STRING));
+    tokens.push_back(new LiteralToken(buffer, BuiltIns::ptrCharType));
 }
 
 ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
     if (typesTable.find(str) != typesTable.cend())
         return typesTable.at(str);
-    return 0;
+    return TypeId(0, 0);
 }
 
 
