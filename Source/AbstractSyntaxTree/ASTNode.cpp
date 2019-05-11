@@ -26,18 +26,20 @@
 #include <Assembly/TokenGenerator/CallTokenGenerator.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <GeneralDataStore.h>
+#include <builtinTypes.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;
     this->children = std::move(children);
+    this->type = BuiltIns::__none;
 }
 
 
 
-ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, ACC::ASTNodeDataType type) {
+ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, TypeId type) {
     this->op = op;
     this->data = std::move(literal);
-    this->dataKind = type;
+    this->type = type;
 }
 
 
@@ -45,19 +47,19 @@ ACC::ASTNode::ASTNode(AstOperator op, std::string str) {
     if(op == AstOperator::LITERAL)
         throw std::runtime_error("Initialise literals with a general store");
     this->op = op;
-    this->dataKind = ASTNodeDataType::ID;
+    this->type = BuiltIns::__none;
     this->data.storeT(std::move(str));
 }
 
 ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore store) {
     this->op = op;
-    this->dataKind = ASTNodeDataType::OTHER;
+    this->type = BuiltIns::__none;
     this->data = std::move(store);
 }
 
 ACC::ASTNode::ASTNode(AstOperator op) {
-    if(op != AstOperator::NONE)
-        throw std::runtime_error("Single argument constructor for `ASTNode` can only be used for `AstOperator::None`");
+    if(op != AstOperator::__NONE)
+        throw std::runtime_error("Single argument constructor for `ASTNode` can only be used for `AstOperator::__NONE`");
     this->op = op;
 }
 
@@ -87,23 +89,28 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
         case AstOperator::MINUS:
             return "-";
         case AstOperator::LITERAL:{
-            if(dataKind == ASTNodeDataType ::NUMBER)
+            if(type == BuiltIns::numType || type == BuiltIns::charType)
                 return "Lit: " + std::to_string(data.createNumber());
-            else if(dataKind == ASTNodeDataType::STRING)
+            else if(type == BuiltIns::ptrCharType)
                 return std::string("Lit: ") + "\"" + data.asT<std::string>() +"\"";
-            else
-                return std::string("Lit (Not stored with correct type): \"") + data.asT<std::string>() +"\"";
+            else{
+                std::string data = "[ ";
+                for(size_t i = 0; i < this->data.size(); i++){
+                    data += " `" + toHex(data.at(i)) + "`";
+                    if(i + 1 < data.size())
+                        data += ",";
+                }
+                data += " ]";
+
+                return "Lit (Complex) " + data;
+            }
         }
         case AstOperator::SEQ:
             return "SEQ";
         case AstOperator::ASSIGN:
             return "assign";
         case AstOperator::ID:
-            if(dataKind == ASTNodeDataType::ID)
-                return std::string("ID: ") + data.asT<std::string>(0);
-            else
-                return std::string("ID (Not stored with correct type): ") + data.asT<std::string>(0);
-
+            return std::string("ID: ") + data.asT<std::string>(0);
         case AstOperator::PRINT:
             return "print";
         case AstOperator::EXIT:
@@ -118,12 +125,15 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "call";
         case AstOperator::RETURN:
             return "return";
-        case AstOperator::NONE:
-            return "none";
+        case AstOperator::__NONE:
+            return "__none";
         case AstOperator::TYPE_DEF:
-            return "type def; id: " + std::to_string(data.createNumber());
+            return "type def; id: " + std::to_string(data.asT<TypeId>().getId()) +
+            " size: " +  std::to_string(data.asT<TypeId>().getSize());
+        case AstOperator::__CONTAINER:
+            return "__container";
     }
-    return "";
+    throw std::runtime_error("Unknown Symbol!");
 }
 
 
@@ -156,8 +166,12 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new CallTokenGenerator(this));
         case AstOperator::RETURN:
             return std::unique_ptr<Expr>(new ReturnTokenGenerator(this));
-        case AstOperator::NONE:
-            throw std::runtime_error("Operator `none` can't be interpreted as an expression.");
+        case AstOperator::__NONE:
+            throw std::runtime_error("Operator `__none` can't be interpreted as an expression.");
+        case AstOperator::TYPE_DEF:
+            throw std::runtime_error("Operator `type_def` can't be interpreted as an expression.");
+        case AstOperator::__CONTAINER:
+            throw std::runtime_error("Operator `__container` can't be interpreted as an expression.");
     }
     return std::unique_ptr<Expr>(nullptr);
 }

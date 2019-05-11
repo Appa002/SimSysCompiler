@@ -9,6 +9,7 @@
 #include <Parser/ParseNode.h>
 #include <memory>
 #include <GeneralDataStore.h>
+#include <TypeId.h>
 
 enum class AstOperator{
     PLUS,
@@ -25,7 +26,8 @@ enum class AstOperator{
     CALL,
     RETURN,
     TYPE_DEF,
-    NONE
+    __NONE,
+    __CONTAINER
 };
 
 namespace ACC {
@@ -46,7 +48,7 @@ namespace ACC {
         void _print(std::string indent, bool isLast) const;
 
         ASTNode(AstOperator op, std::vector<ASTNode*> children);
-        ASTNode(AstOperator op, GeneralDataStore literal, ASTNodeDataType type);
+        ASTNode(AstOperator op, GeneralDataStore literal, TypeId type);
         ASTNode(AstOperator op, std::string str);
         ASTNode(AstOperator op,  GeneralDataStore store);
         explicit ASTNode(AstOperator op);
@@ -57,7 +59,7 @@ namespace ACC {
 
         AstOperator op;
         GeneralDataStore data;
-        ASTNodeDataType dataKind = ASTNodeDataType::ID;
+        TypeId type;
     };
 
 }
