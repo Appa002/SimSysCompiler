@@ -190,7 +190,7 @@ std::string ACC::Fn::generate() {
     std::string out;
     out += "push rbp\n";
     out += "mov rbp, rsp\n";
-    out += "sub rsp, "+ std::to_string(curBpOffset - 1) +"\n";
+    out += "sub rsp, "+ std::to_string(curBpOffset) +"\n";
     out += code;
     return out;
 }

@@ -44,7 +44,7 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
 
         code.emplaceVarSymbol(sym, structure);
         offset += size;
-        fn.curBpOffset += size + 1; //TODO: Figure out why the fuck one needs to add 1!
+        fn.curBpOffset += size;
     }
 
     node->children.at(node->children.size() - 1)->asExpr()->generate(code);
