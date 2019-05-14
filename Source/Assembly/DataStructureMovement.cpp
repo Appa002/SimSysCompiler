@@ -187,3 +187,22 @@ std::string ACC::Movs::bp2r(offset_t offset, std::string reg) {
     return "mov " + reg +", [rbp" + sign + std::to_string(offset) + "]";
 }
 
+std::string ACC::Movs::bp2bp(offset_t offseta, offset_t offsetb, std::string reg, size_t size) {
+    if(size > 8)
+        throw std::runtime_error("Can move a maximum of 8 bytes from an bp offset to an bp offset!");
+
+    std::string aStr = offseta < 0 ? ("-") : ("+");
+    std::string bStr = offsetb < 0 ? ("-") : ("+");
+
+    offseta = offseta < 0 ? (-offseta) : (offseta);
+    offsetb = offsetb < 0 ? (-offsetb) : (offsetb);
+
+    aStr += std::to_string(offseta);
+    bStr += std::to_string(offsetb);
+
+
+    return
+        "lea " + reg + ", [rbp"+aStr+"]\n"
+        "mov [rbp" + bStr + "], " + reg;
+}
+

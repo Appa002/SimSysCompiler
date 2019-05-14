@@ -16,7 +16,7 @@ namespace ACC{
 
     enum class StructureType{
         elementary,
-        complex,
+        complex, // TODO: Reserved for later.
         NA
     };
 
@@ -28,12 +28,8 @@ namespace ACC{
         explicit Structure(StructureType type) : type(type) {};
 
         std::function<std::string (Code&)> copyToStack;
-        std::function<std::string (Code&)> copyAddressToStack;
         std::function<std::string (std::string, Code&)> copyToRegister;
-        std::function<std::string (std::string, Code&)> copyAddressToRegister;
         std::function<std::string (int32_t , Code&)> copyToBpOffset;
-        std::function<std::string (int32_t, Code&)> copyAddressToBpOffset;
-        std::function<std::string (Code&)> rawValue;
 
         StructureType type = StructureType::NA;
         size_t size = 0;
@@ -45,11 +41,10 @@ namespace ACC{
     struct Fn{
         std::string code;
         std::string symbol;
-        uint32_t curBpOffset = 17;
+        uint32_t curBpOffset = 0;
 
         void writeLine(std::string const & line);
         std::string generate();
-        std::vector<TypeId> argsType;
         TypeId returnType = TypeId(0, 0);
     };
 

@@ -5,72 +5,73 @@ ACC::LiteralTokenGenerator::LiteralTokenGenerator(ACC::ASTNode *node) : Expr(nod
 
 }
 
-ACC::Structure ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
+void ACC::LiteralTokenGenerator::handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
+    structure.type = StructureType ::elementary;
+    structure.size = node->data.size();
+
+
+    fn.curBpOffset += node->data.size();
+    fn.writeLine(Movs::imm2bp(node->data, -(offset_t)fn.curBpOffset));
     size_t address = fn.curBpOffset;
-
-    /* Return structure setup... */
-    auto returnStruct = Structure();
-    returnStruct.typeId = node->type;
-
-    std::string literalEncoded; // We need to encode the literal as a string while taking types into account;
-    //e.g. 100 as char and num would yield "d" and "100" respectively.
-
-    if(node->type == BuiltIns::ptrCharType){
-        returnStruct.type = StructureType::complex;
-        returnStruct.size = node->data.size();
-    }
-    else if(node->type == BuiltIns::numType){
-        literalEncoded = std::to_string(node->data.createNumber());
-        returnStruct.type = StructureType::elementary;
-        returnStruct.size = BuiltIns::numType.getSize();
-    }
+    fn.curBpOffset++; // TODO: Figure out why the fuck this is needed.
 
 
-    if(returnStruct.type == StructureType::complex){
-        /* If the litearl is complex other code will assume the data has been stored somewhere and can be accessed*/
-        fn.writeLine(Movs::imm2bp(node->data, -(offset_t)fn.curBpOffset));
-        fn.curBpOffset += node->data.size();
-    }
 
-    GeneralDataStore store = node->data; // Copy for lambdas.
-
-    returnStruct.copyToRegister = [=](std::string reg, Code& c){
-        return "mov " + reg + ", " + literalEncoded;
+    structure.copyToStack = [=](Code& c){
+        Register reg = c.getFreeRegister();
+        std::string out = "lea " + registerToString(8, reg) + ", [rbp - " + std::to_string(address) + "]";
+        out += "\nmov [rsp], " + registerToString(8, reg);
+        c.freeRegister(reg);
+        return out;
     };
 
-    returnStruct.copyToStack = [=](Code& c){
-        return Movs::imm2st(store);
+    structure.copyToBpOffset = [=](int32_t offset, Code& c){
+        Register reg = c.getFreeRegister();
+        std::string sign = offset < 0 ? ("-") : ("+");
+        offset = offset < 0 ? (offset * -1) : (offset);
+        std::string out = "lea " + registerToString(8, reg) + ", [rbp - " + std::to_string(address) + "]";
+        out += "\nmov [rbp " + sign + std::to_string(offset) + "], " + registerToString(8, reg);
+        c.freeRegister(reg);
+        return out;
     };
 
-    returnStruct.copyToBpOffset = [=](int32_t offset, Code& c){
-        return Movs::imm2bp(store, offset);
-    };
-
-    returnStruct.copyAddressToRegister = [=](std::string reg, Code& c){
+    structure.copyToRegister = [=](std::string reg, Code& c){
         return "lea " + reg + ", [rbp - " + std::to_string(address) + "]";
     };
 
-    returnStruct.copyAddressToStack = [=](Code& c){
-        Register reg = c.getFreeRegister();
-        std::string regStr = registerToString(8, reg);
-        std::string out = "lea " + regStr + ", [rbp - " +  std::to_string(address) + "]\n";
-        out += "mov [rsp], " + regStr;
-        return out;
-        c.freeRegister(reg);
-    };
+}
 
-    returnStruct.copyAddressToBpOffset = [=](int32_t offset, Code& c){
-        Register reg = c.getFreeRegister();
-        std::string regStr = registerToString(8, reg);
-        std::string out = "lea " + regStr + ", [rbp - " +  std::to_string(address) + "]\n";
-        std::string sign = offset < 0 ? ("-") : ("+");
-        offset = offset < 0 ? (offset * -1) : (offset);
-        out += "mov [rbp "+sign + std::to_string(offset) +"], " + regStr;
-        return out;
-        c.freeRegister(reg);
-    };
+ACC::Structure ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
+    auto& fn = code.getFnSymbol();
 
+    auto returnStruct = Structure();
+    returnStruct.typeId = node->type;
+
+    if(node->type == BuiltIns::ptrCharType){
+        handleStringLiteral(returnStruct, code, fn);
+    }
+    else if(node->type == BuiltIns::numType){
+        handleNumberLiteral(returnStruct, code, fn);
+    }
 
     return returnStruct;
+}
+
+void ACC::LiteralTokenGenerator::handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
+    std::string literalEncoded = std::to_string(node->data.createNumber());
+    structure.type = StructureType::elementary;
+    structure.size = BuiltIns::numType.getSize();
+    GeneralDataStore store = node->data; // Copy for lambdas.
+
+    structure.copyToRegister = [=](std::string reg, Code& c){
+        return "mov " + reg + ", " + literalEncoded;
+    };
+
+    structure.copyToStack = [=](Code& c){
+        return Movs::imm2st(store);
+    };
+
+    structure.copyToBpOffset = [=](int32_t offset, Code& c){
+        return Movs::imm2bp(store, offset);
+    };
 }

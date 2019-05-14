@@ -9,6 +9,8 @@ ACC::Structure ACC::DivisionTokenGenerator::generate(ACC::Code &code) {
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();
 
+    //TODO: Type Conversions.
+
     if(!(code.isRegisterFree(Register::rD) && code.isRegisterFree(Register::rA) && code.isRegisterFree(Register::rC)))
         throw std::runtime_error("Division needs register rdx, rax and rcx");
 
@@ -29,6 +31,7 @@ ACC::Structure ACC::DivisionTokenGenerator::generate(ACC::Code &code) {
     fn.writeLine("div rcx");
 
     auto return_struct = Structure(StructureType::elementary);
+    return_struct.typeId = lhs.typeId;
 
     return_struct.copyToRegister = [=](std::string reg, Code& c){
         if(reg != "rax")

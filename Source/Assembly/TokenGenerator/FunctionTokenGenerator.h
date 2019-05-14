@@ -14,6 +14,7 @@ namespace ACC{
         Structure generate(ACC::Code &code) override;
         explicit FunctionTokenGenerator(ASTNode* node);
 
+        std::string copyIntoStackFrame(size_t offset, size_t loc, size_t size, ACC::Code &code);
     };
 }
 

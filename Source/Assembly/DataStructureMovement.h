@@ -29,5 +29,8 @@ namespace ACC {
         std::string r2st(std::string reg);
 
         std::string bp2r(offset_t offset, std::string reg);
+
+        std::string bp2bp(offset_t offseta, offset_t offsetb, std::string reg, size_t size);
+
     }
 }

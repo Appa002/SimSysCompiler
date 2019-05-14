@@ -5,6 +5,8 @@
 #ifndef SIMSYSCOMPILER_TYPEID_H
 #define SIMSYSCOMPILER_TYPEID_H
 
+#include <vector>
+
 namespace ACC {
     struct TypeId {
         TypeId() = default;

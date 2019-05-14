@@ -1,4 +1,5 @@
 #include "AddTokenGenerator.h"
+#include <Logger/Logger.h>
 
 ACC::AddTokenGenerator::AddTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
@@ -7,6 +8,9 @@ ACC::AddTokenGenerator::AddTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 ACC::Structure ACC::AddTokenGenerator::generate(ACC::Code &code) {
     auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
+
+   //TODO: Type conversion.
+
     auto& fn = code.getFnSymbol();
 
     auto lhsRegister = code.getFreeRegister();
@@ -20,9 +24,12 @@ ACC::Structure ACC::AddTokenGenerator::generate(ACC::Code &code) {
         fn.writeLine(rhs.copyToRegister(registerToString(8, rhsRegister), code));
     }
 
+    /* TODO: Implement generation for complex structures by invoking operator+ on that structure */
+
     fn.writeLine("add "+ registerToString(8, lhsRegister) +", "+ registerToString(8, rhsRegister));
 
     auto return_struct = Structure(StructureType::elementary);
+    return_struct.typeId = lhs.typeId;
 
     return_struct.copyToRegister = [=](std::string reg, Code& c){
         if(reg != "rax")

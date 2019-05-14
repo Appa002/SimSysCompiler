@@ -11,15 +11,11 @@ std::string loadReg(ACC::Code &code, ACC::Register reg, ACC::Structure structure
 
     code.reserveRegister(reg);
 
-    if (structure.type == StructureType::elementary) {
-        return structure.copyToRegister( registerToString(8, reg), code);
+    std::string out = structure.copyToRegister( registerToString(8, reg), code);
 
-    } else if (structure.type == StructureType::complex) {
-        return structure.copyAddressToRegister(registerToString(8, reg), code);
-    }
     code.freeRegister(structure.registerUsed);
 
-    return "";
+    return out;
 }
 
 ACC::Structure ACC::SyscallTokenGenerator::generate(ACC::Code &code) {

@@ -19,7 +19,7 @@ namespace ACC{
             return "Id ("+sym+")";
         }
 
-            friend inline bool operator==(IdToken const & lhs, IdToken const & rhs){
+        friend inline bool operator==(IdToken const & lhs, IdToken const & rhs){
             return lhs.sym == rhs.sym;
         }
     };

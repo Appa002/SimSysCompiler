@@ -8,13 +8,16 @@ ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     for(size_t i = 1; i < node->children.size(); i++){
         auto value = node->children[i]->asExpr()->generate(code);
-        fn.writeLine("sub rsp, 8");
+        fn.writeLine("sub rsp, " + std::to_string(value.typeId.getSize()));
         fn.writeLine(value.copyToStack(code));
     }
 
-    fn.writeLine("call " + node->children[0]->data.asT<std::string>());
+    auto name = node->children[0]->data.asT<std::string>();
+    fn.writeLine("call " + name);
 
     auto out = Structure(StructureType::elementary);
+    out.typeId = code.getFnSymbol(name).returnType;
+
     out.copyToRegister = [](std::string reg, Code& c){
         if(reg != "rax")
             return "mov " + reg + " , rax";
@@ -32,9 +35,6 @@ ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
 
         return "mov qword [rbp " + sign + offstr + "], rax";
     };
-
-
-    out.size = 8;
 
     return out;
 }

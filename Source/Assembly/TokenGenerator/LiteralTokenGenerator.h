@@ -14,6 +14,10 @@ namespace ACC{
         Structure generate(ACC::Code &code) override;
         explicit LiteralTokenGenerator(ASTNode* node);
 
+        void handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn);
+        void handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn);
+
     };
 }
+
 

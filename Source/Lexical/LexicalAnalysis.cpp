@@ -107,7 +107,6 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
 }
 
 void ACC::LexicalAnalysis::call(size_t pos){
-    readUntilNextLine(pos);
     if(matchIgnoreW('(', pos))
         tokens.push_back(new BracketToken(BracketKind::OPEN));
     else

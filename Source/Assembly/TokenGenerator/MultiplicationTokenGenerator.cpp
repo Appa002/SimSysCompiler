@@ -9,6 +9,8 @@ ACC::Structure ACC::MultiplicationTokenGenerator::generate(ACC::Code &code) {
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();
 
+    //TODO: Type Conversions.
+
     auto lhsRegister = code.getFreeRegister();
     auto rhsRegister = code.getFreeRegister();
 
@@ -23,6 +25,7 @@ ACC::Structure ACC::MultiplicationTokenGenerator::generate(ACC::Code &code) {
     fn.writeLine("imul "+ registerToString(8, lhsRegister) +", "+ registerToString(8, rhsRegister));
 
     auto return_struct = Structure(StructureType::elementary);
+    return_struct.typeId = lhs.typeId;
 
     return_struct.copyToRegister = [=](std::string reg, Code& c){
         if(reg != "rax")
