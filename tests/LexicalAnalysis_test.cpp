@@ -5,7 +5,7 @@
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/MathOperatorToken.h>
-#include <Lexical/Tokens/PrintToken.h>
+#include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/EOSToken.h>
 #include <Lexical/Tokens/BracketToken.h>
 #include "Production.h"
@@ -63,8 +63,8 @@ TEST(ExpressionizedInputSuit, Parsing) {
             case Symbol::MATH_OPERATOR:
                 EXPECT_EQ(*(MathOperatorToken*)token, *(MathOperatorToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";
                 break;
-            case Symbol::PRINT:
-                EXPECT_EQ(*(PrintToken*)token, *(PrintToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";
+            case Symbol::SYSCALL:
+                EXPECT_EQ(*(SyscallToken*)token, *(SyscallToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";
                 break;
             case Symbol::LITERAL:
                 EXPECT_EQ(*(LiteralToken*)token, *(LiteralToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";

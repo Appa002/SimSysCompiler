@@ -19,6 +19,7 @@ enum class AstOperator{
     LITERAL,
     SEQ,
     ASSIGN,
+    REASSIGN,
     ID,
     SYSCALL,
     EXIT,

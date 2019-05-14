@@ -92,10 +92,16 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             return;
         }
     }
-    else if (isVariable(buffer)) {
+    else if (isSymbol(buffer)) {
         tokens.push_back(new IdToken(buffer));
-        buffer.clear();
-        call(pos + 1);
+
+        if(symbolTable[buffer] == Symbol::FUNCTION){
+            buffer.clear();
+            call(pos + 1);
+        }else if(symbolTable[buffer] == Symbol::DECL){
+            buffer.clear();
+            assignment(pos + 1);
+        }
         return;
     }
     else{
@@ -145,6 +151,23 @@ void ACC::LexicalAnalysis::call(size_t pos){
 
 }
 
+void ACC::LexicalAnalysis::assignment(size_t pos) {
+    if(!matchIgnoreW('=', pos))
+        throw std::runtime_error("Assignment needs to be followed by an expression, at:" + std::to_string(pos));
+
+    tokens.push_back(new AssignToken());
+
+    pos++;
+    expr(pos, {";"});
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing ; at end of expression, at:" + std::to_string(pos));
+
+    tokens.push_back(new EOSToken());
+
+    start(pos + 1, true);
+}
+
 void ACC::LexicalAnalysis::ret(size_t pos) {
     readUntilNextLine(pos);
 
@@ -176,11 +199,11 @@ void ACC::LexicalAnalysis::var(size_t pos) {
                       buffer += document.at(pos);
     });
 
-    if(isVariable(buffer))
+    if(isSymbol(buffer))
         throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
 
     tokens.push_back(new DeclToken(buffer));
-    variableTable.emplace(buffer, Symbol::DECL);
+    symbolTable.emplace(buffer, Symbol::DECL);
 
     if(!matchIgnoreW(':', pos))
         throw std::runtime_error("Variable declaration requires type, at: " + std::to_string(pos));
@@ -266,7 +289,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
             tokens.push_back(new LiteralToken(std::stoul(buffer), BuiltIns::numType));
         else if(document.at(pos) == '"')
             parseStringLiteral(pos);
-        else if (isVariable(buffer))
+        else if (isSymbol(buffer))
             tokens.push_back(new IdToken(buffer));
         else if (document.at(pos) == '(')
             tokens.push_back(new BracketToken(BracketKind::OPEN));
@@ -289,7 +312,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
         if(pos + 1 < document.size()){
             pos++;
         }else
-            throw std::runtime_error("Expected ; at end of variable definition, at: " + std::to_string(pos));
+            throw std::runtime_error("Expected ; at end of expression, at: " + std::to_string(pos));
     }
 }
 
@@ -303,7 +326,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
     });
 
     tokens.push_back(new DeclToken(buffer));
-    variableTable.emplace(buffer, Symbol::FUNCTION);
+    symbolTable.emplace(buffer, Symbol::FUNCTION);
 
     buffer.clear();
 
@@ -328,7 +351,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
 
         if(!buffer.empty()){
             tokens.push_back(new DeclToken(buffer));
-            variableTable.emplace(buffer, Symbol::DECL);
+            symbolTable.emplace(buffer, Symbol::DECL);
             pos++;
             type(pos);
         }
@@ -452,8 +475,8 @@ const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {
     return tokens;
 }
 
-bool ACC::LexicalAnalysis::isVariable(std::string idf) {
-    return variableTable.find(idf) != variableTable.end();
+bool ACC::LexicalAnalysis::isSymbol(std::string idf) {
+    return symbolTable.find(idf) != symbolTable.end();
 }
 
 bool ACC::LexicalAnalysis::isNumber(char c) {
@@ -563,5 +586,6 @@ ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
         return typesTable.at(str);
     return TypeId(0, 0);
 }
+
 
 

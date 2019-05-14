@@ -41,10 +41,10 @@ namespace ACC{
 
         std::string getIdentifier() override {
             if(type == BuiltIns::charType || type == BuiltIns::numType){
-                return "Literal (Elementary): 0x" + toHex(literal.createNumber());
+                return "Literal (Arithmetic): 0x" + toHex(literal.createNumber());
             }
             else if(type == BuiltIns::ptrCharType){
-                return "Literal (Complex): " + literal.asT<std::string>() +"\"";
+                return "Literal (String): \"" + literal.asT<std::string>() +"\"";
             }
             else{
                 std::string data = "[ ";
@@ -55,7 +55,7 @@ namespace ACC{
                 }
                 data += " ]";
 
-                return "Literal (Complex): " + data;
+                return "Literal (Array): " + data;
             }
         }
 

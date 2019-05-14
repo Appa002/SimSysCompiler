@@ -7,8 +7,6 @@ ACC::LiteralTokenGenerator::LiteralTokenGenerator(ACC::ASTNode *node) : Expr(nod
 
 void ACC::LiteralTokenGenerator::handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
     structure.type = StructureType ::elementary;
-    structure.size = node->data.size();
-
 
     fn.curBpOffset += node->data.size();
     fn.writeLine(Movs::imm2bp(node->data, -(offset_t)fn.curBpOffset));
@@ -58,7 +56,6 @@ ACC::Structure ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
 void ACC::LiteralTokenGenerator::handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
     std::string literalEncoded = std::to_string(node->data.createNumber());
     structure.type = StructureType::elementary;
-    structure.size = BuiltIns::numType.getSize();
     GeneralDataStore store = node->data; // Copy for lambdas.
 
     structure.copyToRegister = [=](std::string reg, Code& c){

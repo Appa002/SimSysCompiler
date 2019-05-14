@@ -32,10 +32,8 @@ namespace ACC{
         std::function<std::string (int32_t , Code&)> copyToBpOffset;
 
         StructureType type = StructureType::NA;
-        size_t size = 0;
         std::vector<Register> registerUsed;
         TypeId typeId = TypeId(0, 0);
-        std::vector<Structure> fields;
     };
 
     struct Fn{
@@ -74,7 +72,6 @@ namespace ACC{
         std::unordered_map<Register, bool> freeRegisterTable;
 
         Stack<std::string> fnStack;
-        int ref = 1;
         std::string dataSection;
 
     public:

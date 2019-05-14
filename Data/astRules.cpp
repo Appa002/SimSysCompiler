@@ -121,6 +121,12 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::ASSIGN, vec);
         }},
 
+        {{Symbol::assignment, {Symbol::ID, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            auto vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym),
+                        process(children[2], nullptr)};
+            return new ASTNode(AstOperator::REASSIGN, vec);
+        }},
+
 
         {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
                             Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,

@@ -20,11 +20,11 @@ namespace ACC {
         std::string document;
         int refCount = 0;
         bool processed = false;
-        std::unordered_map<std::string, Symbol> variableTable;
+        std::unordered_map<std::string, Symbol> symbolTable;
         std::unordered_map<std::string, TypeId> typesTable;
 
         void preProcessDocument();
-        bool isVariable(std::string idf);
+        bool isSymbol(std::string idf);
         bool isNumber(char c);
         bool isNumber(std::string str);
         TypeId isType(std::string str);
@@ -39,6 +39,7 @@ namespace ACC {
         void syscall(size_t pos);
         void exit(size_t pos);
         void var(size_t pos);
+        void assignment(size_t pos);
         void expr(size_t& pos, std::vector<std::string> exitTokens);
         void ret(size_t pos);
         void call(size_t pos);

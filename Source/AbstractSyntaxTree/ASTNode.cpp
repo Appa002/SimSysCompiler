@@ -23,6 +23,7 @@
 #include <Assembly/TokenGenerator/MultiplicationTokenGenerator.h>
 #include <Assembly/TokenGenerator/FunctionTokenGenerator.h>
 #include <Assembly/TokenGenerator/ReturnTokenGenerator.h>
+#include <Assembly/TokenGenerator/ReassignTokenGenerator.h>
 #include <Assembly/TokenGenerator/CallTokenGenerator.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <GeneralDataStore.h>
@@ -132,6 +133,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             " size: " +  std::to_string(data.asT<TypeId>().getSize());
         case AstOperator::__CONTAINER:
             return "__container";
+        case AstOperator::REASSIGN:
+            return "reassign";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
@@ -166,6 +169,8 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new CallTokenGenerator(this));
         case AstOperator::RETURN:
             return std::unique_ptr<Expr>(new ReturnTokenGenerator(this));
+        case AstOperator::REASSIGN:
+            return std::unique_ptr<Expr>(new ReassignTokenGenerator(this));
         case AstOperator::__NONE:
             throw std::runtime_error("Operator `__none` can't be interpreted as an expression.");
         case AstOperator::TYPE_DEF:
