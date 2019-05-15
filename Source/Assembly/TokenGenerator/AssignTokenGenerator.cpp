@@ -10,6 +10,29 @@ ACC::Structure ACC::AssignTokenGenerator::generate(ACC::Code &code) {
     //TODO: Type Conversions.
     expr.typeId = type;
 
+    if(!expr.isStored){
+        auto& fn = code.getFnSymbol();
+        fn.curBpOffset += expr.typeId.getSize();
+        fn.writeLine(expr.copyToBpOffset(-fn.curBpOffset, code));
+        expr.copyToBpOffset = [=](int32_t offset, Code& c){
+            Register reg = c.getFreeRegister();
+            std::string sign = offset < 0 ? ("-") : ("+");
+            offset = offset < 0 ? (offset * -1) : (offset);
+            std::string out = "mov " + registerToString(expr.typeId.getSize(), reg) + ", [rbp - " + std::to_string(fn.curBpOffset) + "]";
+            out += "\nmov [rbp " + sign + std::to_string(offset) + "], " + registerToString(expr.typeId.getSize(), reg);
+            c.freeRegister(reg);
+            return out;
+        };
+
+        expr.copyToStack = [=](Code& c){
+            Register reg = c.getFreeRegister();
+            std::string out = "mov " + registerToString(expr.typeId.getSize(), reg) + ", [rbp - " + std::to_string(fn.curBpOffset) + "]";
+            out += "\nmov [rsp], " + registerToString(expr.typeId.getSize(), reg);
+            c.freeRegister(reg);
+            return out;
+        };
+    }
+
     code.emplaceVarSymbol(id, expr);
 
     return {};
