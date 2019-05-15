@@ -36,7 +36,7 @@ namespace ACC{
         StructureType type = StructureType::NA;
         std::vector<Register> registerUsed;
         TypeId typeId = TypeId(0, 0);
-        bool isStored = false;
+        bool isStored = true;
     };
     struct Fn{
         std::string code;
