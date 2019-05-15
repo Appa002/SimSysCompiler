@@ -11,6 +11,8 @@
 #include <TypeId.h>
 #include <functional>
 #include <Stack.h>
+#include <memory>
+#include <ScopedSymbolTable.h>
 
 namespace ACC{
 
@@ -35,7 +37,6 @@ namespace ACC{
         std::vector<Register> registerUsed;
         TypeId typeId = TypeId(0, 0);
     };
-
     struct Fn{
         std::string code;
         std::string symbol;
@@ -67,9 +68,11 @@ namespace ACC{
 
     class Code {
     private:
-        std::unordered_map<std::string, Structure> varTable;
         std::unordered_map<std::string, Fn> fnTable;
         std::unordered_map<Register, bool> freeRegisterTable;
+
+        ScopedSymbolTable<Structure>* curScope = nullptr;
+        std::shared_ptr<ScopedSymbolTable<Structure>> globalScope = nullptr;
 
         Stack<std::string> fnStack;
         std::string dataSection;
@@ -93,6 +96,9 @@ namespace ACC{
 
         void writeLineToData(std::string const & str);
         std::string combineOutput();
+
+        void pushScope();
+        void popScope();
     };
 }
 

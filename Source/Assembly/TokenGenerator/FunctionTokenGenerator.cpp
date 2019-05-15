@@ -10,6 +10,8 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
 
     size_t offset = 16;
 
+    code.pushScope();
+
     for(size_t i = 2; i < node->children.size() - 1; i++){
         auto structure = Structure(StructureType::elementary);
         auto container = node->children[i];

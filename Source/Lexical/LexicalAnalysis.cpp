@@ -94,11 +94,11 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
     }
     else if (isSymbol(buffer)) {
         tokens.push_back(new IdToken(buffer));
-
-        if(symbolTable[buffer] == Symbol::FUNCTION){
+        auto sym = getSymbol(buffer);
+        if(sym == Symbol::FUNCTION){
             buffer.clear();
             call(pos + 1);
-        }else if(symbolTable[buffer] == Symbol::DECL){
+        }else if(sym == Symbol::DECL){
             buffer.clear();
             assignment(pos + 1);
         }
@@ -185,6 +185,7 @@ void ACC::LexicalAnalysis::ret(size_t pos) {
     tokens.push_back(new EOSToken());
     pos++;
     buffer.clear();
+    popScope();
     start(pos, true);
 }
 
@@ -203,7 +204,7 @@ void ACC::LexicalAnalysis::var(size_t pos) {
         throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
 
     tokens.push_back(new DeclToken(buffer));
-    symbolTable.emplace(buffer, Symbol::DECL);
+    emplaceSymbol(buffer, Symbol::DECL);
 
     if(!matchIgnoreW(':', pos))
         throw std::runtime_error("Variable declaration requires type, at: " + std::to_string(pos));
@@ -316,7 +317,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
     }
 }
 
-void ACC::LexicalAnalysis::fn(size_t pos) {
+void ACC::LexicalAnalysis::fn(size_t pos){
     skipAll(' ', pos);
 
     matchAsLongAs(pos,
@@ -326,10 +327,10 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
     });
 
     tokens.push_back(new DeclToken(buffer));
-    symbolTable.emplace(buffer, Symbol::FUNCTION);
+    emplaceSymbol(buffer, Symbol::FUNCTION);
 
     buffer.clear();
-
+    pushScope();
     if(matchIgnoreW('(', pos))
         tokens.push_back(new BracketToken(BracketKind::OPEN));
     else
@@ -351,7 +352,7 @@ void ACC::LexicalAnalysis::fn(size_t pos) {
 
         if(!buffer.empty()){
             tokens.push_back(new DeclToken(buffer));
-            symbolTable.emplace(buffer, Symbol::DECL);
+            emplaceSymbol(buffer, Symbol::DECL);
             pos++;
             type(pos);
         }
@@ -422,6 +423,9 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
 
+    curScope = new ScopedSymbolTable<Symbol>();
+    globalScope = curScope;
+
     typesTable["num"] = BuiltIns::numType;
     typesTable["char"] = BuiltIns::charType;
     typesTable["num*"] = BuiltIns::ptrNumType;
@@ -434,10 +438,9 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     start(0);
 }
 
-ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other)
-        : tokens(other.tokens), document(other.document), refCount(other.refCount),
-        processed(other.processed)
-{
+ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other) : buffer(other.buffer), tokens(other.tokens),
+document(other.document), depth(other.depth), refCount(other.refCount), typesTable(other.typesTable), curScope(other.curScope),
+globalScope(other.globalScope){
     refCount++;
 }
 
@@ -448,6 +451,7 @@ ACC::LexicalAnalysis::~LexicalAnalysis() {
     if(refCount != 0)
         return;
 
+    delete globalScope;
     for(const auto& it : tokens)
         delete it;
 }
@@ -476,7 +480,7 @@ const std::vector<ACC::IToken *> &ACC::LexicalAnalysis::data() {
 }
 
 bool ACC::LexicalAnalysis::isSymbol(std::string idf) {
-    return symbolTable.find(idf) != symbolTable.end();
+    return curScope->isSymbol(idf);
 }
 
 bool ACC::LexicalAnalysis::isNumber(char c) {
@@ -585,6 +589,25 @@ ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
     if (typesTable.find(str) != typesTable.cend())
         return typesTable.at(str);
     return TypeId(0, 0);
+}
+
+void ACC::LexicalAnalysis::emplaceSymbol(std::string idf, ACC::Symbol symbol) {
+    curScope->symbolTable[idf] = symbol;
+}
+
+void ACC::LexicalAnalysis::popScope() {
+    auto old = curScope;
+    curScope->prev->next = nullptr;
+    curScope = curScope->prev;
+    delete old;
+}
+
+void ACC::LexicalAnalysis::pushScope() {
+    curScope = new ScopedSymbolTable<Symbol>(curScope);
+}
+
+ACC::Symbol ACC::LexicalAnalysis::getSymbol(std::string sym) {
+    return curScope->getSymbol(sym);
 }
 
 

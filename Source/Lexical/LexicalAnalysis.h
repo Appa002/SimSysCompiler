@@ -9,8 +9,11 @@
 #include <functional>
 #include <unordered_map>
 #include <TypeId.h>
+#include <memory>
+#include <ScopedSymbolTable.h>
 
 namespace ACC {
+
     class LexicalAnalysis{
     private:
 
@@ -19,15 +22,20 @@ namespace ACC {
         std::vector<IToken*> tokens;
         std::string document;
         int refCount = 0;
-        bool processed = false;
-        std::unordered_map<std::string, Symbol> symbolTable;
         std::unordered_map<std::string, TypeId> typesTable;
+
+        ScopedSymbolTable<Symbol>* curScope;
+        ScopedSymbolTable<Symbol>* globalScope;
 
         void preProcessDocument();
         bool isSymbol(std::string idf);
+        void emplaceSymbol(std::string idf, Symbol symbol);
         bool isNumber(char c);
         bool isNumber(std::string str);
         TypeId isType(std::string str);
+        void pushScope();
+        void popScope();
+        Symbol getSymbol(std::string sym);
 
         bool matchIgnoreW(char c, size_t& pos);
         void skipAll(char c, size_t& pos);
