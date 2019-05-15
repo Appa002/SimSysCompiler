@@ -220,7 +220,7 @@ std::string ACC::Movs::bp2bp(offset_t offseta, offset_t offsetb, std::string reg
 
 
     return
-        "lea " + reg + ", [rbp"+aStr+"]\n"
+        "mov " + reg + ", [rbp"+aStr+"]\n"
         "mov [rbp" + bStr + "], " + reg;
 }
 

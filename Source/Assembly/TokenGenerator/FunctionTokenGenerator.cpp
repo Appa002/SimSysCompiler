@@ -30,7 +30,7 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
         };
         structure.copyToStack = [=](Code& c){
             Register reg = c.getFreeRegister();
-            std::string out = "lea "+registerToString(size, reg)+", " + ("[rbp - " + locStr + "]");
+            std::string out = "mov "+registerToString(size, reg)+", " + ("[rbp - " + locStr + "]");
             out += "\nmov [rsp], " + registerToString(size, reg);
             c.freeRegister(reg);
             return out;

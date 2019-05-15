@@ -12,6 +12,8 @@ void ACC::LiteralTokenGenerator::handleStringLiteral(ACC::Structure &structure, 
     fn.writeLine(Movs::imm2bp(node->data, -(offset_t)fn.curBpOffset));
     size_t address = fn.curBpOffset;
 
+    structure.isStored = false;
+
     structure.copyToStack = [=](Code& c){
         Register reg = c.getFreeRegister();
         std::string out = "lea " + registerToString(8, reg) + ", [rbp - " + std::to_string(address) + "]";
