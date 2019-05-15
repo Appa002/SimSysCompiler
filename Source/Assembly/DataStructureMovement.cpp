@@ -17,13 +17,39 @@ std::string ACC::Movs::imm2st(const GeneralDataStore &immediat){
         }
     });
 
-    std::string str = "mov dword [rsp], 0x";
+
+    std::string operatorSize;
+
+    if(immediatForAssembly.size() == 1){
+        operatorSize = "byte";
+    }
+    else if(immediatForAssembly.size() == 2){
+        operatorSize = "word";
+    }
+    else if(immediatForAssembly.size() >= 3){
+        operatorSize = "dword";
+    }
+
+
+    std::string str = "mov "+operatorSize+" [rsp], 0x";
     size_t count = 0;
 
     for (size_t i = 0; i < immediatForAssembly.size(); i++) {
             size_t offset = str.size();
             if (count == 4) {
-                str += "\nmov dword [rsp + " + std::to_string(i) + "], 0x";
+
+                if(immediatForAssembly.size() - i == 1){
+                    operatorSize = "byte";
+                }
+                else if(immediatForAssembly.size() - i == 2){
+                    operatorSize = "word";
+                }
+                else if(immediatForAssembly.size() - i >= 3){
+                    operatorSize = "dword";
+                }
+
+
+                str += "\nmov "+operatorSize+" [rsp + " + std::to_string(i) + "], 0x";
                 offset = str.size();
                 count = 0;
             }
@@ -62,17 +88,14 @@ std::string ACC::Movs::imm2bp(GeneralDataStore immediat, offset_t bpOffset) {
     bpOffset = abs(bpOffset);
 
     std::string operatorSize;
-    size_t totalSize = 0;
 
     if(immediatForAssembly.size() == 1){
         operatorSize = "byte";
     }
     else if(immediatForAssembly.size() == 2){
         operatorSize = "word";
-        totalSize = 2;
     }
     else if(immediatForAssembly.size() >= 3){
-        totalSize = 4;
         operatorSize = "dword";
     }
 
@@ -83,21 +106,16 @@ std::string ACC::Movs::imm2bp(GeneralDataStore immediat, offset_t bpOffset) {
         size_t offset = str.size();
         if (count == 4) {
 
-            size_t chunckSize = 0;
             if(immediatForAssembly.size() - i == 1){
                 operatorSize = "byte";
-                chunckSize = 1;
             }
             else if(immediatForAssembly.size() - i == 2){
                 operatorSize = "word";
-                chunckSize = 2;
             }
             else if(immediatForAssembly.size() - i >= 3){
                 operatorSize = "dword";
-                chunckSize = 4;
             }
 
-            totalSize += chunckSize;
             str += "\nmov " + operatorSize + " [rbp "+sign+" "+std::to_string(bpOffset - i)+"], 0x";
             offset = str.size();
             count = 0;
