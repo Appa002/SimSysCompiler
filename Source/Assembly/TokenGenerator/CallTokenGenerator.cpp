@@ -6,7 +6,7 @@ ACC::CallTokenGenerator::CallTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
 ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
-    for(size_t i = 1; i < node->children.size(); i++){
+    for(size_t i = node->children.size() - 1; i >= 1; i--){
         auto value = node->children[i]->asExpr()->generate(code);
         fn.writeLine("sub rsp, " + std::to_string(value.typeId.getSize()));
         fn.writeLine(value.copyToStack(code));
