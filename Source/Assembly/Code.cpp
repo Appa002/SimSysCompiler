@@ -28,6 +28,7 @@ ACC::Structure &ACC::Code::emplaceVarSymbol(std::string sym, const Structure &st
     return curScope->symbolTable[sym];
 }
 
+
 ACC::Fn &ACC::Code::getFnSymbol(std::string sym) {
     if (fnTable.find(sym) == fnTable.end())
         throw std::runtime_error("Unknown fn: " + sym);
@@ -40,6 +41,11 @@ ACC::Fn &ACC::Code::emplaceFnSymbol(std::string sym) {
     fnTable[sym] = Fn();
     return fnTable.at(sym);
 }
+
+ACC::Fn &ACC::Code::getFnSymbol() {
+    return getFnSymbol(fnStack.peek());
+}
+
 
 std::string ACC::Code::combineOutput() {
     std::string out = "section .data\n" + dataSection;
@@ -56,10 +62,6 @@ std::string ACC::Code::combineOutput() {
 
 void ACC::Code::writeLineToData(std::string const &str) {
     dataSection += str + "\n";
-}
-
-ACC::Fn &ACC::Code::getFnSymbol() {
-    return getFnSymbol(fnStack.peek());
 }
 
 void ACC::Code::reserveRegister(ACC::Register reg) {
@@ -213,17 +215,4 @@ std::string ACC::registerToString(size_t size, ACC::Register reg) {
             break;
     }
     return "";
-}
-
-void ACC::Fn::writeLine(std::string const &line) {
-    code += line + "\n";
-}
-
-std::string ACC::Fn::generate() {
-    std::string out;
-    out += "push rbp\n";
-    out += "mov rbp, rsp\n";
-    out += "sub rsp, " + std::to_string(curBpOffset) + "\n";
-    out += code;
-    return out;
 }

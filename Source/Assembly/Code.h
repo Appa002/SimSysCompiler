@@ -13,6 +13,7 @@
 #include <Stack.h>
 #include <memory>
 #include <ScopedSymbolTable.h>
+#include "Fn.h"
 
 namespace ACC{
 
@@ -38,16 +39,6 @@ namespace ACC{
         std::vector<Register> registerUsed;
         TypeId typeId = TypeId(0, 0);
         bool isStored = true;
-    };
-    struct Fn{
-        std::string code;
-        std::string symbol;
-        uint32_t curBpOffset = 0;
-        uint32_t extraRspAddition = 0;
-
-        void writeLine(std::string const & line);
-        std::string generate();
-        TypeId returnType = TypeId(0, 0);
     };
 
     enum class Register{
