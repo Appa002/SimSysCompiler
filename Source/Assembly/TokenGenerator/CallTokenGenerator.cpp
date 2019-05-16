@@ -8,6 +8,7 @@ ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     for(size_t i = node->children.size() - 1; i >= 1; i--){
         auto value = node->children[i]->asExpr()->generate(code);
+        fn.extraRspAddition += value.typeId.getSize();
         fn.writeLine("sub rsp, " + std::to_string(value.typeId.getSize()));
         fn.writeLine(value.copyToStack(code));
     }
