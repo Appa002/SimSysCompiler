@@ -11,4 +11,5 @@ namespace ACC::BuiltIns{
     const auto charType = TypeId(2, 1);
     const auto ptrNumType = TypeId(3, 8);
     const auto ptrCharType = TypeId(4, 8);
+    const auto boolType = TypeId(5, 1);
 }
