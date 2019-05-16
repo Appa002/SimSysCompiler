@@ -9,11 +9,11 @@
 #include <TypeId.h>
 
 namespace ACC {
+
     struct Fn {
         std::string code;
         std::string symbol;
         uint32_t curBpOffset = 0;
-        uint32_t extraRspAddition = 0;
 
         void writeLine(std::string const & line);
         std::string generate();
