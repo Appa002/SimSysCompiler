@@ -25,6 +25,7 @@
 #include <Assembly/TokenGenerator/ReturnTokenGenerator.h>
 #include <Assembly/TokenGenerator/ReassignTokenGenerator.h>
 #include <Assembly/TokenGenerator/CallTokenGenerator.h>
+#include <Assembly/TokenGenerator/ComparisionGenerator.h>
 #include <Assembly/TokenGenerator/IfTokenGenerator.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <GeneralDataStore.h>
@@ -138,6 +139,18 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "reassign";
         case AstOperator::IF:
             return "if";
+        case AstOperator::EQUAL:
+            return "equal";
+        case AstOperator::NOT_EQUAL:
+            return "not equal";
+        case AstOperator::LESS:
+            return "less";
+        case AstOperator::GREATER:
+            return "greater";
+        case AstOperator::LESS_EQUAL:
+            return "less equal";
+        case AstOperator::GREATER_EQUAL:
+            return "greater equal";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
@@ -176,6 +189,19 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new ReassignTokenGenerator(this));
         case AstOperator::IF:
             return std::unique_ptr<Expr>(new IfTokenGenerator(this));
+        case AstOperator::EQUAL:
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::EQ));
+        case AstOperator::NOT_EQUAL:
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::NEQ));
+        case AstOperator::LESS:
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::LT));
+        case AstOperator::GREATER:
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::GT));
+        case AstOperator::LESS_EQUAL:
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::LET));
+        case AstOperator::GREATER_EQUAL:
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::GET));
+
         case AstOperator::__NONE:
             throw std::runtime_error("Operator `__none` can't be interpreted as an expression.");
         case AstOperator::TYPE_DEF:

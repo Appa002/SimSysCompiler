@@ -79,7 +79,8 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::expr,        {Symbol::ID}},
             {Symbol::expr,        {Symbol::ID, Symbol::expr}},
 
-            {Symbol::expr,        {Symbol::MATH_OPERATOR, Symbol::expr}}
+            {Symbol::expr,        {Symbol::MATH_OPERATOR, Symbol::expr}},
+            {Symbol::expr,        {Symbol::CMP, Symbol::expr}}
     };
 }
 
@@ -147,6 +148,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "IF";
         case Symbol::ifStmt:
             return "ifStmt";
+        case Symbol::CMP:
+            return "EQUAL";
     }
     throw std::runtime_error("Symbol not known.");
 }

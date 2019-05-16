@@ -28,6 +28,13 @@ enum class AstOperator{
     RETURN,
     TYPE_DEF,
     IF,
+    EQUAL,
+    NOT_EQUAL,
+    LESS,
+    GREATER,
+    LESS_EQUAL,
+    GREATER_EQUAL,
+
     __NONE,
     __CONTAINER
 };
