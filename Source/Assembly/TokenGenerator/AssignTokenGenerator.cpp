@@ -35,6 +35,12 @@ ACC::Structure ACC::AssignTokenGenerator::generate(ACC::Code &code) {
         expr.copyToRegister = [=](std::string reg, Code& c){
             return "mov " + reg + ", [rbp - " + std::to_string(fn.curBpOffset) + "]";
         };
+
+        expr.copyAddrToRegister = [=](std::string reg, Code& c){
+            return "lea " + reg + ", [rbp - " + std::to_string(fn.curBpOffset) + "]";
+        };
+
+
     }
 
     code.emplaceVarSymbol(id, expr);
