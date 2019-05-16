@@ -9,6 +9,7 @@
 #include "Production.h"
 #include <Logger/Logger.h>
 #include <errors.h>
+#include <Lexical/Tokens/IndentToken.h>
 
 size_t gap = 0;
 
@@ -117,6 +118,7 @@ ACC::token_string
 ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t::iterator &productionItr,
                              token_string const &input, productionBody_t const &production) {
     int depth = 0;
+    int indent = 0;
     token_string subStr;
     while (inputItr != input.end()) {
         if ((*inputItr)->id == Symbol::BRACKET &&
@@ -124,13 +126,23 @@ ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t:
             depth++;
         }
 
-        if (productionItr != production.end() && (*inputItr)->id == *productionItr && depth == 0)
+        if((*inputItr)->id == Symbol::INDENT){
+            indent++;
+        }
+
+
+        if((*inputItr)->id == Symbol::EXTENT) {
+            indent--;
+        }
+
+        if (productionItr != production.end() && (*inputItr)->id == *productionItr && depth == 0 && indent == 0)
             break;
 
         if ((*inputItr)->id == Symbol::BRACKET &&
                 dynamic_cast<BracketToken *>(*inputItr)->kind == BracketKind::CLOSED){
             depth--;
         }
+
         subStr.push_back(*inputItr);
         inputItr++;
     }
