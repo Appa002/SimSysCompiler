@@ -5,20 +5,38 @@ ACC::IfTokenGenerator::IfTokenGenerator(ASTNode *node) : Expr(node) {
 }
 
 ACC::Structure ACC::IfTokenGenerator::generate(ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
-
+    auto &fn = code.getFnSymbol();
     auto expr = node->children[0]->asExpr()->generate(code);
-
-    auto reg = code.getFreeRegister();
-
-    fn.writeLine(expr.copyToRegister(registerToString(expr.typeId.getSize(), reg), code));
-    fn.writeLine("cmp " + registerToString(expr.typeId.getSize(), reg) + ", 0"); //TODO: Remove
-
     auto uuid = code.getUUID();
 
-    fn.writeLine("jnz ." + uuid);
+    switch (expr.flag) {
+        case StructureFlags::EQ:
+            fn.writeLine("jnz ." + uuid);
+            break;
+
+        case StructureFlags::LT:
+            fn.writeLine("jge ." + uuid);
+            break;
+
+        case StructureFlags::GT:
+            fn.writeLine("jle ." + uuid);
+            break;
+
+        case StructureFlags::NEQ:
+            fn.writeLine("je ." + uuid);
+            break;
+
+        case StructureFlags::LET:
+            fn.writeLine("jg ." + uuid);
+            break;
+
+        case StructureFlags::GET:
+            fn.writeLine("jl ." + uuid);
+            break;
+    }
+
     auto block = node->children[1]->asExpr()->generate(code);
-    fn.writeLine("."+uuid+":");
+    fn.writeLine("." + uuid + ":");
 
     return {};
     /*

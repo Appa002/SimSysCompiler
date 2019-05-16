@@ -9,6 +9,7 @@
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/DeclToken.h>
 #include <Lexical/Tokens/TypeToken.h>
+#include <Lexical/Tokens/ComparisionToken.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -286,7 +287,26 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                  case MathOperators::DIVISION:
                      return new ASTNode(AstOperator::DIVISION, vec);
              }
-         }}
+         }},
+
+        {{Symbol::expr, {Symbol::CMP, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+            auto vec = {carry, process(children[1], nullptr)};
+
+            switch (dynamic_cast<ComparisionToken*>(children[0]->token)->kind){
+                case ComparisionTokenKind::Equal:
+                    return new ASTNode(AstOperator::EQUAL, vec);
+                case ComparisionTokenKind::NotEqual:
+                    return new ASTNode(AstOperator::NOT_EQUAL, vec);
+                case ComparisionTokenKind::Less:
+                    return new ASTNode(AstOperator::LESS, vec);
+                case ComparisionTokenKind::Greater:
+                    return new ASTNode(AstOperator::GREATER, vec);
+                case ComparisionTokenKind::LessEqual:
+                    return new ASTNode(AstOperator::LESS_EQUAL, vec);
+                case ComparisionTokenKind::GreaterEqual:
+                    return new ASTNode(AstOperator::GREATER_EQUAL, vec);
+            }
+        }}
     };
 }
 

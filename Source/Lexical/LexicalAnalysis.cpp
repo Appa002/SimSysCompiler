@@ -27,6 +27,7 @@
 #include <Lexical/Tokens/ReturnToken.h>
 #include <builtinTypes.h>
 #include <Lexical/Tokens/IfToken.h>
+#include <Lexical/Tokens/ComparisionToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -283,7 +284,8 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
-                      [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ","});},
+                      [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
+                                                                "<", ">", "!"});},
                       [&](){
                           buffer += document.at(pos);
         });
@@ -294,6 +296,34 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
         if(isNumber(buffer))
             tokens.push_back(new LiteralToken(std::stoul(buffer), BuiltIns::numType));
+
+        else if (pos + 1 < document.size() && document.at(pos) == '!' && document.at(pos + 1) == '=') {
+            tokens.push_back(new ComparisionToken(ComparisionTokenKind::NotEqual));
+            pos++;
+        }
+
+        else if (pos + 1 < document.size() && document.at(pos) == '<' && document.at(pos + 1) == '='){
+            tokens.push_back(new ComparisionToken(ComparisionTokenKind::LessEqual));
+            pos++;
+        }
+
+        else if (pos + 1 < document.size() && document.at(pos) == '>' && document.at(pos + 1) == '='){
+            tokens.push_back(new ComparisionToken(ComparisionTokenKind::GreaterEqual));
+            pos++;
+        }
+
+
+        else if (pos + 1 < document.size() && document.at(pos) == '=' && document.at(pos + 1) == '='){
+            tokens.push_back(new ComparisionToken(ComparisionTokenKind::Equal));
+            pos++;
+        }
+
+        else if(document.at(pos) == '<')
+            tokens.push_back(new ComparisionToken(ComparisionTokenKind::Less));
+
+        else if(document.at(pos) == '>')
+            tokens.push_back(new ComparisionToken(ComparisionTokenKind::Greater));
+
         else if(document.at(pos) == '"')
             parseStringLiteral(pos);
         else if (isSymbol(buffer))

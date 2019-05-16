@@ -13,6 +13,7 @@ namespace ACC {
         VAR = 0,
         DECL,
         ID,
+        CMP,
         BRACKET,
         MATH_OPERATOR,
         SYSCALL,

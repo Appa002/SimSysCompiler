@@ -149,7 +149,7 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
         case Symbol::ifStmt:
             return "ifStmt";
         case Symbol::CMP:
-            return "EQUAL";
+            return "CMP";
     }
     throw std::runtime_error("Symbol not known.");
 }

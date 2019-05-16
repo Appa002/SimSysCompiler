@@ -26,6 +26,16 @@ namespace ACC{
     enum class Register;
     class Code;
 
+    enum class StructureFlags{
+        EQ, // Equal
+        LT, // Less then
+        GT, // Greater then
+        NEQ, // Not equal
+        LET, // Less or Equal Then
+        GET // Greater or Equal Then
+    };
+
+
     struct Structure{
         Structure() = default;
         explicit Structure(StructureType type) : type(type) {};
@@ -39,6 +49,7 @@ namespace ACC{
         std::vector<Register> registerUsed;
         TypeId typeId = TypeId(0, 0);
         bool isStored = true;
+        StructureFlags flag;
     };
 
     enum class Register{
