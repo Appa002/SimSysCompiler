@@ -26,6 +26,7 @@
 #include <Lexical/Tokens/CommaToken.h>
 #include <Lexical/Tokens/ReturnToken.h>
 #include <builtinTypes.h>
+#include <Lexical/Tokens/IfToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -48,7 +49,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return"
+            "fn", "var", "exit", "syscall", "return", "if"
     };
 
     if(shallCheckIndent) {
@@ -89,6 +90,11 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             tokens.push_back(new ReturnToken());
             buffer.clear();
             ret(pos + 1);
+            return;
+        }else if("if" == buffer){
+            tokens.push_back(new IfToken());
+            buffer.clear();
+            ifStmt(pos + 1);
             return;
         }
     }
@@ -608,6 +614,24 @@ void ACC::LexicalAnalysis::pushScope() {
 
 ACC::Symbol ACC::LexicalAnalysis::getSymbol(std::string sym) {
     return curScope->getSymbol(sym);
+}
+
+void ACC::LexicalAnalysis::ifStmt(size_t pos) {
+    if(!matchIgnoreW('(', pos))
+        throw std::runtime_error("Expected expression after if, at: " + std::to_string(pos));
+    tokens.push_back(new BracketToken(BracketKind::OPEN));
+    pos++;
+    expr(pos, {")"});
+    if(!matchIgnoreW(')', pos))
+        throw std::runtime_error("Missing ) after if, at: " + std::to_string(pos));
+
+    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+    pos++;
+    if(!matchIgnoreW(':', pos))
+        throw std::runtime_error("Expected block after if, at: " + std::to_string(pos));
+
+    tokens.push_back(new ColonToken());
+    start(pos + 1, true);
 }
 
 

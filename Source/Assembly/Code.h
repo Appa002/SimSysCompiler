@@ -31,6 +31,7 @@ namespace ACC{
 
         std::function<std::string (Code&)> copyToStack;
         std::function<std::string (std::string, Code&)> copyToRegister;
+        std::function<std::string (std::string, Code&)> copyAddrToRegister;
         std::function<std::string (int32_t , Code&)> copyToBpOffset;
 
         StructureType type = StructureType::NA;
@@ -70,6 +71,8 @@ namespace ACC{
 
     class Code {
     private:
+        size_t uuidCounter = 0;
+
         std::unordered_map<std::string, Fn> fnTable;
         std::unordered_map<Register, bool> freeRegisterTable;
 
@@ -98,6 +101,7 @@ namespace ACC{
 
         void writeLineToData(std::string const & str);
         std::string combineOutput();
+        std::string getUUID();
 
         void pushScope();
         void popScope();

@@ -27,6 +27,7 @@ enum class AstOperator{
     CALL,
     RETURN,
     TYPE_DEF,
+    IF,
     __NONE,
     __CONTAINER
 };

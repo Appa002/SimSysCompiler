@@ -27,6 +27,7 @@ namespace ACC {
         COMMA,
         RETURN,
         TYPE,
+        IF,
 
         none_terminals_start,
 
@@ -39,7 +40,8 @@ namespace ACC {
         function,
         paramsDecl,
         paramsList,
-        call
+        call,
+        ifStmt
     };
 
     using productionBody_t = std::vector<Symbol>;

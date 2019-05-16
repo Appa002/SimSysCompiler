@@ -4,6 +4,7 @@
 
 #include <Logger/Logger.h>
 #include "Code.h"
+#include <utils.h>
 
 
 ACC::Code::Code() {
@@ -104,6 +105,10 @@ void ACC::Code::popScope() {
     curScope->prev->next = nullptr;
     curScope = curScope->prev;
     delete old;
+}
+
+std::string ACC::Code::getUUID() {
+    return numberToLetterSequence(uuidCounter++);
 }
 
 std::string ACC::registerToString(size_t size, ACC::Register reg) {

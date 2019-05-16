@@ -16,11 +16,13 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT}},
+            {Symbol::start,       {Symbol::ifStmt, Symbol::EXTENT}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS}},
             {Symbol::start,       {Symbol::call, Symbol::EOS}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT, Symbol::start}},
+            {Symbol::start,       {Symbol::ifStmt, Symbol::EXTENT, Symbol::start}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::call, Symbol::EOS, Symbol::start}},
 
@@ -57,6 +59,9 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
 
             {Symbol::keyword,     {Symbol::EXIT, Symbol::expr}},
             {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
+            {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr}},
+
+            {Symbol::ifStmt,      {Symbol::IF, Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
 
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
@@ -138,6 +143,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "return";
         case Symbol::TYPE:
             return "type";
+        case Symbol::IF:
+            return "IF";
+        case Symbol::ifStmt:
+            return "ifStmt";
     }
     throw std::runtime_error("Symbol not known.");
 }

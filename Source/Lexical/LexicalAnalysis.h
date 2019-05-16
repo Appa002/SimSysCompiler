@@ -53,6 +53,7 @@ namespace ACC {
         void call(size_t pos);
         void type(size_t& pos);
         void parseStringLiteral(size_t &pos);
+        void ifStmt(size_t pos);
 
 
     public:

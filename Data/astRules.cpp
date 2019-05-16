@@ -21,6 +21,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::function, Symbol::EXTENT}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
+        {{Symbol::start, {Symbol::ifStmt, Symbol::EXTENT}}, [](auto children, auto carry){
+            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+        }},
         {{Symbol::start, {Symbol::call, Symbol::EOS}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
@@ -31,6 +34,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::function, Symbol::EXTENT, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
+            return new ASTNode(AstOperator::SEQ, vec);
+        }},
+        {{Symbol::start, {Symbol::ifStmt, Symbol::EXTENT, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
             return new ASTNode(AstOperator::SEQ, vec);
         }},
@@ -125,6 +132,13 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             auto vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym),
                         process(children[2], nullptr)};
             return new ASTNode(AstOperator::REASSIGN, vec);
+        }},
+
+        {{Symbol::ifStmt, {Symbol::IF, Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[2], nullptr),
+                        process(children[6], nullptr)};
+
+            return new ASTNode(AstOperator::IF, vec);
         }},
 
 
