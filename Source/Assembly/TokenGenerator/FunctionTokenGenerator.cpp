@@ -44,6 +44,10 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
             return out;
         };
 
+        structure.copyAddrToRegister = [=](std::string reg, Code& c){
+            return "lea " + reg + ", [rbp - " + locStr + "]";
+        };
+
         code.emplaceVarSymbol(sym, structure);
         offset += size;
         fn.curBpOffset += size;
