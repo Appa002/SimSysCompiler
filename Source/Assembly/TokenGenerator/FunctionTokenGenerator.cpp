@@ -54,7 +54,8 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
     }
 
     node->children.at(node->children.size() - 1)->asExpr()->generate(code);
-
+    code.popFnFromStack();
+    code.popScope();
     return {};
 }
 

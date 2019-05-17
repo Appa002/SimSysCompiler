@@ -55,10 +55,13 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
 
     if(shallCheckIndent) {
         int newDepth = readUntilNextLine(pos);
-        if (newDepth > depth)
+        if (newDepth > depth){
             tokens.push_back(new IndentToken());
-        else if (newDepth < depth)
+        }
+        else if (newDepth < depth){
             tokens.push_back(new ExtentToken());
+            popScope();
+        }
         depth = newDepth;
     }
     buffer += document.at(pos);
@@ -194,7 +197,6 @@ void ACC::LexicalAnalysis::ret(size_t pos) {
     tokens.push_back(new EOSToken());
     pos++;
     buffer.clear();
-    popScope();
     start(pos, true);
 }
 
@@ -209,7 +211,7 @@ void ACC::LexicalAnalysis::var(size_t pos) {
                       buffer += document.at(pos);
     });
 
-    if(isSymbol(buffer))
+    if(curScope->isSymbolInThisScope(buffer))
         throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
 
     if(contains(buffer, {"fn", "var", "exit", "syscall", "return", "if"}))
@@ -371,12 +373,12 @@ void ACC::LexicalAnalysis::fn(size_t pos){
     emplaceSymbol(buffer, Symbol::FUNCTION);
 
     buffer.clear();
-    pushScope();
     if(matchIgnoreW('(', pos))
         tokens.push_back(new BracketToken(BracketKind::OPEN));
     else
         throw std::runtime_error("Expected parameter list after function declaration; missing `(`, at: " + std::to_string(pos));
 
+    pushScope();
     pos++;
     while(pos < document.size() && document.at(pos - 1) != ')'){
         while(pos < document.size()  && !contains(document.at(pos), {":", "," ,")"})){
@@ -392,7 +394,7 @@ void ACC::LexicalAnalysis::fn(size_t pos){
             throw std::runtime_error("Expected declaration in parameter list, at: " + std::to_string(pos));
 
         if(!buffer.empty()){
-            if(isSymbol(buffer))
+            if(curScope->isSymbolInThisScope(buffer))
                 throw std::runtime_error("Redeclaration of variable, at: " + std::to_string(pos));
 
             if(contains(buffer, {"fn", "var", "exit", "syscall", "return", "if"}))
@@ -672,6 +674,7 @@ void ACC::LexicalAnalysis::ifStmt(size_t pos) {
         throw std::runtime_error("Expected block after if, at: " + std::to_string(pos));
 
     tokens.push_back(new ColonToken());
+    pushScope();
     start(pos + 1, true);
 }
 

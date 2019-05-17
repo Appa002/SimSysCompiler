@@ -16,7 +16,6 @@ ACC::Structure ACC::ReturnTokenGenerator::generate(ACC::Code &code) {
 
     fn.writeLine("pop rbp");
     fn.writeLine("ret");
-    code.popFnFromStack();
-    code.popScope();
+
     return {};
 }

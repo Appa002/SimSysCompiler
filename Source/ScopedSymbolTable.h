@@ -19,6 +19,7 @@ namespace ACC {
         }
 
         bool isSymbol(std::string const &sym);
+        bool isSymbolInThisScope(std::string const & sym);
         T& getSymbol(std::string const &sym);
 
         std::unordered_map<std::string, T> symbolTable;
@@ -48,4 +49,12 @@ namespace ACC {
     ScopedSymbolTable<T>::ScopedSymbolTable(ScopedSymbolTable *prev)  : prev(prev) {
         prev->next = this;
     }
+
+    template<class T>
+    bool ScopedSymbolTable<T>::isSymbolInThisScope(std::string const &sym) {
+        if (symbolTable.find(sym) != symbolTable.cend())
+            return true;
+        return false;
+    }
+
 }
