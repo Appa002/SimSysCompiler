@@ -99,7 +99,9 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             return;
         }
     }
-    else if (isSymbol(buffer)) {
+    else if (isSymbol(buffer) && (document.size() - 1 == pos || contains(document.at(pos + 1),
+            {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=", "<", ">", "!"}))) {
+
         tokens.push_back(new IdToken(buffer));
         auto sym = getSymbol(buffer);
         if(sym == Symbol::FUNCTION){
@@ -209,6 +211,9 @@ void ACC::LexicalAnalysis::var(size_t pos) {
 
     if(isSymbol(buffer))
         throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
+
+    if(contains(buffer, {"fn", "var", "exit", "syscall", "return", "if"}))
+        throw std::runtime_error("Can't use keyword as variable name, at: " + std::to_string(pos));
 
     tokens.push_back(new DeclToken(buffer));
     emplaceSymbol(buffer, Symbol::DECL);
@@ -387,6 +392,12 @@ void ACC::LexicalAnalysis::fn(size_t pos){
             throw std::runtime_error("Expected declaration in parameter list, at: " + std::to_string(pos));
 
         if(!buffer.empty()){
+            if(isSymbol(buffer))
+                throw std::runtime_error("Redeclaration of variable, at: " + std::to_string(pos));
+
+            if(contains(buffer, {"fn", "var", "exit", "syscall", "return", "if"}))
+                throw std::runtime_error("Can't use keyword as variable name, at: " + std::to_string(pos));
+
             tokens.push_back(new DeclToken(buffer));
             emplaceSymbol(buffer, Symbol::DECL);
             pos++;
