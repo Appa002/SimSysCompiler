@@ -33,3 +33,7 @@ uint8_t ACC::GeneralDataStore::at(size_t idx) const {
 void ACC::GeneralDataStore::push(uint8_t value) {
     internalStore.push_back(value);
 }
+
+std::vector<uint8_t> &ACC::GeneralDataStore::data() {
+    return internalStore;
+}

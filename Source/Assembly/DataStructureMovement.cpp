@@ -83,7 +83,6 @@ std::string ACC::Movs::imm2bp(GeneralDataStore immediat, offset_t bpOffset) {
         }
     });
 
-
     auto sign = std::string(bpOffset >= 0 ? ("+") : ("-"));
     bpOffset = abs(bpOffset);
 
@@ -99,8 +98,10 @@ std::string ACC::Movs::imm2bp(GeneralDataStore immediat, offset_t bpOffset) {
         operatorSize = "dword";
     }
 
+
     std::string str = "mov "+operatorSize+" [rbp "+sign+" "+std::to_string(bpOffset)+"], 0x";
     size_t count = 0;
+    size_t totalSize = 0;
 
     for (size_t i = 0; i < immediatForAssembly.size(); i++) {
         size_t offset = str.size();
@@ -108,12 +109,15 @@ std::string ACC::Movs::imm2bp(GeneralDataStore immediat, offset_t bpOffset) {
 
             if(immediatForAssembly.size() - i == 1){
                 operatorSize = "byte";
+                totalSize += 1;
             }
             else if(immediatForAssembly.size() - i == 2){
                 operatorSize = "word";
+                totalSize += 2;
             }
             else if(immediatForAssembly.size() - i >= 3){
                 operatorSize = "dword";
+                totalSize += 4;
             }
 
             str += "\nmov " + operatorSize + " [rbp "+sign+" "+std::to_string(bpOffset - i)+"], 0x";

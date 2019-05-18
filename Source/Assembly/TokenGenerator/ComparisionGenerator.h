@@ -12,10 +12,10 @@ namespace ACC{
     struct ComparisionGenerator : public Expr{
         Structure generate(ACC::Code &code) override;
         explicit ComparisionGenerator(ASTNode* node);
-        ComparisionGenerator(ASTNode* node, StructureFlags cmpType);
+        ComparisionGenerator(ASTNode* node, ComparisionType cmpType);
 
     private:
-        StructureFlags cmpType;
+        ComparisionType cmpType;
     };
 }
 

@@ -190,17 +190,17 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
         case AstOperator::IF:
             return std::unique_ptr<Expr>(new IfTokenGenerator(this));
         case AstOperator::EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::EQ));
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::EQ));
         case AstOperator::NOT_EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::NEQ));
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::NEQ));
         case AstOperator::LESS:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::LT));
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::LT));
         case AstOperator::GREATER:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::GT));
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::GT));
         case AstOperator::LESS_EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::LET));
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::LET));
         case AstOperator::GREATER_EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, StructureFlags::GET));
+            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::GET));
 
         case AstOperator::__NONE:
             throw std::runtime_error("Operator `__none` can't be interpreted as an expression.");

@@ -25,6 +25,7 @@ namespace ACC {
 
         uint8_t at(size_t idx) const;
         size_t size() const;
+        std::vector<uint8_t>& data();
         void push(uint8_t value);
 
 
