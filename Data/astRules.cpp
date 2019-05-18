@@ -135,9 +135,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ASTNode(AstOperator::REASSIGN, vec);
         }},
 
-        {{Symbol::ifStmt, {Symbol::IF, Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
-            auto vec = {process(children[2], nullptr),
-                        process(children[6], nullptr)};
+        {{Symbol::ifStmt, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr),
+                        process(children[4], nullptr)};
 
             return new ASTNode(AstOperator::IF, vec);
         }},

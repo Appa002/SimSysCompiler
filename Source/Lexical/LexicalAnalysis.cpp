@@ -660,18 +660,12 @@ ACC::Symbol ACC::LexicalAnalysis::getSymbol(std::string sym) {
 }
 
 void ACC::LexicalAnalysis::ifStmt(size_t pos) {
-    if(!matchIgnoreW('(', pos))
-        throw std::runtime_error("Expected expression after if, at: " + std::to_string(pos));
-    tokens.push_back(new BracketToken(BracketKind::OPEN));
     pos++;
-    expr(pos, {")"});
-    if(!matchIgnoreW(')', pos))
-        throw std::runtime_error("Missing ) after if, at: " + std::to_string(pos));
-
-    tokens.push_back(new BracketToken(BracketKind::CLOSED));
-    pos++;
+    expr(pos, {":"});
     if(!matchIgnoreW(':', pos))
         throw std::runtime_error("Expected block after if, at: " + std::to_string(pos));
+
+    pos++;
 
     tokens.push_back(new ColonToken());
     pushScope();

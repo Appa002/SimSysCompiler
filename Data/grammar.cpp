@@ -61,7 +61,7 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
             {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr}},
 
-            {Symbol::ifStmt,      {Symbol::IF, Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::COLON, Symbol::INDENT, Symbol::start}},
+            {Symbol::ifStmt,      {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
 
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
