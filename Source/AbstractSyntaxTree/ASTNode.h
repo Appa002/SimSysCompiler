@@ -25,6 +25,7 @@ namespace ACC {
 
     enum class AstOperator {
         PLUS,
+        NOT,
         MINUS,
         MULTIPLICATION,
         DIVISION,

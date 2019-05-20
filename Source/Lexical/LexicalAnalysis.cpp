@@ -28,6 +28,7 @@
 #include <builtinTypes.h>
 #include <Lexical/Tokens/IfToken.h>
 #include <Lexical/Tokens/ComparisionToken.h>
+#include <Lexical/Tokens/NotToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -103,7 +104,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         }
     }
     else if (isSymbol(buffer) && (document.size() - 1 == pos || contains(document.at(pos + 1),
-            {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=", "<", ">", "!"}))) {
+            {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=", "<", ">", "!", ":"}))) {
 
         tokens.push_back(new IdToken(buffer));
         auto sym = getSymbol(buffer);
@@ -292,7 +293,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
                       [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
-                                                                "<", ">", "!"});},
+                                                                "<", ">", "!", ":"});},
                       [&](){
                           buffer += document.at(pos);
         });
@@ -324,6 +325,9 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
             tokens.push_back(new ComparisionToken(ComparisionTokenKind::Equal));
             pos++;
         }
+
+        else if (document.at(pos) == '!')
+            tokens.push_back(new NotToken());
 
         else if(document.at(pos) == '<')
             tokens.push_back(new ComparisionToken(ComparisionTokenKind::Less));

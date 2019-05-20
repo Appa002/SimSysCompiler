@@ -29,6 +29,7 @@ namespace ACC {
         RETURN,
         TYPE,
         IF,
+        NOT,
 
         none_terminals_start,
 

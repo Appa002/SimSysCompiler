@@ -306,7 +306,11 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                 case ComparisionTokenKind::GreaterEqual:
                     return new ASTNode(AstOperator::GREATER_EQUAL, vec);
             }
-        }}
+        }},
+
+        {{Symbol::expr, {Symbol::NOT, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+            return new ASTNode(AstOperator::NOT, {process(children[1])});
+        }},
     };
 }
 

@@ -26,6 +26,7 @@
 #include <Assembly/TokenGenerator/ReassignTokenGenerator.h>
 #include <Assembly/TokenGenerator/CallTokenGenerator.h>
 #include <Assembly/TokenGenerator/ComparisionGenerator.h>
+#include <Assembly/TokenGenerator/NotTokenGenerator.h>
 #include <Assembly/TokenGenerator/IfTokenGenerator.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <GeneralDataStore.h>
@@ -151,6 +152,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "less equal";
         case AstOperator::GREATER_EQUAL:
             return "greater equal";
+        case AstOperator::NOT:
+            return "not";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
@@ -201,6 +204,8 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::LET));
         case AstOperator::GREATER_EQUAL:
             return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::GET));
+        case AstOperator::NOT:
+            return std::unique_ptr<Expr>(new NotTokenGenerator(this));
 
         case AstOperator::__NONE:
             throw std::runtime_error("Operator `__none` can't be interpreted as an expression.");
