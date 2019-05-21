@@ -13,10 +13,6 @@ namespace ACC {
     class ParseTree {
     private:
         void killChildren(ParseNode* node);
-        ACC::token_string createString(token_string::iterator &inputItr, productionBody_t::iterator &productionItr,
-                                               token_string const &input, productionBody_t const &production);
-
-        ParseNode * process(token_string input, Symbol prodHead);
 
         ParseNode * root = nullptr;
         int refCount = 1;
@@ -28,6 +24,21 @@ namespace ACC {
         ~ParseTree();
 
         ParseNode const* getRoot();
-        void generate(const LexicalAnalysis& in);
+        void generate(LexicalAnalysis in);
+
+    private:
+        std::vector<IToken*> document;
+
+        ParseNode* match(size_t& pos, Symbol what);
+
+        ParseNode* start(size_t& pos);
+        ParseNode* assignment(size_t& pos);
+        ParseNode* function(size_t& pos);
+        ParseNode* keyword(size_t& pos);
+        ParseNode* call(size_t& pos);
+        ParseNode* expr(size_t& pos);
+        ParseNode* paramDecl(size_t &pos);
+        ParseNode* paramList(size_t &pos);
+
     };
 }

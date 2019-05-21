@@ -57,6 +57,7 @@ namespace ACC {
 
 
     public:
+        LexicalAnalysis() = default;
         explicit LexicalAnalysis(std::string path);
         LexicalAnalysis(const LexicalAnalysis& other);
         ~LexicalAnalysis();

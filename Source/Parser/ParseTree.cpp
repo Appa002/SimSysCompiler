@@ -2,6 +2,7 @@
 // Created by a_mod on 10.01.2019.
 //
 
+#include <exception>
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/BracketToken.h>
 #include <iostream>
@@ -18,99 +19,8 @@ ACC::ParseTree::ParseTree(const ACC::LexicalAnalysis &in) {
 }
 
 ACC::ParseTree::ParseTree(const ACC::ParseTree &other) : refCount(other.refCount), root(other.root),
-                                                         generated(other.generated){
+                                                         generated(other.generated) {
     refCount++;
-}
-
-ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
-    auto iItr = input.begin();
-    auto node = new ParseNode(prodHead);
-    gap += 4;
-
-    for (auto production : data::getGrammar()) {
-        if (production.head != prodHead)
-            continue;
-        LOG() <<  Log::Colour::Blue << std::string(gap, ' ') << "Selected: " << data::symbolToString(production.head) << std::endl;
-        auto old = iItr;
-        for (auto pItr = production.body.begin();; ++pItr) {
-            if (pItr == production.body.end()) {
-                if (iItr == input.end()){
-                    gap -= 4;
-                    return node;
-                }
-                LOG() << std::string(gap, ' ') <<"-----" << std::endl;
-                LOG() << std::string(gap, ' ') <<"Symbol: " << (*iItr)->getIdentifier() << std::endl;
-                LOG() << std::string(gap, ' ') <<"Input: " << input.createStdString() << std::endl;
-                LOG() << std::string(gap, ' ') <<"Production: " << data::productionToString(production) << std::endl;
-                LOG() << Log::Colour::Magenta << std::string(gap, ' ') <<"  --- FAILED -- (reached end of production without reaching end of input)" << std::endl;
-                iItr = old;
-                killChildren(node);
-                break;
-            }
-            auto expected = *pItr;
-
-            if (!isNoneterminal(expected)) {
-                if(iItr == input.end()){
-                    if(pItr == production.body.end()){
-                        gap -= 4;
-                        return node;
-                    }
-                    LOG() << std::string(gap, ' ') << "Reached end of input whilst matching" << std::endl;
-                    killChildren(node);
-                    iItr = old;
-                    break;
-                }
-                if (expected == (*iItr)->id) {
-                    node->children.push_back(new ParseNode((*iItr)->id, *iItr));
-                    LOG() << std::string(gap, ' ') << "Matched terminal: " << (*iItr)->getIdentifier() << std::endl;
-                    iItr++;
-                } else {
-                    killChildren(node);
-                    iItr = old;
-                    LOG() << std::string(gap, ' ') << "-----" << std::endl;
-                    LOG() << std::string(gap, ' ') << "Terminal: " << (*iItr)->getIdentifier() << std::endl;
-                    LOG() << std::string(gap, ' ') << "Input: " << input.createStdString() << std::endl;
-                    LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
-                    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (noneterminal wasn't the same in the production and the input)" << std::endl;
-                    break;
-                }
-            } else {
-                auto terminal = *pItr;
-                LOG() << std::string(gap, ' ') << "Noneterminal in production: " << data::symbolToString(terminal) << std::endl;
-                ++pItr;
-
-
-                if (iItr == input.end() && pItr != production.body.end()) {
-                    iItr = old;
-                    LOG() << std::string(gap, ' ') << "-----" << std::endl;
-                    LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
-                    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (reached end of input while not reaching the end of production.)" << std::endl;
-                    break;
-                }
-
-
-                token_string subStr = createString(iItr, pItr, input, production.body);
-
-                LOG() << std::string(gap, ' ') << "Production: " << data::productionToString(production) << std::endl;
-                LOG() << std::string(gap, ' ') << "Substring: " << subStr.createStdString() << std::endl;
-
-                ParseNode *newNode = process(subStr, terminal);
-                if (newNode) {
-                    node->children.push_back(newNode);
-                    pItr--;
-                } else {
-                    killChildren(node);
-                    iItr = old;
-                    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  --- FAILED -- (couldn't satisfy terminal; see above)" << std::endl;
-                    break;
-                }
-            }
-        }
-    }
-    LOG() << Log::Colour::Magenta << std::string(gap, ' ') << "  :-: Couldn't satisfy overall expression: " << input.createStdString() << std::endl;
-    delete node;
-    gap -= 4;
-    return nullptr;
 }
 
 void ACC::ParseTree::killChildren(ACC::ParseNode *node) {
@@ -119,62 +29,655 @@ void ACC::ParseTree::killChildren(ACC::ParseNode *node) {
     node->children.clear();
 }
 
-ACC::token_string
-ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t::iterator &productionItr,
-                             token_string const &input, productionBody_t const &production) {
-    int depth = 0;
-    int indent = 0;
-    token_string subStr;
-    while (inputItr != input.end()) {
-        if ((*inputItr)->id == Symbol::BRACKET &&
-                dynamic_cast<BracketToken *>(*inputItr)->kind == BracketKind::OPEN){
-            depth++;
-        }
-
-        if((*inputItr)->id == Symbol::INDENT){
-            indent++;
-        }
-
-        if (productionItr != production.end() && (*inputItr)->id == *productionItr && depth == 0 && indent == 0)
-            break;
-
-
-
-        if((*inputItr)->id == Symbol::EXTENT) {
-            indent--;
-        }
-
-
-        if ((*inputItr)->id == Symbol::BRACKET &&
-                dynamic_cast<BracketToken *>(*inputItr)->kind == BracketKind::CLOSED){
-            depth--;
-        }
-
-        subStr.push_back(*inputItr);
-        inputItr++;
-    }
-    return subStr;
-}
-
 const ACC::ParseNode *ACC::ParseTree::getRoot() {
     return root;
 }
 
-void ACC::ParseTree::generate(const ACC::LexicalAnalysis &in) {
-    if(generated)
+void ACC::ParseTree::generate(ACC::LexicalAnalysis in) {
+    if (generated)
         throw repeated_step_error_t("The parse tree has already been generated.");
     generated = true;
     LOG.createHeading("Generating Parse Tree...");
-    root = process(const_cast<LexicalAnalysis &>(in).data(), Symbol::start);
+    //  root = process(const_cast<LexicalAnalysis &>(in).data(), Symbol::start);
+    document = in.data();
+    size_t pos = 0;
+    root = start(pos);
 }
 
 ACC::ParseTree::~ParseTree() {
     refCount--;
-    if(refCount > 0)
+    if (refCount > 0)
         return;
 
     delete root;
     root = nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::match(size_t &pos, ACC::Symbol what) {
+    if (pos >= document.size())
+        return nullptr;
+
+    if (document[pos]->id == what)
+        return new ParseNode(document[pos]->id, document[pos]);
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::start;
+
+    size_t oldPos = pos;
+
+    ParseNode *other;
+
+    if (other = assignment(pos), other != nullptr) { // start -> assignment EOS
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::EOS), other != nullptr)
+                node->children.push_back(other);
+            else {
+                return false;
+            }
+
+            if (other = start(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+            return true;
+        }();
+
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+
+    if (other = function(pos), other != nullptr) { // start -> function extent
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::EXTENT), other != nullptr)
+                node->children.push_back(other);
+            else
+                return false;
+
+            if (other = start(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    if (other = keyword(pos), other != nullptr) { // start -> keyword EOS
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::EOS), other != nullptr)
+                node->children.push_back(other);
+            else
+                return false;
+            if (other = start(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+
+    }
+
+    if (other = call(pos), other != nullptr) { // start -> call EOS
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::EOS), other != nullptr)
+                node->children.push_back(other);
+            else
+                return false;
+
+            if (other = start(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::assignment(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::assignment;
+
+    size_t oldPos = pos;
+
+
+    ParseNode *other;
+    if (other = match(pos, Symbol::VAR), other != nullptr) { // start -> assignment EOS
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::DECL), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::TYPE), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::ASSIGN), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = expr(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    if (other = match(++pos, Symbol::ID), other != nullptr) {
+        bool b = [&]() {
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::ASSIGN), other == nullptr) {
+                return false;
+            }
+
+            node->children.push_back(other);
+
+            if (other = expr(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::function(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::function;
+
+    size_t oldPos = pos;
+
+    ParseNode *other;
+    if (other = match(pos, Symbol::FUNCTION), other !=
+                                              nullptr) { // function -> FUNCTION DECL BRACKET BRACKET TYPE COLON INDENT start
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::DECL), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+
+            if (other = paramDecl(++pos), other != nullptr) {
+                node->children.push_back(other);
+            } else
+                pos--;
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+
+            if (other = match(++pos, Symbol::TYPE), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::COLON), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::INDENT), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = start(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::keyword;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if (other = match(pos, Symbol::EXIT), other != nullptr) { // keyword -> exit expr
+        node->children.push_back(other);
+        if (other = expr(++pos), other == nullptr) {
+            killChildren(node);
+            pos = oldPos;
+        } else {
+            node->children.push_back(other);
+            return node;
+        }
+    }
+
+    if (other = match(pos, Symbol::RETURN), other != nullptr) { // keyword -> return expr
+        node->children.push_back(other);
+        if (other = expr(++pos), other == nullptr) {
+            killChildren(node);
+            pos = oldPos;
+        } else {
+            node->children.push_back(other);
+            return node;
+        }
+    }
+
+    if (other = match(pos, Symbol::SYSCALL), other != nullptr) { // keyword -> syscall expr COMMA expr COMMA...
+        bool b = [&]() {
+            node->children.push_back(other);
+
+            if (other = expr(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::COMMA), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            for (size_t i = 0; i < 6; i++) {
+                if (other = expr(++pos), other == nullptr) {
+                    pos--;
+                    break;
+                }
+                node->children.push_back(other);
+
+                if (other = match(++pos, Symbol::COMMA), other == nullptr) {
+                    pos--;
+                    break;
+                }
+                node->children.push_back(other);
+            }
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::call(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::call;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if (other = match(pos, Symbol::ID), other != nullptr) { // call -> ID BRACKET [paramList] BRACKET
+        bool b = [&]() {
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = paramList(++pos), other != nullptr) {
+                node->children.push_back(other);
+            } else
+                pos--;
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::expr;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET BRACKET
+        bool b = [&]() {
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET BRACKET expr
+        bool b = [&]() {
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = expr(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET paramList BRACKET
+        bool b = [&]() {
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = paramDecl(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET paramList BRACKET expr
+        bool b = [&]() {
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = paramDecl(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = expr(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+
+    if (other = match(pos, Symbol::BRACKET), other != nullptr) { // expr -> BRACKET expr BRACKET expr
+        bool b = [&]() {
+            node->children.push_back(other);
+
+
+            if (other = expr(++pos), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
+                return false;
+            }
+            node->children.push_back(other);
+
+            if (other = expr(++pos), other != nullptr) {
+                node->children.push_back(other);
+            } else
+                pos--;
+            return true;
+        }();
+        if (b)
+            return node;
+        else {
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    if (other = match(pos, Symbol::LITERAL), other != nullptr) { // expr -> LITERAL [expr]
+        node->children.push_back(other);
+
+        if (other = expr(++pos), other != nullptr) {
+            node->children.push_back(other);
+        } else
+            --pos;
+        return node;
+    }
+
+
+    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> ID expr
+        node->children.push_back(other);
+
+        if (other = expr(++pos), other != nullptr) {
+            node->children.push_back(other);
+        } else
+            --pos;
+        return node;
+    }
+
+    if (other = match(pos, Symbol::MATH_OPERATOR), other != nullptr) { // expr -> MATH_OPERATOR expr
+        node->children.push_back(other);
+
+        if (other = expr(++pos), other == nullptr) {
+            killChildren(node);
+            pos = oldPos;
+        } else {
+            node->children.push_back(other);
+            return node;
+        }
+    }
+    if (other = match(pos, Symbol::ID), other != nullptr) { // CMP -> ID expr
+        node->children.push_back(other);
+
+        if (other = expr(++pos), other == nullptr) {
+            killChildren(node);
+            pos = oldPos;
+        } else {
+            node->children.push_back(other);
+            return node;
+        }
+    }
+    if (other = match(pos, Symbol::ID), other != nullptr) { // NOT -> ID expr
+        node->children.push_back(other);
+
+        if (other = expr(++pos), other == nullptr) {
+            killChildren(node);
+            pos = oldPos;
+        } else {
+            node->children.push_back(other);
+            return node;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::paramDecl(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::paramsDecl;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if (other = match(pos, Symbol::DECL), other != nullptr) {
+        node->children.push_back(other);
+
+        if (other = match(++pos, Symbol::TYPE), other == nullptr) {
+            killChildren(node);
+            pos = oldPos;
+        } else {
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::COMMA), other != nullptr)
+                node->children.push_back(other);
+            else
+                pos--;
+
+            if (other = paramDecl(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                pos--;
+            return node;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::paramsList;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+
+    if (other = expr(pos), other != nullptr) {
+        node->children.push_back(other);
+
+
+        if (other = match(++pos, Symbol::COMMA), other != nullptr)
+            node->children.push_back(other);
+        else
+            pos--;
+
+        if (other = paramList(++pos), other != nullptr)
+            node->children.push_back(other);
+        else
+            pos--;
+        return node;
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
 }
 
 
