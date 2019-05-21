@@ -13,16 +13,16 @@ bool ACC::isNoneterminal(Symbol sys) {
 
 std::vector<ACC::Production> ACC::data::getGrammar() {
     return {
+            {Symbol::start,       {Symbol::if_construct, Symbol::EXTENT, Symbol::start}},
+            {Symbol::start,       {Symbol::if_construct, Symbol::EXTENT}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT}},
-            {Symbol::start,       {Symbol::ifStmt, Symbol::EXTENT}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS}},
             {Symbol::start,       {Symbol::call, Symbol::EOS}},
 
             {Symbol::start,       {Symbol::assignment, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::function, Symbol::EXTENT, Symbol::start}},
-            {Symbol::start,       {Symbol::ifStmt, Symbol::EXTENT, Symbol::start}},
             {Symbol::start,       {Symbol::keyword, Symbol::EOS, Symbol::start}},
             {Symbol::start,       {Symbol::call, Symbol::EOS, Symbol::start}},
 
@@ -61,8 +61,17 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::keyword,     {Symbol::RETURN, Symbol::expr}},
             {Symbol::keyword,     {Symbol::SYSCALL, Symbol::expr}},
 
-            {Symbol::ifStmt,      {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
+            {Symbol::if_construct,      {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT,
+                                         Symbol::ELIF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
+            {Symbol::if_construct,      {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
+        //    {Symbol::if_construct,      {Symbol::ifStmt, Symbol::INDENT, Symbol::start, Symbol::EXTENT, Symbol::elseIf_construct}},
+
+            {Symbol::elseIf_construct,      {Symbol::elseIfStmt}},
+          //  {Symbol::elseIf_construct,      {Symbol::elseIfStmt,  Symbol::EXTENT, Symbol::elseIf_construct}},
+
+            {Symbol::ifStmt,    {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
+            {Symbol::elseIfStmt,{Symbol::ELIF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}},
@@ -153,6 +162,16 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "CMP";
         case Symbol::NOT:
             return "not";
+        case Symbol::ELIF:
+            return "elif";
+        case Symbol::if_construct:
+            return "if_construct";
+        case Symbol::ELSE:
+            return "else";
+        case Symbol::elseIfStmt:
+            return "elseIfStmt";
+        case Symbol::elseIf_construct:
+            return "elseIf_construct";
     }
     throw std::runtime_error("Symbol not known.");
 }

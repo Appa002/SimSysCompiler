@@ -22,7 +22,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::function, Symbol::EXTENT}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
-        {{Symbol::start, {Symbol::ifStmt, Symbol::EXTENT}}, [](auto children, auto carry){
+        {{Symbol::start, {Symbol::if_construct, Symbol::EXTENT}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::call, Symbol::EOS}}, [](auto children, auto carry){
@@ -38,9 +38,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
             return new ASTNode(AstOperator::SEQ, vec);
         }},
-        {{Symbol::start, {Symbol::ifStmt, Symbol::EXTENT, Symbol::start}}, [](auto children, auto carry){
-            auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+        {{Symbol::start, {Symbol::if_construct, Symbol::EXTENT, Symbol::start}}, [](auto children, auto carry){
+                auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
+                return new ASTNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::keyword, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
@@ -49,6 +49,17 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::call, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
             return new ASTNode(AstOperator::SEQ, vec);
+        }},
+
+        // Symbol::if_construct,      {Symbol::ifStmt, Symbol::EXTENT, Symbol::if_construct}
+        {{Symbol::if_construct, {Symbol::ifStmt, Symbol::EXTENT, Symbol::if_construct}}, [](auto children, auto carry){
+            auto vec = {process(children[0], nullptr), process(children[2]->children[0], nullptr)};
+            return new ASTNode(AstOperator::IF_CONSTRUCT, vec);
+        }},
+
+        {{Symbol::if_construct, {Symbol::ifStmt}}, [](auto children, auto carry){
+            auto vec = {process(children[0], nullptr)};
+            return new ASTNode(AstOperator::IF_CONSTRUCT, vec);
         }},
 
 
@@ -140,6 +151,13 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                         process(children[4], nullptr)};
 
             return new ASTNode(AstOperator::IF, vec);
+        }},
+
+        {{Symbol::ifStmt, {Symbol::ELIF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr),
+                        process(children[4], nullptr)};
+
+            return new ASTNode(AstOperator::ELIF, vec);
         }},
 
 

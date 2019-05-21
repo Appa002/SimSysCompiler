@@ -12,6 +12,7 @@ namespace ACC {
         empty = -1,
         VAR = 0,
         DECL,
+        ELIF,
         ID,
         CMP,
         BRACKET,
@@ -30,9 +31,11 @@ namespace ACC {
         TYPE,
         IF,
         NOT,
+        ELSE,
 
         none_terminals_start,
 
+        if_construct,
         expr,
         declaration,
         assignment,
@@ -43,7 +46,9 @@ namespace ACC {
         paramsDecl,
         paramsList,
         call,
-        ifStmt
+        ifStmt,
+        elseIfStmt,
+        elseIf_construct
     };
 
     using productionBody_t = std::vector<Symbol>;

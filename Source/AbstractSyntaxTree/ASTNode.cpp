@@ -27,7 +27,7 @@
 #include <Assembly/TokenGenerator/CallTokenGenerator.h>
 #include <Assembly/TokenGenerator/ComparisionGenerator.h>
 #include <Assembly/TokenGenerator/NotTokenGenerator.h>
-#include <Assembly/TokenGenerator/IfTokenGenerator.h>
+#include <Assembly/TokenGenerator/IfConstructTokenGenerator.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <GeneralDataStore.h>
 #include <builtinTypes.h>
@@ -138,8 +138,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "__container";
         case AstOperator::REASSIGN:
             return "reassign";
-        case AstOperator::IF:
-            return "if";
+        case AstOperator::IF_CONSTRUCT:
+            return "if constructor";
         case AstOperator::EQUAL:
             return "equal";
         case AstOperator::NOT_EQUAL:
@@ -154,6 +154,10 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "greater equal";
         case AstOperator::NOT:
             return "not";
+        case AstOperator::IF:
+            return "if";
+        case AstOperator::ELIF:
+            return "elif";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
@@ -190,8 +194,8 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new ReturnTokenGenerator(this));
         case AstOperator::REASSIGN:
             return std::unique_ptr<Expr>(new ReassignTokenGenerator(this));
-        case AstOperator::IF:
-            return std::unique_ptr<Expr>(new IfTokenGenerator(this));
+        case AstOperator::IF_CONSTRUCT:
+            return std::unique_ptr<Expr>(new IfConstructTokenGenerator(this));
         case AstOperator::EQUAL:
             return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::EQ));
         case AstOperator::NOT_EQUAL:
@@ -213,6 +217,10 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             throw std::runtime_error("Operator `type_def` can't be interpreted as an expression.");
         case AstOperator::__CONTAINER:
             throw std::runtime_error("Operator `__container` can't be interpreted as an expression.");
+        case AstOperator::IF:
+            throw std::runtime_error("Operator `if` can't be interpreted as an expression.");
+        case AstOperator::ELIF:
+            throw std::runtime_error("Operator `elif` can't be interpreted as an expression.");
     }
     return std::unique_ptr<Expr>(nullptr);
 }

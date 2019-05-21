@@ -21,6 +21,7 @@
 #include <Lexical/Tokens/ExitToken.h>
 #include <Lexical/Tokens/IndentToken.h>
 #include <Lexical/Tokens/FunctionToken.h>
+#include <Lexical/Tokens/ElifToken.h>
 #include <Lexical/Tokens/ColonToken.h>
 #include <Lexical/Tokens/ExtentToken.h>
 #include <Lexical/Tokens/CommaToken.h>
@@ -51,7 +52,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if"
+            "fn", "var", "exit", "syscall", "return", "if", "elif"
     };
 
     if(shallCheckIndent) {
@@ -98,6 +99,11 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             return;
         }else if("if" == buffer){
             tokens.push_back(new IfToken());
+            buffer.clear();
+            ifStmt(pos + 1);
+            return;
+        }else if("elif" == buffer){
+            tokens.push_back(new ElifToken());
             buffer.clear();
             ifStmt(pos + 1);
             return;

@@ -51,9 +51,14 @@ ACC::ParseNode *ACC::ParseTree::process(token_string input, Symbol prodHead) {
 
             if (!isNoneterminal(expected)) {
                 if(iItr == input.end()){
+                    if(pItr == production.body.end()){
+                        gap -= 4;
+                        return node;
+                    }
                     LOG() << std::string(gap, ' ') << "Reached end of input whilst matching" << std::endl;
                     killChildren(node);
                     iItr = old;
+                    break;
                 }
                 if (expected == (*iItr)->id) {
                     node->children.push_back(new ParseNode((*iItr)->id, *iItr));
@@ -130,13 +135,15 @@ ACC::ParseTree::createString(token_string::iterator &inputItr, productionBody_t:
             indent++;
         }
 
+        if (productionItr != production.end() && (*inputItr)->id == *productionItr && depth == 0 && indent == 0)
+            break;
+
+
 
         if((*inputItr)->id == Symbol::EXTENT) {
             indent--;
         }
 
-        if (productionItr != production.end() && (*inputItr)->id == *productionItr && depth == 0 && indent == 0)
-            break;
 
         if ((*inputItr)->id == Symbol::BRACKET &&
                 dynamic_cast<BracketToken *>(*inputItr)->kind == BracketKind::CLOSED){
@@ -169,3 +176,5 @@ ACC::ParseTree::~ParseTree() {
     delete root;
     root = nullptr;
 }
+
+
