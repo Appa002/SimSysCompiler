@@ -67,11 +67,11 @@ std::vector<ACC::Production> ACC::data::getGrammar() {
             {Symbol::if_construct,      {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
         //    {Symbol::if_construct,      {Symbol::ifStmt, Symbol::INDENT, Symbol::start, Symbol::EXTENT, Symbol::elseIf_construct}},
 
-            {Symbol::elseIf_construct,      {Symbol::elseIfStmt}},
+            {Symbol::elseIf_construct,      {Symbol::else_construct}},
           //  {Symbol::elseIf_construct,      {Symbol::elseIfStmt,  Symbol::EXTENT, Symbol::elseIf_construct}},
 
             {Symbol::ifStmt,    {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
-            {Symbol::elseIfStmt,{Symbol::ELIF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
+            {Symbol::else_construct,{Symbol::ELIF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}},
 
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
             {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}},
@@ -168,8 +168,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "if_construct";
         case Symbol::ELSE:
             return "else";
-        case Symbol::elseIfStmt:
-            return "elseIfStmt";
+        case Symbol::else_construct:
+            return "else_construct";
         case Symbol::elseIf_construct:
             return "elseIf_construct";
     }

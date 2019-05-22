@@ -47,7 +47,7 @@ namespace ACC {
         paramsList,
         call,
         ifStmt,
-        elseIfStmt,
+        else_construct,
         elseIf_construct
     };
 

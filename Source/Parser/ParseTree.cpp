@@ -94,6 +94,16 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
         }
     }
 
+    if(other = ifConstruct(pos), other != nullptr){ // start -> ifConstruct [start]
+        node->children.push_back(other);
+        if (other = start(++pos), other != nullptr)
+            node->children.push_back(other);
+        else
+            --pos;
+
+        return node;
+    }
+
 
     if (other = function(pos), other != nullptr) { // start -> function extent
         bool b = [&]() {
@@ -589,7 +599,7 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             return node;
         }
     }
-    if (other = match(pos, Symbol::ID), other != nullptr) { // CMP -> ID expr
+    if (other = match(pos, Symbol::CMP), other != nullptr) { // expr -> CMP expr
         node->children.push_back(other);
 
         if (other = expr(++pos), other == nullptr) {
@@ -600,7 +610,7 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             return node;
         }
     }
-    if (other = match(pos, Symbol::ID), other != nullptr) { // NOT -> ID expr
+    if (other = match(pos, Symbol::NOT), other != nullptr) { // expr -> NOT expr
         node->children.push_back(other);
 
         if (other = expr(++pos), other == nullptr) {
@@ -678,6 +688,151 @@ ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
     pos = oldPos;
     delete node;
     return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::ifConstruct(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::if_construct;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if(other = match(pos, Symbol::IF), other != nullptr){ // ifConstruct -> IF expr COLON INDENT start EXTENT [elifConstruct] [elseConstruct]
+        node->children.push_back(other);
+        bool b = [&](){
+            if (other = expr(++pos), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+
+            if (other = match(++pos, Symbol::COLON), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::INDENT), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = start(++pos), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::EXTENT), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if(other = elifConstruct(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+
+            if(other = elseConstruct(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+
+            return true;
+        }();
+        if (b)
+            return node;
+        else{
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::elifConstruct(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::elseIf_construct;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if(other = match(pos, Symbol::ELIF), other != nullptr){ // elifConstruct -> ELIF expr COLON INDENT start EXTENT [elifConstruct]
+        node->children.push_back(other);
+        bool b = [&](){
+            if (other = expr(++pos), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::COLON), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::INDENT), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = start(++pos), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::EXTENT), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if(other = elifConstruct(++pos), other != nullptr)
+                node->children.push_back(other);
+            else
+                --pos;
+
+            return true;
+        }();
+        if (b)
+            return node;
+        else{
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::elseConstruct(size_t &pos) {
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::else_construct;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    if(other = match(pos, Symbol::ELSE), other != nullptr){ // else_construct -> ELSE INDENT start EXTENT
+        node->children.push_back(other);
+        bool b = [&](){
+            if (other = match(++pos, Symbol::INDENT), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = start(++pos), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+            if (other = match(++pos, Symbol::EXTENT), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
+
+            return true;
+        }();
+        if (b)
+            return node;
+        else{
+            killChildren(node);
+            pos = oldPos;
+        }
+    }
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+
 }
 
 

@@ -30,6 +30,7 @@
 #include <Lexical/Tokens/IfToken.h>
 #include <Lexical/Tokens/ComparisionToken.h>
 #include <Lexical/Tokens/NotToken.h>
+#include <Lexical/Tokens/ElseToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -52,7 +53,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if", "elif"
+            "fn", "var", "exit", "syscall", "return", "if", "elif", "else"
     };
 
     if(shallCheckIndent) {
@@ -106,6 +107,12 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             tokens.push_back(new ElifToken());
             buffer.clear();
             ifStmt(pos + 1);
+            return;
+        }else if("else" == buffer){
+            tokens.push_back(new ElseToken());
+            buffer.clear();
+            pushScope();
+            start(pos + 1, true);
             return;
         }
     }
