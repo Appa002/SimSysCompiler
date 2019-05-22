@@ -139,7 +139,7 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
         case AstOperator::REASSIGN:
             return "reassign";
         case AstOperator::IF_CONSTRUCT:
-            return "if constructor";
+            return "if construct";
         case AstOperator::EQUAL:
             return "equal";
         case AstOperator::NOT_EQUAL:
@@ -158,6 +158,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "if";
         case AstOperator::ELIF:
             return "elif";
+        case AstOperator::ELSE:
+            return "else";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
@@ -221,6 +223,9 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             throw std::runtime_error("Operator `if` can't be interpreted as an expression.");
         case AstOperator::ELIF:
             throw std::runtime_error("Operator `elif` can't be interpreted as an expression.");
+        case AstOperator::ELSE:
+            throw std::runtime_error("Operator `else` can't be interpreted as an expression.");
+            ;
     }
     return std::unique_ptr<Expr>(nullptr);
 }

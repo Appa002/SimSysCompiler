@@ -43,6 +43,7 @@ namespace ACC {
         IF_CONSTRUCT,
         IF,
         ELIF,
+        ELSE,
         EQUAL,
         NOT_EQUAL,
         LESS,
