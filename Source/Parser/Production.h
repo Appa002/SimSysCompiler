@@ -33,7 +33,6 @@ namespace ACC {
         NOT,
         ELSE,
 
-        none_terminals_start,
 
         if_construct,
         expr,

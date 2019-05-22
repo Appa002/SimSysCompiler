@@ -10,12 +10,8 @@
 
 namespace ACC {
 
-    bool isNoneterminal(Symbol sys);
 
     namespace data {
-        std::vector<Production> getGrammar();
-
-        std::string productionToString(Production p);
         std::string symbolToString(Symbol s);
     }
 }
