@@ -111,8 +111,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         }else if("else" == buffer){
             tokens.push_back(new ElseToken());
             buffer.clear();
-            pushScope();
-            start(pos + 1, true);
+            elseStmt(pos + 1);
             return;
         }
     }
@@ -688,5 +687,14 @@ void ACC::LexicalAnalysis::ifStmt(size_t pos) {
     pushScope();
     start(pos + 1, true);
 }
+
+void ACC::LexicalAnalysis::elseStmt(size_t pos) {
+    if(!matchIgnoreW(':', pos))
+        throw std::runtime_error("Else statements needs to be followed by a colon, at: " + std::to_string(pos));
+    tokens.push_back(new ColonToken());
+    pushScope();
+    start(pos + 1, true);
+}
+
 
 

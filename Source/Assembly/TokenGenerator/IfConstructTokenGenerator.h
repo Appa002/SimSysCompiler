@@ -18,5 +18,8 @@ namespace ACC{
         void handleElif(ACC::Fn &fn, ACC::Code &code, size_t idx, std::string &next,
                                 std::string const &final);
 
+        void handleElse(ACC::Fn &fn, ACC::Code &code, size_t idx, std::string &next);
+
+
     };
 }

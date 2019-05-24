@@ -95,8 +95,8 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return nullptr;
         }},
 
-        {{Symbol::else_construct, {Symbol::ELSE, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
-            auto vec = {process(children[2], nullptr)};
+        {{Symbol::else_construct, {Symbol::ELSE, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
+            auto vec = {process(children[3], nullptr)};
             return new ASTNode(AstOperator::ELSE, vec);
 
         }},
@@ -370,23 +370,3 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
     };
 }
-
-/*
-            {Symbol::expr,        {Symbol::LITERAL}},
-            {Symbol::expr,        {Symbol::LITERAL, Symbol::expr}},
-
-            {Symbol::expr,        {Symbol::ID}},
-            {Symbol::expr,        {Symbol::ID, Symbol::expr}},
-
-            {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET}},
-            {Symbol::expr,        {Symbol::ID,    Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}},
-
-            {Symbol::expr,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}},
-            {Symbol::expr,        {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET, Symbol::expr}},
-
-            {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}},
-            {Symbol::expr,        {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::expr}},
-
-            {Symbol::expr,        {Symbol::MATH_OPERATOR, Symbol::expr}}
- *
- * */

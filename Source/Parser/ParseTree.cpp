@@ -428,29 +428,7 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET BRACKET
-        bool b = [&]() {
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
-
-    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET BRACKET expr
+    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET BRACKET [expr]
         bool b = [&]() {
             node->children.push_back(other);
 
@@ -463,10 +441,10 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             }
             node->children.push_back(other);
 
-            if (other = expr(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+            if (other = expr(++pos), other != nullptr) {
+                node->children.push_back(other);
+            } else
+                pos--;
             return true;
         }();
         if (b)
@@ -806,6 +784,10 @@ ACC::ParseNode *ACC::ParseTree::elseConstruct(size_t &pos) {
     if(other = match(pos, Symbol::ELSE), other != nullptr){ // else_construct -> ELSE INDENT start EXTENT
         node->children.push_back(other);
         bool b = [&](){
+            if (other = match(++pos, Symbol::COLON), other == nullptr)
+                return false;
+            node->children.push_back(other);
+
             if (other = match(++pos, Symbol::INDENT), other == nullptr)
                 return false;
             node->children.push_back(other);

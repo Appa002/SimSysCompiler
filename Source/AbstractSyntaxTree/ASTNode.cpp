@@ -225,7 +225,6 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             throw std::runtime_error("Operator `elif` can't be interpreted as an expression.");
         case AstOperator::ELSE:
             throw std::runtime_error("Operator `else` can't be interpreted as an expression.");
-            ;
     }
     return std::unique_ptr<Expr>(nullptr);
 }
