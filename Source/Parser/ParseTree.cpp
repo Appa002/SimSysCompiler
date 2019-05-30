@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by a_mod on 10.01.2019.
 //
@@ -11,8 +13,64 @@
 #include <Logger/Logger.h>
 #include <errors.h>
 #include <Lexical/Tokens/IndentToken.h>
+#include <Logger/LogableProduction.h>
 
-size_t gap = 0;
+#define START_PRODUCTION() \
+    logable.echoProduction(); \
+    { \
+    bool b = [&]() {
+
+#define END_PRODUCTION() \
+    return true; \
+    }(); \
+    if (b){ \
+         pos--;\
+        return node; \
+    }\
+    else { \
+        killChildren(node); \
+        pos = oldPos;\
+    }\
+    }
+
+#define NONE_TERMINAL(name) \
+    if (other = name(pos), other == nullptr) { \
+        logable.red(); \
+        return false; \
+    } \
+    pos++; \
+    node->children.push_back(other); \
+    logable.green();
+
+#define TERMINAL(name) \
+    if (other = match(pos, Symbol::name), other == nullptr) { \
+        logable.red(); \
+        return false; \
+    } \
+    pos++; \
+    node->children.push_back(other); \
+    logable.green();
+
+#define OPTIONAL_NONE_TERMINAL(name) \
+    if (other = name(pos), other != nullptr){\
+        node->children.push_back(other);\
+        logable.green(); \
+        pos++;\
+    } \
+    else {\
+        logable.blue();\
+    }\
+
+#define OPTIONAL_TERMINAL(name) \
+    if (other = match(pos, Symbol::name), other != nullptr){\
+        node->children.push_back(other);\
+        logable.green(); \
+        pos++;\
+    } \
+    else {\
+        logable.blue();\
+    }\
+
 
 ACC::ParseTree::ParseTree(const ACC::LexicalAnalysis &in) {
     generate(in);
@@ -63,6 +121,9 @@ ACC::ParseNode *ACC::ParseTree::match(size_t &pos, ACC::Symbol what) {
 }
 
 ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [start]...\n";
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::start;
 
@@ -70,106 +131,51 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     ParseNode *other;
 
-    if (other = assignment(pos), other != nullptr) { // start -> assignment EOS
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::EOS), other != nullptr)
-                node->children.push_back(other);
-            else {
-                return false;
-            }
+    logable.loadProduction(Symbol::start, {Symbol::assignment, Symbol::EOS, Symbol::start});
+    START_PRODUCTION()
 
-            if (other = start(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-            return true;
-        }();
+        NONE_TERMINAL(assignment)
+        TERMINAL(EOS)
+        OPTIONAL_NONE_TERMINAL(start);
 
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
-
-    if(other = ifConstruct(pos), other != nullptr){ // start -> ifConstruct [start]
-        node->children.push_back(other);
-        if (other = start(++pos), other != nullptr)
-            node->children.push_back(other);
-        else
-            --pos;
-
-        return node;
-    }
+    END_PRODUCTION()
 
 
-    if (other = function(pos), other != nullptr) { // start -> function extent
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::EXTENT), other != nullptr)
-                node->children.push_back(other);
-            else
-                return false;
+    logable.loadProduction(Symbol::start, {Symbol::if_construct, Symbol::start});
+    START_PRODUCTION()
+            NONE_TERMINAL(ifConstruct)
+            OPTIONAL_NONE_TERMINAL(start);
 
-            if (other = start(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    END_PRODUCTION()
 
-    if (other = keyword(pos), other != nullptr) { // start -> keyword EOS
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::EOS), other != nullptr)
-                node->children.push_back(other);
-            else
-                return false;
-            if (other = start(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
+    logable.loadProduction(Symbol::start, {Symbol::function, Symbol::EXTENT, Symbol::start});
+    START_PRODUCTION()
 
-    }
+            NONE_TERMINAL(function)
+            TERMINAL(EXTENT)
+            OPTIONAL_NONE_TERMINAL(start);
 
-    if (other = call(pos), other != nullptr) { // start -> call EOS
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::EOS), other != nullptr)
-                node->children.push_back(other);
-            else
-                return false;
+    END_PRODUCTION()
 
-            if (other = start(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    logable.loadProduction(Symbol::start, {Symbol::keyword, Symbol::EOS, Symbol::start});
+    START_PRODUCTION()
+
+            NONE_TERMINAL(keyword)
+            TERMINAL(EOS)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::start, {Symbol::call, Symbol::EOS, Symbol::start});
+    START_PRODUCTION()
+
+            NONE_TERMINAL(call)
+            TERMINAL(EOS)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -177,68 +183,34 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::assignment(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [assignment]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::assignment;
+    ParseNode *other;
 
     size_t oldPos = pos;
 
+    logable.loadProduction(Symbol::assignment, {Symbol::VAR, Symbol::DECL, Symbol::TYPE, Symbol::ASSIGN, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(VAR)
+            TERMINAL(DECL)
+            TERMINAL(TYPE)
+            TERMINAL(ASSIGN)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-    ParseNode *other;
-    if (other = match(pos, Symbol::VAR), other != nullptr) { // start -> assignment EOS
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::DECL), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::assignment, {Symbol::ID, Symbol::ASSIGN, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(ID)
+            TERMINAL(ASSIGN)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-            if (other = match(++pos, Symbol::TYPE), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
 
-            if (other = match(++pos, Symbol::ASSIGN), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = expr(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
-
-    if (other = match(++pos, Symbol::ID), other != nullptr) {
-        bool b = [&]() {
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::ASSIGN), other == nullptr) {
-                return false;
-            }
-
-            node->children.push_back(other);
-
-            if (other = expr(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -246,136 +218,80 @@ ACC::ParseNode *ACC::ParseTree::assignment(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::function(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [function]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::function;
 
     size_t oldPos = pos;
 
     ParseNode *other;
-    if (other = match(pos, Symbol::FUNCTION), other !=
-                                              nullptr) { // function -> FUNCTION DECL BRACKET BRACKET TYPE COLON INDENT start
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::DECL), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
 
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl,
+                                              Symbol::BRACKET, Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start});
+    START_PRODUCTION()
+            TERMINAL(FUNCTION)
+            TERMINAL(DECL)
+            TERMINAL(BRACKET)
+            OPTIONAL_NONE_TERMINAL(paramDecl)
+            TERMINAL(BRACKET)
+            TERMINAL(TYPE)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+    END_PRODUCTION()
 
+    LOG() << Log::Colour::Magenta << "..done\n";
 
-            if (other = paramDecl(++pos), other != nullptr) {
-                node->children.push_back(other);
-            } else
-                pos--;
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-
-            if (other = match(++pos, Symbol::TYPE), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::COLON), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::INDENT), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = start(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
     pos = oldPos;
     delete node;
     return nullptr;
 }
 
 ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [keyword]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::keyword;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if (other = match(pos, Symbol::EXIT), other != nullptr) { // keyword -> exit expr
-        node->children.push_back(other);
-        if (other = expr(++pos), other == nullptr) {
-            killChildren(node);
-            pos = oldPos;
-        } else {
-            node->children.push_back(other);
-            return node;
-        }
-    }
+    logable.loadProduction(Symbol::keyword, {Symbol::EXIT, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(EXIT)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-    if (other = match(pos, Symbol::RETURN), other != nullptr) { // keyword -> return expr
-        node->children.push_back(other);
-        if (other = expr(++pos), other == nullptr) {
-            killChildren(node);
-            pos = oldPos;
-        } else {
-            node->children.push_back(other);
-            return node;
-        }
-    }
 
-    if (other = match(pos, Symbol::SYSCALL), other != nullptr) { // keyword -> syscall expr COMMA expr COMMA...
-        bool b = [&]() {
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::keyword, {Symbol::RETURN, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(RETURN)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-            if (other = expr(++pos), other == nullptr) {
-                return false;
+    logable.loadProduction(Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA});
+    START_PRODUCTION()
+            std::vector<Symbol> vec = {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA};
+            TERMINAL(SYSCALL)
+            NONE_TERMINAL(expr)
+            TERMINAL(COMMA)
+
+            for(size_t i = 0; i < 6; i++){
+                vec.push_back(Symbol::expr);
+                vec.push_back(Symbol::COMMA);
+                logable.changeProduction(Symbol::keyword, vec);
+                OPTIONAL_NONE_TERMINAL(expr)
+                OPTIONAL_TERMINAL(COMMA)
             }
-            node->children.push_back(other);
 
-            if (other = match(++pos, Symbol::COMMA), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    END_PRODUCTION()
 
-            for (size_t i = 0; i < 6; i++) {
-                if (other = expr(++pos), other == nullptr) {
-                    pos--;
-                    break;
-                }
-                node->children.push_back(other);
-
-                if (other = match(++pos, Symbol::COMMA), other == nullptr) {
-                    pos--;
-                    break;
-                }
-                node->children.push_back(other);
-            }
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -383,38 +299,25 @@ ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::call(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [call]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::call;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if (other = match(pos, Symbol::ID), other != nullptr) { // call -> ID BRACKET [paramList] BRACKET
-        bool b = [&]() {
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList,Symbol::BRACKET});
+    START_PRODUCTION()
+            TERMINAL(ID)
+            TERMINAL(BRACKET)
+            OPTIONAL_NONE_TERMINAL(paramList)
+            TERMINAL(BRACKET)
+    END_PRODUCTION()
 
-            if (other = paramList(++pos), other != nullptr) {
-                node->children.push_back(other);
-            } else
-                pos--;
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -422,183 +325,75 @@ ACC::ParseNode *ACC::ParseTree::call(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [expr]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::expr;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET BRACKET [expr]
-        bool b = [&]() {
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET, Symbol::expr});
+    START_PRODUCTION()
+        TERMINAL(ID)
+        TERMINAL(BRACKET)
+        TERMINAL(BRACKET)
+        OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(ID)
+            TERMINAL(BRACKET)
+            NONE_TERMINAL(paramList)
+            TERMINAL(BRACKET)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-            if (other = expr(++pos), other != nullptr) {
-                node->children.push_back(other);
-            } else
-                pos--;
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    logable.loadProduction(Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(BRACKET)
+            NONE_TERMINAL(expr)
+            TERMINAL(BRACKET)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET paramList BRACKET
-        bool b = [&]() {
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = paramDecl(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
-
-    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> id BRACKET paramList BRACKET expr
-        bool b = [&]() {
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = paramDecl(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-
-            if (other = expr(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    logable.loadProduction(Symbol::expr, {Symbol::LITERAL, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(LITERAL)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
 
-    if (other = match(pos, Symbol::BRACKET), other != nullptr) { // expr -> BRACKET expr BRACKET expr
-        bool b = [&]() {
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(ID)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
 
-            if (other = expr(++pos), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::expr, {Symbol::MATH_OPERATOR, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(MATH_OPERATOR)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-            if (other = match(++pos, Symbol::BRACKET), other == nullptr) {
-                return false;
-            }
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::expr, {Symbol::CMP, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(CMP)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
-            if (other = expr(++pos), other != nullptr) {
-                node->children.push_back(other);
-            } else
-                pos--;
-            return true;
-        }();
-        if (b)
-            return node;
-        else {
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
-
-    if (other = match(pos, Symbol::LITERAL), other != nullptr) { // expr -> LITERAL [expr]
-        node->children.push_back(other);
-
-        if (other = expr(++pos), other != nullptr) {
-            node->children.push_back(other);
-        } else
-            --pos;
-        return node;
-    }
+    logable.loadProduction(Symbol::expr, {Symbol::NOT, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(NOT)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
 
 
-    if (other = match(pos, Symbol::ID), other != nullptr) { // expr -> ID expr
-        node->children.push_back(other);
-
-        if (other = expr(++pos), other != nullptr) {
-            node->children.push_back(other);
-        } else
-            --pos;
-        return node;
-    }
-
-    if (other = match(pos, Symbol::MATH_OPERATOR), other != nullptr) { // expr -> MATH_OPERATOR expr
-        node->children.push_back(other);
-
-        if (other = expr(++pos), other == nullptr) {
-            killChildren(node);
-            pos = oldPos;
-        } else {
-            node->children.push_back(other);
-            return node;
-        }
-    }
-    if (other = match(pos, Symbol::CMP), other != nullptr) { // expr -> CMP expr
-        node->children.push_back(other);
-
-        if (other = expr(++pos), other == nullptr) {
-            killChildren(node);
-            pos = oldPos;
-        } else {
-            node->children.push_back(other);
-            return node;
-        }
-    }
-    if (other = match(pos, Symbol::NOT), other != nullptr) { // expr -> NOT expr
-        node->children.push_back(other);
-
-        if (other = expr(++pos), other == nullptr) {
-            killChildren(node);
-            pos = oldPos;
-        } else {
-            node->children.push_back(other);
-            return node;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -606,33 +401,26 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::paramDecl(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [paramsDecl]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::paramsDecl;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if (other = match(pos, Symbol::DECL), other != nullptr) {
-        node->children.push_back(other);
+    logable.loadProduction(Symbol::paramsDecl, {Symbol::DECL, Symbol::TYPE, Symbol::COMMA, Symbol::paramsDecl});
+    START_PRODUCTION()
+            TERMINAL(DECL)
+            TERMINAL(TYPE)
+            OPTIONAL_TERMINAL(COMMA)
+            OPTIONAL_NONE_TERMINAL(paramDecl)
+    END_PRODUCTION()
 
-        if (other = match(++pos, Symbol::TYPE), other == nullptr) {
-            killChildren(node);
-            pos = oldPos;
-        } else {
-            node->children.push_back(other);
 
-            if (other = match(++pos, Symbol::COMMA), other != nullptr)
-                node->children.push_back(other);
-            else
-                pos--;
-
-            if (other = paramDecl(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                pos--;
-            return node;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -640,28 +428,25 @@ ACC::ParseNode *ACC::ParseTree::paramDecl(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [paramsList]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::paramsList;
 
     size_t oldPos = pos;
     ParseNode *other;
 
+    logable.loadProduction(Symbol::paramsList, {Symbol::expr, Symbol::COMMA, Symbol::paramsList});
+    START_PRODUCTION()
+            NONE_TERMINAL(expr)
+            OPTIONAL_TERMINAL(COMMA)
+            OPTIONAL_NONE_TERMINAL(paramList)
+    END_PRODUCTION()
 
-    if (other = expr(pos), other != nullptr) {
-        node->children.push_back(other);
 
-
-        if (other = match(++pos, Symbol::COMMA), other != nullptr)
-            node->children.push_back(other);
-        else
-            pos--;
-
-        if (other = paramList(++pos), other != nullptr)
-            node->children.push_back(other);
-        else
-            pos--;
-        return node;
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -669,55 +454,30 @@ ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::ifConstruct(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [if_construct]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::if_construct;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if(other = match(pos, Symbol::IF), other != nullptr){ // ifConstruct -> IF expr COLON INDENT start EXTENT [elifConstruct] [elseConstruct]
-        node->children.push_back(other);
-        bool b = [&](){
-            if (other = expr(++pos), other == nullptr)
-                return false;
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT,
+                                                  Symbol::elseIf_construct, Symbol::else_construct});
+    START_PRODUCTION()
+            TERMINAL(IF)
+            NONE_TERMINAL(expr)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+            TERMINAL(EXTENT)
+            OPTIONAL_NONE_TERMINAL(elifConstruct)
+            OPTIONAL_NONE_TERMINAL(elseConstruct)
+    END_PRODUCTION()
 
-
-            if (other = match(++pos, Symbol::COLON), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::INDENT), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = start(++pos), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::EXTENT), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if(other = elifConstruct(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-
-            if(other = elseConstruct(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-
-            return true;
-        }();
-        if (b)
-            return node;
-        else{
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -725,49 +485,30 @@ ACC::ParseNode *ACC::ParseTree::ifConstruct(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::elifConstruct(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [elif_construct]...\n";
+
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::elseIf_construct;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if(other = match(pos, Symbol::ELIF), other != nullptr){ // elifConstruct -> ELIF expr COLON INDENT start EXTENT [elifConstruct]
-        node->children.push_back(other);
-        bool b = [&](){
-            if (other = expr(++pos), other == nullptr)
-                return false;
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::elseIf_construct, {Symbol::ELIF, Symbol::expr, Symbol::COLON,Symbol::INDENT,Symbol::start,
+                                                      Symbol::EXTENT,Symbol::elseIf_construct});
+    START_PRODUCTION()
+            TERMINAL(ELIF)
+            NONE_TERMINAL(expr)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+            TERMINAL(EXTENT)
+            OPTIONAL_NONE_TERMINAL(elifConstruct)
+    END_PRODUCTION()
 
-            if (other = match(++pos, Symbol::COLON), other == nullptr)
-                return false;
-            node->children.push_back(other);
 
-            if (other = match(++pos, Symbol::INDENT), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = start(++pos), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::EXTENT), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if(other = elifConstruct(++pos), other != nullptr)
-                node->children.push_back(other);
-            else
-                --pos;
-
-            return true;
-        }();
-        if (b)
-            return node;
-        else{
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
@@ -775,41 +516,25 @@ ACC::ParseNode *ACC::ParseTree::elifConstruct(size_t &pos) {
 }
 
 ACC::ParseNode *ACC::ParseTree::elseConstruct(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [else_construct]...\n";
     ParseNode *node = new ParseNode;
     node->symbol = Symbol::else_construct;
 
     size_t oldPos = pos;
     ParseNode *other;
 
-    if(other = match(pos, Symbol::ELSE), other != nullptr){ // else_construct -> ELSE INDENT start EXTENT
-        node->children.push_back(other);
-        bool b = [&](){
-            if (other = match(++pos, Symbol::COLON), other == nullptr)
-                return false;
-            node->children.push_back(other);
+    logable.loadProduction(Symbol::else_construct, {Symbol::ELSE, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT});
+    START_PRODUCTION()
+            TERMINAL(ELSE)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+            TERMINAL(EXTENT)
+    END_PRODUCTION()
 
-            if (other = match(++pos, Symbol::INDENT), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = start(++pos), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-            if (other = match(++pos, Symbol::EXTENT), other == nullptr)
-                return false;
-            node->children.push_back(other);
-
-
-            return true;
-        }();
-        if (b)
-            return node;
-        else{
-            killChildren(node);
-            pos = oldPos;
-        }
-    }
+    LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
     delete node;
