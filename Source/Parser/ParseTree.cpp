@@ -279,7 +279,7 @@ ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
             std::vector<Symbol> vec = {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA};
             TERMINAL(SYSCALL)
             NONE_TERMINAL(expr)
-            TERMINAL(COMMA)
+            OPTIONAL_TERMINAL(COMMA)
 
             for(size_t i = 0; i < 6; i++){
                 vec.push_back(Symbol::expr);
