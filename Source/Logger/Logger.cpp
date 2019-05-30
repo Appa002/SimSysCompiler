@@ -62,6 +62,7 @@ namespace ANSI_CODES{
     const std::string magenta = "\033[35;1m";
     const std::string clear = "\033[0m";
     const std::string heading = "\033[32;1m";
+    const std::string green = "\033[32;1m";
     const std::string red = "\033[31;1m";
 };
 
@@ -123,6 +124,9 @@ void ACC::Log::Logger::logToConsole(ACC::Log::LogLevel level, std::string str) {
         case Colour::Red:
             std::cout << ANSI_CODES::red;
             break;
+        case Colour::Green:
+            std::cout << ANSI_CODES::green;
+            break;
     }
     std::cout << str;
     std::cout << ANSI_CODES::clear;
@@ -156,7 +160,10 @@ void ACC::Log::Logger::logToFile(ACC::Log::LogLevel level, std::string str) {
         case Colour::Red:
             str = R"(<b style="color: red;">)" + str;
             str += R"(</b>)";
-            break;;
+            break;
+        case Colour::Green:  str = R"(<b style="color: green;">)" + str;
+            str += R"(</b>)";
+            break;
     }
 
     file.seekp(head);
