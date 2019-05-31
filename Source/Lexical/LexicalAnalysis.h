@@ -55,6 +55,7 @@ namespace ACC {
         void parseStringLiteral(size_t &pos);
         void ifStmt(size_t pos);
         void elseStmt(size_t pos);
+        void whileStmt(size_t pos);
 
 
     public:

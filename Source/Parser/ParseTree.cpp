@@ -175,6 +175,14 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::start, {Symbol::while_construct, Symbol::start});
+    START_PRODUCTION()
+
+            NONE_TERMINAL(whileConstruct)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
     LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
@@ -540,6 +548,35 @@ ACC::ParseNode *ACC::ParseTree::elseConstruct(size_t &pos) {
     delete node;
     return nullptr;
 
+}
+
+ACC::ParseNode *ACC::ParseTree::whileConstruct(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [while_construct]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::while_construct;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::while_construct, {Symbol::WHILE, Symbol::expr, Symbol::COLON, Symbol::INDENT,
+                                                     Symbol::start, Symbol::EXTENT});
+    START_PRODUCTION()
+            TERMINAL(WHILE)
+            NONE_TERMINAL(expr)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+            TERMINAL(EXTENT)
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
 }
 
 

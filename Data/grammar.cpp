@@ -82,6 +82,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "else_construct";
         case Symbol::elseIf_construct:
             return "elseIf_construct";
+        case Symbol::WHILE:
+            return "WHILE";
+        case Symbol::while_construct:
+            return "while_construct";
     }
     throw std::runtime_error("Symbol not known.");
 }

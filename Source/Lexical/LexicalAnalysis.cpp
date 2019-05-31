@@ -2,6 +2,7 @@
 // Created by a_mod on 06.01.2019.
 //
 
+#include <Lexical/Tokens/WhileToken.h>
 #include <Lexical/Tokens/TypeToken.h>
 #include "LexicalAnalysis.h"
 #include <fstream>
@@ -53,7 +54,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if", "elif", "else"
+            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while"
     };
 
     if(shallCheckIndent) {
@@ -112,6 +113,11 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             tokens.push_back(new ElseToken());
             buffer.clear();
             elseStmt(pos + 1);
+            return;
+        }else if ("while" == buffer){
+            tokens.push_back(new WhileToken());
+            buffer.clear();
+            whileStmt(pos + 1);
             return;
         }
     }
@@ -692,6 +698,15 @@ void ACC::LexicalAnalysis::elseStmt(size_t pos) {
     if(!matchIgnoreW(':', pos))
         throw std::runtime_error("Else statements needs to be followed by a colon, at: " + std::to_string(pos));
     tokens.push_back(new ColonToken());
+    pushScope();
+    start(pos + 1, true);
+}
+
+void ACC::LexicalAnalysis::whileStmt(size_t pos) {
+    pos++;
+    expr(pos, {":"});
+    matchIgnoreW(':', pos);
+    tokens.push_back(new ColonToken);
     pushScope();
     start(pos + 1, true);
 }

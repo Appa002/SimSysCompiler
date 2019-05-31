@@ -50,6 +50,7 @@ namespace ACC {
         GREATER,
         LESS_EQUAL,
         GREATER_EQUAL,
+        WHILE,
 
         __NONE,
         __CONTAINER

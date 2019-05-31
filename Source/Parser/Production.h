@@ -32,8 +32,9 @@ namespace ACC {
         IF,
         NOT,
         ELSE,
+        WHILE,
 
-
+        while_construct,
         if_construct,
         expr,
         declaration,

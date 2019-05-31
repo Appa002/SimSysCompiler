@@ -25,6 +25,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::if_construct}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
+        {{Symbol::start, {Symbol::while_construct}}, [](auto children, auto carry){
+            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+        }},
         {{Symbol::start, {Symbol::call, Symbol::EOS}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
@@ -42,6 +45,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                 auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
                 return new ASTNode(AstOperator::SEQ, vec);
         }},
+        {{Symbol::start, {Symbol::while_construct, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
+            return new ASTNode(AstOperator::SEQ, vec);
+        }},
         {{Symbol::start, {Symbol::keyword, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
             return new ASTNode(AstOperator::SEQ, vec);
@@ -54,6 +61,11 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
             return new ASTNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
+        }},
+
+        {{Symbol::while_construct, {Symbol::WHILE, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
+            return new ASTNode(AstOperator::WHILE, vec);
         }},
 
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT, Symbol::elseIf_construct}}, [](auto children, auto carry){
