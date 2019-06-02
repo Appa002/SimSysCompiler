@@ -10,7 +10,7 @@ ACC::Structure ACC::ReassignTokenGenerator::generate(ACC::Code &code) {
     Register lhs = code.getFreeRegister();
     Register rhs = code.getFreeRegister();
 
-    fn.writeLine(var.copyAddrToRegister(registerToString(var.typeId.getSize(), lhs), code));
+    fn.writeLine(var.copyAddrToRegister(registerToString(8, lhs), code));
     fn.writeLine(expr.copyToRegister(registerToString(var.typeId.getSize(), rhs), code));
 
     fn.writeLine("mov [" + registerToString(var.typeId.getSize(), lhs) + "], " + registerToString(var.typeId.getSize(), rhs));
