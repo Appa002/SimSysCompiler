@@ -24,7 +24,12 @@ ACC::Structure ACC::WhileTokenGenerator::generate(ACC::Code &code) {
     fn.writeLine("cmp " + registerToString(1, reg) + ", 1");
     fn.writeLine("jnz ." + rest);
 
+    code.freeRegister(reg);
+    code.freeRegister(condition.registerUsed);
+
+    code.pushScope();
     auto body = node->children[1]->asExpr()->generate(code);
+    code.popScope();
 
     fn.writeLine("jmp ." + top);
 

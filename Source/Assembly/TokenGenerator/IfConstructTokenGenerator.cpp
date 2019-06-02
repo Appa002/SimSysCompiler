@@ -29,7 +29,9 @@ ACC::Structure ACC::IfConstructTokenGenerator::generate(ACC::Code &code) {
     code.freeRegister(expr.registerUsed);
     code.freeRegister(reg);
 
+    code.pushScope();
     node->children[0]->children[1]->asExpr()->generate(code);
+    code.popScope();
     if(!node->children.empty()){
         fn.writeLine("jmp ." + final);
         for(size_t i = 1; i < node->children.size(); i++){
@@ -70,12 +72,16 @@ void ACC::IfConstructTokenGenerator::handleElif(ACC::Fn &fn, ACC::Code &code, si
 
     code.freeRegister(condition.registerUsed);
     code.freeRegister(reg);
+    code.pushScope();
     node->children[idx]->children[1]->asExpr()->generate(code);
+    code.popScope();
     if(node->children.size() - idx - 1 != 0)
         fn.writeLine("jmp ." + final);
 }
 
 void ACC::IfConstructTokenGenerator::handleElse(ACC::Fn &fn, ACC::Code &code, size_t idx, std::string &next) {
+    code.pushScope();
     fn.writeLine("." + next + ":");
     node->children[idx]->children[0]->asExpr()->generate(code);
+    code.popScope();
 }
