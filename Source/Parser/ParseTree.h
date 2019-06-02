@@ -43,6 +43,7 @@ namespace ACC {
         ParseNode* elifConstruct(size_t &pos);
         ParseNode* elseConstruct(size_t &pos);
         ParseNode* whileConstruct(size_t &pos);
+        ParseNode* forConstruct(size_t &pos);
 
     };
 }

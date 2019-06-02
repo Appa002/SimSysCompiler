@@ -183,6 +183,14 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::start, {Symbol::for_construct, Symbol::start});
+    START_PRODUCTION()
+
+            NONE_TERMINAL(forConstruct)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
     LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
@@ -565,6 +573,37 @@ ACC::ParseNode *ACC::ParseTree::whileConstruct(size_t &pos) {
                                                      Symbol::start, Symbol::EXTENT});
     START_PRODUCTION()
             TERMINAL(WHILE)
+            NONE_TERMINAL(expr)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+            TERMINAL(EXTENT)
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [for_construct]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::for_construct;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::GOES_TO, Symbol::expr, Symbol::COLON,
+                                                   Symbol::INDENT, Symbol::start, Symbol::EXTENT});
+    START_PRODUCTION()
+            TERMINAL(FOR)
+            TERMINAL(ID)
+            TERMINAL(GOES_TO)
             NONE_TERMINAL(expr)
             TERMINAL(COLON)
             TERMINAL(INDENT)

@@ -56,6 +56,8 @@ namespace ACC {
         void ifStmt(size_t pos);
         void elseStmt(size_t pos);
         void whileStmt(size_t pos);
+        void forStmt(size_t pos);
+        void declExpr(size_t& pos);
 
 
     public:
