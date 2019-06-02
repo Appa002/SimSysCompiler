@@ -22,6 +22,7 @@
 #include <Lexical/Tokens/ExitToken.h>
 #include <Lexical/Tokens/IndentToken.h>
 #include <Lexical/Tokens/FunctionToken.h>
+#include <Lexical/Tokens/ForToken.h>
 #include <Lexical/Tokens/ElifToken.h>
 #include <Lexical/Tokens/ColonToken.h>
 #include <Lexical/Tokens/ExtentToken.h>
@@ -32,6 +33,7 @@
 #include <Lexical/Tokens/ComparisionToken.h>
 #include <Lexical/Tokens/NotToken.h>
 #include <Lexical/Tokens/ElseToken.h>
+#include <Lexical/Tokens/GoesToToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -54,7 +56,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while"
+            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for"
     };
 
     if(shallCheckIndent) {
@@ -118,6 +120,11 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             tokens.push_back(new WhileToken());
             buffer.clear();
             whileStmt(pos + 1);
+            return;
+        }else if ("for" == buffer){
+            tokens.push_back(new ForToken());
+            buffer.clear();
+            forStmt(pos + 1);
             return;
         }
     }
@@ -233,7 +240,7 @@ void ACC::LexicalAnalysis::var(size_t pos) {
     if(curScope->isSymbolInThisScope(buffer))
         throw std::runtime_error("Redefinition variable `"+ buffer +"`, at: " + std::to_string(pos));
 
-    if(contains(buffer, {"fn", "var", "exit", "syscall", "return", "if"}))
+    if(contains(buffer, { "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for"}))
         throw std::runtime_error("Can't use keyword as variable name, at: " + std::to_string(pos));
 
     tokens.push_back(new DeclToken(buffer));
@@ -307,7 +314,6 @@ void ACC::LexicalAnalysis::type(size_t &pos) {
 }
 
 void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens) {
-
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
                       [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
@@ -705,8 +711,44 @@ void ACC::LexicalAnalysis::elseStmt(size_t pos) {
 void ACC::LexicalAnalysis::whileStmt(size_t pos) {
     pos++;
     expr(pos, {":"});
-    matchIgnoreW(':', pos);
+    if(!matchIgnoreW(':', pos))
+        throw std::runtime_error("While loop requires block, at: " + std::to_string(pos));
     tokens.push_back(new ColonToken);
+    pushScope();
+    start(pos + 1, true);
+}
+
+void ACC::LexicalAnalysis::forStmt(size_t pos) {
+    pos++;
+    // match ID
+    buffer.clear();
+    readUntilNextLine(pos);
+    matchAsLongAs(pos, [&](){return !contains(document.at(pos), {";", " ", ":", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
+            [&](){
+        buffer += document.at(pos);
+    });
+
+    if(!curScope->isSymbolInThisScope(buffer))
+        throw std::runtime_error("Unknown variable `"+ buffer +"`, at: " + std::to_string(pos));
+
+    tokens.push_back(new IdToken(buffer));
+
+    // match `->`
+    readUntilNextLine(pos);
+    if(!(document.at(pos) == '-' && document.at(pos + 1) == '>'))
+        throw std::runtime_error("In for loop; variable goes to where?, at: " + std::to_string(pos));
+    pos += 2;
+    tokens.push_back(new GoesToToken());
+
+    // match expr
+
+    buffer.clear();
+    expr(pos, {":"});
+    if(!matchIgnoreW(':', pos))
+        throw std::runtime_error("Expected block, at: " + std::to_string(pos));
+
+    tokens.push_back(new ColonToken());
+
     pushScope();
     start(pos + 1, true);
 }

@@ -18,6 +18,7 @@
 #include <Assembly/TokenGenerator/AssignTokenGenerator.h>
 #include <Assembly/TokenGenerator/IdTokenGenerator.h>
 #include <Assembly/TokenGenerator/WhileTokenGenerator.h>
+#include <Assembly/TokenGenerator/ForTokenGenerator.h>
 #include <Assembly/TokenGenerator/SyscallTokenGenerator.h>
 #include <Assembly/TokenGenerator/ExitTokenGenerator.h>
 #include <Assembly/TokenGenerator/DivisionTokenGenerator.h>
@@ -163,6 +164,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "else";
         case AstOperator::WHILE:
             return "while";
+        case AstOperator::FOR:
+            return "for";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
@@ -230,6 +233,8 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             throw std::runtime_error("Operator `else` can't be interpreted as an expression.");
         case AstOperator::WHILE:
             return std::unique_ptr<Expr>(new WhileTokenGenerator(this));
+        case AstOperator::FOR:
+            return std::unique_ptr<Expr>(new ForTokenGenerator(this));
     }
     return std::unique_ptr<Expr>(nullptr);
 }

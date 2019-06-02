@@ -30,8 +30,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "stmt";
         case Symbol::start:
             return "start";
-        case Symbol::declaration:
-            return "declaration";
+        case Symbol::for_construct:
+            return "for_construct";
         case Symbol::assignment:
             return "assignment";
         case Symbol::keyword:
@@ -86,6 +86,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "WHILE";
         case Symbol::while_construct:
             return "while_construct";
+        case Symbol::GOES_TO:
+            return "GOES_TO";
+        case Symbol::FOR:
+            return "FOR";
     }
     throw std::runtime_error("Symbol not known.");
 }

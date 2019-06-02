@@ -25,6 +25,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::if_construct}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
+        {{Symbol::start, {Symbol::for_construct}}, [](auto children, auto carry){
+            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+        }},
         {{Symbol::start, {Symbol::while_construct}}, [](auto children, auto carry){
             return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
@@ -46,6 +49,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                 return new ASTNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::while_construct, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
+            return new ASTNode(AstOperator::SEQ, vec);
+        }},
+        {{Symbol::start, {Symbol::for_construct, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
             return new ASTNode(AstOperator::SEQ, vec);
         }},
@@ -110,6 +117,15 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::else_construct, {Symbol::ELSE, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             auto vec = {process(children[3], nullptr)};
             return new ASTNode(AstOperator::ELSE, vec);
+
+        }},
+
+        {{Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::GOES_TO, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
+            auto vec = {
+                    new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym),
+                    process(children[3], nullptr),
+                    process(children[6], nullptr)};
+            return new ASTNode(AstOperator::FOR, vec);
 
         }},
 
