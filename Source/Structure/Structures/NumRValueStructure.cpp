@@ -3,10 +3,11 @@
 //
 
 #include "NumRValueStructure.h"
+#include "NumLValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 
-ACC::NumRValueStructure::NumRValueStructure(ACC::Register reg) : reg(reg){
+ACC::NumRValueStructure::NumRValueStructure(ACC::Register reg) : reg(reg), ElementaryStructure(ValueCategory::rvalue, 8){
 
 }
 
@@ -21,10 +22,23 @@ std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorForNext(ACC::Co
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorCopy(std::shared_ptr<Structure> address,
                                                                      ACC::Code &code) {
-    auto* addressAsNum = dynamic_cast<ElementaryStructure*>(address.get());
-    Register other = code.getFreeRegister();
-    addressAsNum->loadToRegister(other, code);
-    return std::make_shared<NumRValueStructure>(other);
+    if(address->vCategory == ValueCategory::rvalue) {
+        auto *addressAsNum = dynamic_cast<ElementaryStructure *>(address.get());
+        Register other = code.getFreeRegister();
+        addressAsNum->loadToRegister(other, code);
+        return std::make_shared<NumRValueStructure>(other);
+    }
+
+    if(address->vCategory == ValueCategory::lvalue){
+        auto *addressAsLvalue = dynamic_cast<NumLValueStructure *>(address.get());
+        auto& fn = code.getFnSymbol();
+
+        fn.writeLine("mov [" + addressAsLvalue->access + "], " + registerToString(8, reg));
+
+        return address;
+    }
+
+    return nullptr;
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorAdd(std::shared_ptr<Structure> amount, ACC::Code &code) {
@@ -40,7 +54,7 @@ std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorAdd(std::shared
 
     fn.writeLine("add " + meAsString + ", " + otherAsString);
     code.freeRegister(other);
-    return nullptr;
+    return shared_from_this();
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorSubtract(std::shared_ptr<Structure> amount,
