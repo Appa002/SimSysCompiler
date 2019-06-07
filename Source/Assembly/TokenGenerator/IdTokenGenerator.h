@@ -6,14 +6,13 @@
 #pragma once
 
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
-    struct IdTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit IdTokenGenerator(ASTNode* node);
+    struct IdTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
     };
 }

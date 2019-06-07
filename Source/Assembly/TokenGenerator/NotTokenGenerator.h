@@ -4,12 +4,11 @@
 
 #pragma once
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 namespace ACC{
-    struct NotTokenGenerator : public Expr{
-        explicit NotTokenGenerator(ASTNode* node);
-        Structure generate(ACC::Code &code) override;
+    struct NotTokenGenerator : public ASTNode {
+        Structure* generate(ACC::Code &code) override;
     };
 }

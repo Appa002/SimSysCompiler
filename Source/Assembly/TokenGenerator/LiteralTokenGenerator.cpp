@@ -1,12 +1,9 @@
 #include "LiteralTokenGenerator.h"
 #include <builtinTypes.h>
 
-ACC::LiteralTokenGenerator::LiteralTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
 
 void ACC::LiteralTokenGenerator::handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
-    structure.type = StructureType ::elementary;
+   /* structure.type = StructureType ::elementary;
 
     size_t count = 0;
     for(size_t i = 0; i < node->data.size(); i++){
@@ -45,11 +42,11 @@ void ACC::LiteralTokenGenerator::handleStringLiteral(ACC::Structure &structure, 
     structure.copyToRegister = [=](std::string reg, Code& c){
         return "lea " + reg + ", [rbp - " + std::to_string(address) + "]";
     };
-
+*/
 }
 
-ACC::Structure ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
+ACC::Structure* ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
+    /*auto& fn = code.getFnSymbol();
 
     auto returnStruct = Structure();
     returnStruct.typeId = node->type;
@@ -61,11 +58,12 @@ ACC::Structure ACC::LiteralTokenGenerator::generate(ACC::Code &code) {
         handleNumberLiteral(returnStruct, code, fn);
     }
 
-    return returnStruct;
+    return returnStruct;*/
+    return nullptr;
 }
 
 void ACC::LiteralTokenGenerator::handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
-    std::string literalEncoded = std::to_string(node->data.createNumber());
+  /*  std::string literalEncoded = std::to_string(node->data.createNumber());
     structure.type = StructureType::elementary;
     structure.isStored = false;
 
@@ -100,4 +98,5 @@ void ACC::LiteralTokenGenerator::handleNumberLiteral(ACC::Structure &structure, 
     structure.copyToBpOffset = [=](int32_t offset, Code& c){
         return Movs::imm2bp(store, offset);
     };
+    */
 }

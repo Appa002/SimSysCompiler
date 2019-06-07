@@ -1,12 +1,9 @@
 #include <builtinTypes.h>
 #include "ComparisionGenerator.h"
 
-ACC::ComparisionGenerator::ComparisionGenerator(ACC::ASTNode *node) : Expr(node) {
-    cmpType = ComparisionType::EQ;
-}
 
-ACC::Structure ACC::ComparisionGenerator::generate(ACC::Code &code) {
-    auto lhs = node->children[0]->asExpr()->generate(code);
+ACC::Structure* ACC::ComparisionGenerator::generate(ACC::Code &code) {
+/*    auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();
 
@@ -82,8 +79,7 @@ ACC::Structure ACC::ComparisionGenerator::generate(ACC::Code &code) {
     code.freeRegister(lhs.registerUsed);
     code.freeRegister(rhs.registerUsed);
     return return_struct;
+    */
+    return nullptr;
 }
 
-ACC::ComparisionGenerator::ComparisionGenerator(ACC::ASTNode *node, ACC::ComparisionType cmpType) : Expr(node) {
-    this->cmpType = cmpType;
-}

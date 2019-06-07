@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 namespace ACC{
-    struct AssignTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
+    struct AssignTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
         explicit AssignTokenGenerator(ASTNode* node);
 

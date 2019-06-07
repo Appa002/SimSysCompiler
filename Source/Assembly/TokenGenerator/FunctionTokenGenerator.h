@@ -5,14 +5,13 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
-    struct FunctionTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit FunctionTokenGenerator(ASTNode* node);
+    struct FunctionTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
         std::string copyIntoStackFrame(size_t offset, size_t loc, size_t size, ACC::Code &code);
     };

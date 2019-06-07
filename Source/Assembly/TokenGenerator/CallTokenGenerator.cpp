@@ -1,11 +1,7 @@
 #include "CallTokenGenerator.h"
 
-ACC::CallTokenGenerator::CallTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
-
-ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
+ACC::Structure* ACC::CallTokenGenerator::generate(ACC::Code &code) {
+  /*  auto& fn = code.getFnSymbol();
     size_t totalRspSubtracted = 0;
     for(size_t i = node->children.size() - 1; i >= 1; i--){
         auto value = node->children[i]->asExpr()->generate(code);
@@ -40,4 +36,5 @@ ACC::Structure ACC::CallTokenGenerator::generate(ACC::Code &code) {
     };
 
     return out;
+    */
 }

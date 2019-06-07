@@ -10,6 +10,7 @@
 #include <memory>
 #include <GeneralDataStore.h>
 #include <TypeId.h>
+#include <Types/Structure.h>
 
 namespace ACC {
 
@@ -80,7 +81,7 @@ namespace ACC {
 
         ~ASTNode();
 
-        std::unique_ptr<Expr> asExpr();
+        virtual Structure* generate(Code& code);
 
         std::vector<ASTNode *> children;
 

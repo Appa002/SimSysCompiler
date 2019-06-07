@@ -3,16 +3,14 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
 
-    struct ComparisionGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit ComparisionGenerator(ASTNode* node);
-        ComparisionGenerator(ASTNode* node, ComparisionType cmpType);
+    struct ComparisionGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
     private:
         ComparisionType cmpType;

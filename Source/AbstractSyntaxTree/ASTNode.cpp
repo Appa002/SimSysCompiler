@@ -171,7 +171,7 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
 }
 
 
-
+/*
 std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
     switch (op){
         case AstOperator::PLUS:
@@ -237,11 +237,15 @@ std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
             return std::unique_ptr<Expr>(new ForTokenGenerator(this));
     }
     return std::unique_ptr<Expr>(nullptr);
-}
+}*/
 
 ACC::ASTNode::~ASTNode() {
     for(const auto& child : children){
         delete child;
     }
+}
+
+ACC::Structure *ACC::ASTNode::generate(ACC::Code&) {
+    throw std::runtime_error("Can't generate on operator `"+ astOperator2String(op) +"`");
 }
 

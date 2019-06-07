@@ -1,24 +1,22 @@
 #include "ForTokenGenerator.h"
 
 ACC::Register getEfficientRegister(ACC::Structure structure, ACC::Code& code){
-    ACC::Register reg;
+/*    ACC::Register reg;
     if(!structure.registerUsed.empty())
         reg = structure.registerUsed[0];
     else
         reg = code.getFreeRegister();
     return reg;
+*/
 }
 
-ACC::ForTokenGenerator::ForTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
-
-ACC::Structure ACC::ForTokenGenerator::generate(ACC::Code &code) {
+ACC::Structure* ACC::ForTokenGenerator::generate(ACC::Code &code) {
     /* Assume:
      * for index -> limit:
      *      ...block
      * ...rest
      * */
+    /*
 
     auto& fn = code.getFnSymbol();
     auto top = code.getUUID();
@@ -42,7 +40,7 @@ ACC::Structure ACC::ForTokenGenerator::generate(ACC::Code &code) {
     code.freeRegister(limit.registerUsed);
     code.freeRegister(index.registerUsed);
 
-    /* At this point rflags has been set according to the comparison of index and limit*/
+    // At this point rflags has been set according to the comparison of index and limit
 
     fn.writeLine("jge ." + rest);
     code.pushScope();
@@ -55,14 +53,14 @@ ACC::Structure ACC::ForTokenGenerator::generate(ACC::Code &code) {
 
     /* Looping back up / seting up rest.. */
     fn.writeLine("jmp ." + top);
-    fn.writeLine("."+rest+":");
+    fn.writeLine("."+rest+":");*/
 
 
     return {};
 }
 
 void ACC::ForTokenGenerator::handleAddition(ACC::Fn &fn, ACC::Code &code, ACC::Structure index) {
-    /* TODO: Do this using operators! */
+   /*
     Register valueReg = code.getFreeRegister();
     Register addressReg = code.getFreeRegister();
 
@@ -71,7 +69,7 @@ void ACC::ForTokenGenerator::handleAddition(ACC::Fn &fn, ACC::Code &code, ACC::S
 
     fn.writeLine(index.copyAddrToRegister(registerToString(8, addressReg), code));
     fn.writeLine("mov [" + registerToString(8, addressReg) + "], " + registerToString(index.typeId.getSize(), valueReg));
-    code.freeRegister({valueReg, addressReg});
+    code.freeRegister({valueReg, addressReg});*/
 
 }
 

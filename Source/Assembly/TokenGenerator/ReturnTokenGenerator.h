@@ -5,14 +5,13 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
 #include <Assembly/Code.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 
 
 namespace ACC{
-    struct ReturnTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit ReturnTokenGenerator(ASTNode* node);
+    struct ReturnTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
     };
 }

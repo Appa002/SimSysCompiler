@@ -7,12 +7,12 @@
 
 
 #include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 
 
 namespace ACC{
-    struct LiteralTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit LiteralTokenGenerator(ASTNode* node);
+    struct LiteralTokenGenerator : public ASTNode{
+        Structure *generate(ACC::Code &code) override;
 
         void handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn);
         void handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn);

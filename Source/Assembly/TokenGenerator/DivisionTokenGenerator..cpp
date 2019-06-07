@@ -1,11 +1,7 @@
 #include "DivisionTokenGenerator.h"
 
-ACC::DivisionTokenGenerator::DivisionTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
-
-ACC::Structure ACC::DivisionTokenGenerator::generate(ACC::Code &code) {
-    auto lhs = node->children[0]->asExpr()->generate(code);
+ACC::Structure* ACC::DivisionTokenGenerator::generate(ACC::Code &code) {
+    /*auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();
 
@@ -60,4 +56,6 @@ ACC::Structure ACC::DivisionTokenGenerator::generate(ACC::Code &code) {
     return_struct.registerUsed = {Register::rA};
 
     return return_struct;
+*/
+    return nullptr;
 }

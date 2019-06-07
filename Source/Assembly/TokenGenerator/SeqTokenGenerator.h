@@ -4,12 +4,11 @@
 
 #pragma once
 
-#include <Assembly/Expr.h>
 #include <Assembly/Code.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 
 namespace ACC{
-    struct SeqTokenGenerator : public Expr{
-        explicit SeqTokenGenerator(ASTNode* node);
-        Structure generate(ACC::Code &code) override;
+    struct SeqTokenGenerator : public ASTNode{
+        Structure *generate(ACC::Code &code) override;
     };
 }

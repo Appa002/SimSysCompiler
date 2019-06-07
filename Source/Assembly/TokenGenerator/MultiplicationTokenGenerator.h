@@ -3,14 +3,13 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
-    struct MultiplicationTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit MultiplicationTokenGenerator(ASTNode* node);
+    struct MultiplicationTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
     };
 }
 

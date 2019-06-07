@@ -4,13 +4,14 @@
 #pragma once
 
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
-    struct SubtractTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
+    struct SubtractTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
+
         explicit SubtractTokenGenerator(ASTNode* node);
     };
 }

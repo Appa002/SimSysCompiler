@@ -1,11 +1,9 @@
 #include "SubtractTokenGenerator.h"
 
-ACC::SubtractTokenGenerator::SubtractTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
-}
 
-ACC::Structure ACC::SubtractTokenGenerator::generate(ACC::Code &code){
-    auto lhs = node->children[0]->asExpr()->generate(code);
+ACC::Structure* ACC::SubtractTokenGenerator::generate(ACC::Code &code){
+ /*   auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();
 
@@ -50,5 +48,6 @@ ACC::Structure ACC::SubtractTokenGenerator::generate(ACC::Code &code){
     code.freeRegister(rhs.registerUsed);
     return_struct.registerUsed = {lhsRegister};
 
-    return return_struct;
+    return return_struct;*/
+    return nullptr;
 }

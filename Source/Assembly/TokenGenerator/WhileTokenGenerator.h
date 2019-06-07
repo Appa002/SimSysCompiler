@@ -5,15 +5,12 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
 #include <Assembly/Code.h>
-
+#include <AbstractSyntaxTree/ASTNode.h>
 
 namespace ACC{
-    struct WhileTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit WhileTokenGenerator(ASTNode* node);
-
+    struct WhileTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
     };
 }
 

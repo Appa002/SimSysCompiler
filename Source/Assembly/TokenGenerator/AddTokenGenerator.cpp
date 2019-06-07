@@ -1,12 +1,8 @@
 #include "AddTokenGenerator.h"
 #include <Logger/Logger.h>
 
-ACC::AddTokenGenerator::AddTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
-
-ACC::Structure ACC::AddTokenGenerator::generate(ACC::Code &code) {
-    auto lhs = node->children[0]->asExpr()->generate(code);
+ACC::Structure* ACC::AddTokenGenerator::generate(ACC::Code &code) {
+   /* auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
 
    //TODO: Type conversion.
@@ -24,7 +20,7 @@ ACC::Structure ACC::AddTokenGenerator::generate(ACC::Code &code) {
         fn.writeLine(rhs.copyToRegister(registerToString(8, rhsRegister), code));
     }
 
-    /* TODO: Implement generation for complex structures by invoking operator+ on that structure */
+   // TODO: Implement generation for complex structures by invoking operator+ on that structure
 
     fn.writeLine("add "+ registerToString(8, lhsRegister) +", "+ registerToString(8, rhsRegister));
 
@@ -54,4 +50,6 @@ ACC::Structure ACC::AddTokenGenerator::generate(ACC::Code &code) {
     return_struct.registerUsed = {lhsRegister};
 
     return return_struct;
+*/
+return nullptr;
 }

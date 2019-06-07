@@ -5,14 +5,13 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
-    struct ExitTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit ExitTokenGenerator(ASTNode* node);
+    struct ExitTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
     };
 }

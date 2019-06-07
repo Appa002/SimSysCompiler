@@ -1,11 +1,8 @@
 #include "IfConstructTokenGenerator.h"
 
-ACC::IfConstructTokenGenerator::IfConstructTokenGenerator(ASTNode *node) : Expr(node) {
 
-}
-
-ACC::Structure ACC::IfConstructTokenGenerator::generate(ACC::Code &code) {
-    auto &fn = code.getFnSymbol();
+ACC::Structure* ACC::IfConstructTokenGenerator::generate(ACC::Code &code) {
+   /* auto &fn = code.getFnSymbol();
     auto final = code.getUUID();
     std::string next;
     if(node->children.size() == 1)
@@ -47,11 +44,13 @@ ACC::Structure ACC::IfConstructTokenGenerator::generate(ACC::Code &code) {
 
     code.popScope();
     return {};
+    */
+    return nullptr;
 }
 
 void ACC::IfConstructTokenGenerator::handleElif(ACC::Fn &fn, ACC::Code &code, size_t idx, std::string &next,
                                                 std::string const &final) {
-    fn.writeLine("." + next + ":");
+    /*fn.writeLine("." + next + ":");
 
     if(node->children.size() - idx - 1 == 0)
         next = final;
@@ -77,11 +76,13 @@ void ACC::IfConstructTokenGenerator::handleElif(ACC::Fn &fn, ACC::Code &code, si
     code.popScope();
     if(node->children.size() - idx - 1 != 0)
         fn.writeLine("jmp ." + final);
+        */
 }
 
 void ACC::IfConstructTokenGenerator::handleElse(ACC::Fn &fn, ACC::Code &code, size_t idx, std::string &next) {
-    code.pushScope();
+   /* code.pushScope();
     fn.writeLine("." + next + ":");
     node->children[idx]->children[0]->asExpr()->generate(code);
     code.popScope();
+    */
 }

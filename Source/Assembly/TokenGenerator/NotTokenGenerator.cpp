@@ -1,11 +1,7 @@
 #include "NotTokenGenerator.h"
 
-ACC::NotTokenGenerator::NotTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
-
-ACC::Structure ACC::NotTokenGenerator::generate(ACC::Code &code) {
-    auto &fn = code.getFnSymbol();
+ACC::Structure* ACC::NotTokenGenerator::generate(ACC::Code &code) {
+    /*auto &fn = code.getFnSymbol();
     auto expr = node->children[0]->asExpr()->generate(code);
 
     Register reg;
@@ -38,5 +34,6 @@ ACC::Structure ACC::NotTokenGenerator::generate(ACC::Code &code) {
         return "mov [rbp " + sign+std::to_string(offset)+"], " + regAsStr;
     };
 
-    return out;
+    return out;*/
+    return nullptr;
 }

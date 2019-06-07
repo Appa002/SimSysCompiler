@@ -3,14 +3,14 @@
 //
 #pragma once
 
-#include <Assembly/Expr.h>
+
+#include <AbstractSyntaxTree/ASTNode.h>
 #include <Assembly/Code.h>
 
 
 namespace ACC{
-    struct DivisionTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit DivisionTokenGenerator(ASTNode* node);
+    struct DivisionTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
     };
 }
 

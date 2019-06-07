@@ -6,14 +6,13 @@
 #pragma once
 
 
-#include <Assembly/Expr.h>
 #include <Assembly/Code.h>
+#include <AbstractSyntaxTree/ASTNode.h>
 
 
 namespace ACC{
-    struct IfConstructTokenGenerator : public Expr{
-        Structure generate(ACC::Code &code) override;
-        explicit IfConstructTokenGenerator(ASTNode* node);
+    struct IfConstructTokenGenerator : public ASTNode{
+        Structure* generate(ACC::Code &code) override;
 
         void handleElif(ACC::Fn &fn, ACC::Code &code, size_t idx, std::string &next,
                                 std::string const &final);

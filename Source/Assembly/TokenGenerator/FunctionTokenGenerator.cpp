@@ -1,11 +1,9 @@
 #include "FunctionTokenGenerator.h"
 
-ACC::FunctionTokenGenerator::FunctionTokenGenerator(ACC::ASTNode *node) : Expr(node) {
 
-}
 
-ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
-    auto& fn = code.emplaceFnSymbol(node->children[0]->data.asT<std::string>());
+ACC::Structure* ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
+ /*   auto& fn = code.emplaceFnSymbol(node->children[0]->data.asT<std::string>());
     fn.returnType = node->children[1]->data.asT<TypeId>();
 
     size_t offset = 16;
@@ -57,6 +55,8 @@ ACC::Structure ACC::FunctionTokenGenerator::generate(ACC::Code &code) {
     code.popFnFromStack();
     code.popScope();
     return {};
+    */
+    return nullptr;
 }
 
 std::string

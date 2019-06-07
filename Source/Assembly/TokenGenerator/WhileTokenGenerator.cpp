@@ -1,11 +1,7 @@
 #include "WhileTokenGenerator.h"
 #include <builtinTypes.h>
 
-ACC::WhileTokenGenerator::WhileTokenGenerator(ACC::ASTNode *node) : Expr(node) {
-
-}
-
-ACC::Structure ACC::WhileTokenGenerator::generate(ACC::Code &code) {
+ACC::Structure* ACC::WhileTokenGenerator::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
 
     auto top = code.getUUID();
