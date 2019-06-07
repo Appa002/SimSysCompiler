@@ -3,7 +3,7 @@
 #include "ReassignNode.h"
 
 
-ACC::Structure* ACC::ReassignNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
    /* auto id = node->children[0]->data.asT<std::string>();
     auto expr = node->children[1]->asExpr()->generate(code);
     auto& var = code.getVarSymbol(id);

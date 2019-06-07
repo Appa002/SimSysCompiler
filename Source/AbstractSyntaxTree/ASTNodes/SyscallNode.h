@@ -13,7 +13,7 @@ namespace ACC{
     struct SyscallNode : public ASTNode{
         SyscallNode(AstOperator op, std::vector<ASTNode *> children);
 
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
     };
 }
 

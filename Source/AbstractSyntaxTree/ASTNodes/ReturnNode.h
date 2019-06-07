@@ -11,7 +11,7 @@
 
 namespace ACC{
     struct ReturnNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         ReturnNode(AstOperator op, std::vector<ASTNode *> children);
 
 

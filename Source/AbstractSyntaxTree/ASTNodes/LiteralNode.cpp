@@ -49,7 +49,7 @@ void ACC::LiteralNode::handleStringLiteral(ACC::Structure &structure, ACC::Code 
 */
 }
 
-ACC::Structure* ACC::LiteralNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
     /*auto& fn = code.getFnSymbol();
 
     auto returnStruct = Structure();

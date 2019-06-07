@@ -4,7 +4,7 @@
 
 
 
-ACC::Structure* ACC::FunctionNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
  /*   auto& fn = code.emplaceFnSymbol(node->children[0]->data.asT<std::string>());
     fn.returnType = node->children[1]->data.asT<TypeId>();
 

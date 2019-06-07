@@ -2,7 +2,7 @@
 
 #include "NotNode.h"
 
-ACC::Structure* ACC::NotNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::NotNode::generate(ACC::Code &code) {
     /*auto &fn = code.getFnSymbol();
     auto expr = node->children[0]->asExpr()->generate(code);
 

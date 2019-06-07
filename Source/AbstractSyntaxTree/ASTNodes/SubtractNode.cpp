@@ -4,7 +4,7 @@
 
 
 
-ACC::Structure* ACC::SubtractNode::generate(ACC::Code &code){
+std::shared_ptr<ACC::Structure> ACC::SubtractNode::generate(ACC::Code &code){
  /*   auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();

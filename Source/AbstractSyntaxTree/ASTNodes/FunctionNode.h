@@ -11,7 +11,7 @@
 
 namespace ACC{
     struct FunctionNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         FunctionNode(AstOperator op, std::vector<ASTNode *> children);
 
         std::string copyIntoStackFrame(size_t offset, size_t loc, size_t size, ACC::Code &code);

@@ -3,7 +3,7 @@
 #include "WhileNode.h"
 #include <builtinTypes.h>
 
-ACC::Structure* ACC::WhileNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
  /*   auto& fn = code.getFnSymbol();
 
     auto top = code.getUUID();

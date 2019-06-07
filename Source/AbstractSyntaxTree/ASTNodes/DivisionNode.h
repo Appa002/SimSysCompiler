@@ -10,7 +10,7 @@
 
 namespace ACC{
     struct DivisionNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         DivisionNode(AstOperator op, std::vector<ASTNode *> children);
 
     };

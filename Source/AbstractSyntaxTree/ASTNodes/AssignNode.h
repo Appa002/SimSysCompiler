@@ -11,7 +11,7 @@
 
 namespace ACC{
     struct AssignNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
 
         AssignNode(AstOperator op, std::vector<ASTNode *> children);
 

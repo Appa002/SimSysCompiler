@@ -2,7 +2,7 @@
 
 #include "ReturnNode.h"
 
-ACC::Structure* ACC::ReturnNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::ReturnNode::generate(ACC::Code &code) {
   /*  auto returnValue = node->children[0]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();
 

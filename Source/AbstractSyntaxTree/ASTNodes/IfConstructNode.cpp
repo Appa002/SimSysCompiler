@@ -3,7 +3,7 @@
 #include "IfConstructNode.h"
 
 
-ACC::Structure* ACC::IfConstructNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::IfConstructNode::generate(ACC::Code &code) {
    /* auto &fn = code.getFnSymbol();
     auto final = code.getUUID();
     std::string next;

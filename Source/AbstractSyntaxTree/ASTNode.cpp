@@ -241,6 +241,6 @@ ACC::ASTNode::~ASTNode() {
     }
 }
 
-ACC::Structure *ACC::ASTNode::generate(ACC::Code&) {
+std::shared_ptr<ACC::Structure> ACC::ASTNode::generate(ACC::Code &) {
     throw std::runtime_error("Can't generate on operator `"+ astOperator2String(op) +"`");
 }

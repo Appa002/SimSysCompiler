@@ -12,7 +12,7 @@ namespace ACC{
     struct WhileNode : public ASTNode{
         WhileNode(AstOperator op, std::vector<ASTNode *> children);
 
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
     };
 }
 

@@ -4,7 +4,7 @@
 
 #include "IdNode.h"
 
-ACC::Structure* ACC::IdNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::IdNode::generate(ACC::Code &code) {
      //return code.getVarSymbol(node->data.asT<std::string>());
      return nullptr;
 }

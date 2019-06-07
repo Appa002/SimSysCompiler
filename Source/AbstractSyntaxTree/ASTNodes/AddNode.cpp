@@ -3,7 +3,7 @@
 #include "AddNode.h"
 #include <Logger/Logger.h>
 
-ACC::Structure* ACC::AddNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::AddNode::generate(ACC::Code &code) {
    /* auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
 

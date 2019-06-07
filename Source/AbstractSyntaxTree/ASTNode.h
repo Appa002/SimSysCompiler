@@ -74,7 +74,7 @@ namespace ACC {
 
         ~ASTNode();
 
-        virtual Structure* generate(Code& code);
+        virtual std::shared_ptr<Structure> generate(Code &code);
 
         std::vector<ASTNode *> children;
 

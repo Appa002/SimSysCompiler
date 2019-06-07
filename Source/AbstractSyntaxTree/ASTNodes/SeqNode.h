@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct SeqNode : public ASTNode{
-        Structure *generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         SeqNode(AstOperator op, std::vector<ASTNode *> children);
 
     };

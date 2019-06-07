@@ -10,7 +10,7 @@
 
 namespace ACC{
     struct SubtractNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         SubtractNode(AstOperator op, std::vector<ASTNode *> children);
 };
 }

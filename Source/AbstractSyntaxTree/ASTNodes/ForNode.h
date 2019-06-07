@@ -12,7 +12,7 @@
 
 namespace ACC{
     struct ForNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         ForNode(AstOperator op, std::vector<ASTNode *> children);
 
         void handleAddition(ACC::Fn& fn, Code& code, Structure index);

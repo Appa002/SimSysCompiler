@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct MultiplicationNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         MultiplicationNode(AstOperator op, std::vector<ASTNode *> children);
 
     };

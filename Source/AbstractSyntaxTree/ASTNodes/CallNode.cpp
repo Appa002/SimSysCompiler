@@ -2,7 +2,7 @@
 
 #include "CallNode.h"
 
-ACC::Structure* ACC::CallNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
   /*  auto& fn = code.getFnSymbol();
     size_t totalRspSubtracted = 0;
     for(size_t i = node->children.size() - 1; i >= 1; i--){

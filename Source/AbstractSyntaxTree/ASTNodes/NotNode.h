@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct NotNode : public ASTNode {
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         NotNode(AstOperator op, std::vector<ASTNode *> children);
     };
 }

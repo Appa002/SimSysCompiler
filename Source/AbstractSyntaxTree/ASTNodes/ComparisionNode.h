@@ -10,7 +10,7 @@
 namespace ACC{
 
     struct ComparisionNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         ComparisionNode(AstOperator op, std::vector<ASTNode *> children, ComparisionType cmpType);
 
     private:

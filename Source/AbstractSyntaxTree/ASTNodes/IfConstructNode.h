@@ -12,7 +12,7 @@
 
 namespace ACC{
     struct IfConstructNode : public ASTNode{
-        Structure* generate(ACC::Code &code) override;
+        std::shared_ptr<Structure> generate(ACC::Code &code) override;
         IfConstructNode(AstOperator op, std::vector<ASTNode *> children);
 
 

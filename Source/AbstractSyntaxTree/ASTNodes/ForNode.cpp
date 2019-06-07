@@ -12,7 +12,7 @@ ACC::Register getEfficientRegister(ACC::Structure structure, ACC::Code& code){
 */
 }
 
-ACC::Structure* ACC::ForNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
     /* Assume:
      * for index -> limit:
      *      ...block

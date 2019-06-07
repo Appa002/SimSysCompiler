@@ -17,7 +17,7 @@ std::string loadReg(ACC::Code &code, ACC::Register reg, ACC::Structure structure
     return out;*/
 }
 
-ACC::Structure* ACC::SyscallNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::SyscallNode::generate(ACC::Code &code) {
   /*  auto &fn = code.getFnSymbol();
 
     if (node->children.size() >= 1)
