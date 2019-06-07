@@ -11,25 +11,25 @@
 #include <Assembly/Expr.h>
 #include <Logger/Logger.h>
 
-#include <AbstractSyntaxTree/DerivedASTNodes/AddNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/SubtractNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/LiteralNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/SeqNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/AssignNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/IdNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/WhileNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/ForNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/SyscallNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/ExitNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/DivisionNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/MultiplicationNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/FunctionNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/ReturnNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/ReassignNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/CallNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/ComparisionNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/NotNode.h>
-#include <AbstractSyntaxTree/DerivedASTNodes/IfConstructNode.h>
+#include <AbstractSyntaxTree/ASTNodes/AddNode.h>
+#include <AbstractSyntaxTree/ASTNodes/SubtractNode.h>
+#include <AbstractSyntaxTree/ASTNodes/LiteralNode.h>
+#include <AbstractSyntaxTree/ASTNodes/SeqNode.h>
+#include <AbstractSyntaxTree/ASTNodes/AssignNode.h>
+#include <AbstractSyntaxTree/ASTNodes/IdNode.h>
+#include <AbstractSyntaxTree/ASTNodes/WhileNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ForNode.h>
+#include <AbstractSyntaxTree/ASTNodes/SyscallNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ExitNode.h>
+#include <AbstractSyntaxTree/ASTNodes/DivisionNode.h>
+#include <AbstractSyntaxTree/ASTNodes/MultiplicationNode.h>
+#include <AbstractSyntaxTree/ASTNodes/FunctionNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ReturnNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ReassignNode.h>
+#include <AbstractSyntaxTree/ASTNodes/CallNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
+#include <AbstractSyntaxTree/ASTNodes/NotNode.h>
+#include <AbstractSyntaxTree/ASTNodes/IfConstructNode.h>
 #include <Lexical/Tokens/LiteralToken.h>
 #include <GeneralDataStore.h>
 #include <builtinTypes.h>
@@ -39,8 +39,6 @@ ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->children = std::move(children);
     this->type = BuiltIns::__none;
 }
-
-
 
 ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, TypeId type) {
     this->op = op;
@@ -248,4 +246,3 @@ ACC::ASTNode::~ASTNode() {
 ACC::Structure *ACC::ASTNode::generate(ACC::Code&) {
     throw std::runtime_error("Can't generate on operator `"+ astOperator2String(op) +"`");
 }
-
