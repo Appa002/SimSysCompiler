@@ -13,7 +13,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     auto type = children[1]->data.asT<TypeId>();
     auto expr = children[2]->generate(code);
 
-    fn.curBpOffset += expr->size;
+    fn.curBpOffset += expr->type.getSize();
 
     std::shared_ptr<NumLValueStructure> address = std::make_shared<NumLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     expr->operatorCopy(address, code);
