@@ -120,3 +120,7 @@ void ACC::NumIValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code)
     auto& fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(8, reg) + ", " + std::to_string(value));
 }
+
+int64_t ACC::NumIValueStructure::getValue() const {
+    return value;
+}

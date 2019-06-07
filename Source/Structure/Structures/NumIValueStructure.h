@@ -11,7 +11,10 @@
 namespace ACC {
     class NumIValueStructure : public ElementaryStructure{
         int64_t value;
+
     public:
+        int64_t getValue() const;
+
         explicit NumIValueStructure(int64_t value);
 
         std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code) override;
