@@ -5,7 +5,7 @@
 //
 
 #include "NumLValueStructure.h"
-#include <Types/Structure.h>
+#include <Structure/Structure.h>
 #include <Assembly/Code.h>
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorForNext(ACC::Code &code) {

@@ -56,8 +56,6 @@ ACC::Structure* ACC::AddNode::generate(ACC::Code &code) {
 return nullptr;
 }
 
-ACC::AddNode::AddNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op,
-                                                                                                               std::move(
-                                                                                                                       children)) {
+ACC::AddNode::AddNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op, std::move(children)) {
 
 }

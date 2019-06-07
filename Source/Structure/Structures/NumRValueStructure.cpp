@@ -3,7 +3,7 @@
 //
 
 #include "NumRValueStructure.h"
-#include <Types/Structure.h>
+#include <Structure/Structure.h>
 #include <Assembly/Code.h>
 
 ACC::NumRValueStructure::NumRValueStructure(ACC::Register reg) : reg(reg){

@@ -10,7 +10,7 @@
 #include <memory>
 #include <GeneralDataStore.h>
 #include <TypeId.h>
-#include <Types/Structure.h>
+#include <Structure/Structure.h>
 
 namespace ACC {
 

@@ -4,7 +4,7 @@
 
 #include "Structure.h"
 #include <stdexcept>
-#include <Types/Structure.h>
+#include <Structure/Structure.h>
 
 ACC::Structure::~Structure() = default;
 
