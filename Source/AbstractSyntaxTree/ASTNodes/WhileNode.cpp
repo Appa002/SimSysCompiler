@@ -1,7 +1,7 @@
 #include <utility>
 
 #include "WhileNode.h"
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 
 std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
  /*   auto& fn = code.getFnSymbol();

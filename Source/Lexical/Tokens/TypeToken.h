@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Lexical/IToken.h>
-#include <TypeId.h>
+#include <General/TypeId.h>
 
 namespace ACC{
     struct TypeToken : public IToken{

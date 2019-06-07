@@ -10,10 +10,10 @@
 #define SIMSYSCOMPILER_LITERALTOKEN_H
 
 #include <Lexical/IToken.h>
-#include <GeneralDataStore.h>
-#include <utils.h>
-#include <TypeId.h>
-#include <builtinTypes.h>
+#include <General/GeneralDataStore.h>
+#include <General/utils.h>
+#include <General/TypeId.h>
+#include <General/builtinTypes.h>
 
 namespace ACC{
 

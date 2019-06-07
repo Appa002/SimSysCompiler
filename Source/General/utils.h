@@ -10,7 +10,7 @@
 #include <vector>
 #include <sstream>
 #include <ios>
-#include <Stack.h>
+#include <General/Stack.h>
 
 /*! Expresses the parameter \p value as an x86 worthy hex value
  * (The return value doesn't contain the `0x` or `h` suffix/prefix).

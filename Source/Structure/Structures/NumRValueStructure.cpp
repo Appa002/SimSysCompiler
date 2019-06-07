@@ -6,7 +6,7 @@
 #include "NumLValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 
 ACC::NumRValueStructure::NumRValueStructure(ACC::Register reg)
 : reg(reg), ElementaryStructure(ValueCategory::rvalue, BuiltIns::numType){

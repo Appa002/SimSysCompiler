@@ -8,7 +8,7 @@
 #include "NumRValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorForNext(ACC::Code &code) {
     return Structure::operatorForNext(code);

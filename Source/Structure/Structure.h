@@ -7,7 +7,7 @@
 
 #include <string>
 #include <memory>
-#include <TypeId.h>
+#include <General/TypeId.h>
 
 namespace ACC {
     class Code;

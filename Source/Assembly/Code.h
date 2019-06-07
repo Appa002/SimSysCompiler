@@ -8,11 +8,11 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <TypeId.h>
+#include <General/TypeId.h>
 #include <functional>
-#include <Stack.h>
+#include <General/Stack.h>
 #include <memory>
-#include <ScopedSymbolTable.h>
+#include <General/ScopedSymbolTable.h>
 #include "Fn.h"
 
 #include <Structure/Structure.h>

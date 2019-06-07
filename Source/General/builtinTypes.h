@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <TypeId.h>
+#include <General/TypeId.h>
 
 namespace ACC::BuiltIns{
     const auto __none = TypeId(0, 0);

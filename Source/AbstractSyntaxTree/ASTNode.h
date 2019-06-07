@@ -8,8 +8,8 @@
 #include <initializer_list>
 #include <Parser/ParseNode.h>
 #include <memory>
-#include <GeneralDataStore.h>
-#include <TypeId.h>
+#include <General/GeneralDataStore.h>
+#include <General/TypeId.h>
 #include <Structure/Structure.h>
 
 namespace ACC {

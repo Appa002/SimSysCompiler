@@ -1,6 +1,6 @@
 #include <utility>
 #include <Structure/Structures/NumLValueStructure.h>
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 
 #include "FunctionNode.h"
 

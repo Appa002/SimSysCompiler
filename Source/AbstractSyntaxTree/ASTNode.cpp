@@ -29,8 +29,8 @@
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/IfConstructNode.h>
 #include <Lexical/Tokens/LiteralToken.h>
-#include <GeneralDataStore.h>
-#include <builtinTypes.h>
+#include <General/GeneralDataStore.h>
+#include <General/builtinTypes.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;

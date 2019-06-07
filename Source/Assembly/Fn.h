@@ -6,7 +6,7 @@
 #define SIMSYSCOMPILER_FN_H
 
 #include <string>
-#include <TypeId.h>
+#include <General/TypeId.h>
 
 namespace ACC {
 

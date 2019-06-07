@@ -2,8 +2,8 @@
 
 #include <string>
 #include <vector>
-#include <Stack.h>
-#include <GeneralDataStore.h>
+#include <General/Stack.h>
+#include <General/GeneralDataStore.h>
 
 using offset_t = int32_t;
 

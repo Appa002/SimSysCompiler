@@ -1,6 +1,6 @@
 #include <utility>
 
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 #include <Structure/Structures/ElementaryStructure.h>
 #include "ExitNode.h"
 

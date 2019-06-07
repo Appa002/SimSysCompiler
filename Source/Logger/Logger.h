@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <Singleton.h>
+#include <General/Singleton.h>
 
 #define LOG (*ACC::Log::Logger::get())
 

@@ -27,7 +27,7 @@
 #include <Lexical/Tokens/ExtentToken.h>
 #include <Lexical/Tokens/CommaToken.h>
 #include <Lexical/Tokens/ReturnToken.h>
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 #include <Lexical/Tokens/IfToken.h>
 #include <Lexical/Tokens/ComparisionToken.h>
 #include <Lexical/Tokens/NotToken.h>

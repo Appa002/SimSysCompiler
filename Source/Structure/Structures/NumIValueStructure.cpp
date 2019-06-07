@@ -6,8 +6,8 @@
 #include "NumRValueStructure.h"
 #include "NumLValueStructure.h"
 #include <Assembly/Code.h>
-#include <utils.h>
-#include <builtinTypes.h>
+#include <General/utils.h>
+#include <General/builtinTypes.h>
 
 ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), ElementaryStructure(ValueCategory::ivalue, BuiltIns::numType) {
 

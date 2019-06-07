@@ -1,7 +1,7 @@
 #include <utility>
 #include <Structure/Structures/NumLValueStructure.h>
 #include <Structure/Structures/NumRValueStructure.h>
-#include <builtinTypes.h>
+#include <General/builtinTypes.h>
 
 #include "CallNode.h"
 

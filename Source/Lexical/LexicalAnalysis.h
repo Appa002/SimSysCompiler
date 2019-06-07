@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include <Stack.h>
+#include <General/Stack.h>
 #include <Lexical/IToken.h>
 #include <functional>
 #include <unordered_map>
-#include <TypeId.h>
+#include <General/TypeId.h>
 #include <memory>
-#include <ScopedSymbolTable.h>
+#include <General/ScopedSymbolTable.h>
 
 namespace ACC {
 
