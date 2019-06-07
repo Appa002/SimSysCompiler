@@ -1,10 +1,44 @@
 #include <utility>
+#include <Structure/Structures/NumLValueStructure.h>
+#include <builtinTypes.h>
 
 #include "FunctionNode.h"
 
 
 
 std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
+    auto& fn = code.emplaceFnSymbol(children[0]->data.asT<std::string>());
+    fn.returnType = children[1]->data.asT<TypeId>();
+
+    size_t offset = 16;
+
+    code.pushScope();
+
+    for(size_t i = 2; i < children.size() - 1; i++){
+        std::shared_ptr<Structure> structure;
+        auto container = children[i];
+        auto type = container->children[1]->data.asT<TypeId>();
+        auto size = type.getSize();
+        auto sym = container->children[0]->data.asT<std::string>();
+        auto loc = fn.curBpOffset + size;
+        auto locStr = std::to_string(loc);
+
+        if(type == BuiltIns::numType)
+            structure = std::make_shared<NumLValueStructure>("rbp - " + locStr);
+
+        fn.writeLine(copyIntoStackFrame(offset, loc, size, code));
+
+        code.emplaceVarSymbol(sym, structure);
+        offset += size;
+        fn.curBpOffset += size;
+    }
+
+    children.at(children.size() - 1)->generate(code);
+    code.popFnFromStack();
+    code.popScope();
+    return nullptr;
+
+
  /*   auto& fn = code.emplaceFnSymbol(node->children[0]->data.asT<std::string>());
     fn.returnType = node->children[1]->data.asT<TypeId>();
 
