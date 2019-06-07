@@ -7,6 +7,7 @@
 #include "NumLValueStructure.h"
 #include "NumRValueStructure.h"
 #include "NumIValueStructure.h"
+#include "ElementaryLValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
@@ -40,22 +41,6 @@ std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorForDone(std::sh
     return shared_from_this();
 }
 
-std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorCopy(std::shared_ptr<Structure> address,
-                                                                     ACC::Code &code) {
-    if(address->vCategory == ValueCategory::lvalue) {
-        auto &fn = code.getFnSymbol();
-        auto *addressAsLValue = dynamic_cast<NumLValueStructure *>(address.get());
-
-        Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(8, reg);
-
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->access + " ], " + regStr);
-
-        return std::make_shared<NumLValueStructure>(addressAsLValue->access);
-    }
-    return nullptr;
-}
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorAdd(std::shared_ptr<Structure> amount, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
@@ -122,11 +107,6 @@ std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorGreaterEqual(st
 }
 
 ACC::NumLValueStructure::NumLValueStructure(std::string const &access)
-: access(access), ElementaryStructure(ValueCategory::lvalue, BuiltIns::numType){
+: ElementaryLValueStructure(BuiltIns::numType, access){
 
-}
-
-void ACC::NumLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
-    fn.writeLine("mov " + registerToString(8, reg) + ", [" + access + "]");
 }

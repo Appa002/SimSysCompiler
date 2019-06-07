@@ -35,7 +35,7 @@ std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorCopy(std::share
         auto *addressAsLvalue = dynamic_cast<NumLValueStructure *>(address.get());
         auto& fn = code.getFnSymbol();
 
-        fn.writeLine("mov [" + addressAsLvalue->access + "], " + registerToString(8, reg));
+        fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(8, reg));
 
         return address;
     }
