@@ -1,60 +1,55 @@
 #include <utility>
 
 #include <utility>
+#include <Structure/Structures/ElementaryStructure.h>
 
 #include "SyscallNode.h"
 
 
-std::string loadReg(ACC::Code &code, ACC::Register reg, ACC::Structure structure) {
-    /*using namespace ACC;
+void loadReg(ACC::Code &code, ACC::Register reg, const std::shared_ptr<ACC::Structure> &structure) {
+    using namespace ACC;
 
+    auto* structureAsElementary = dynamic_cast<ElementaryStructure*>(structure.get());
     code.reserveRegister(reg);
 
-    std::string out = structure.copyToRegister( registerToString(8, reg), code);
-
-    code.freeRegister(structure.registerUsed);
-
-    return out;*/
+    structureAsElementary->loadToRegister(reg, code);
 }
 
 std::shared_ptr<ACC::Structure> ACC::SyscallNode::generate(ACC::Code &code) {
-  /*  auto &fn = code.getFnSymbol();
+    auto &fn = code.getFnSymbol();
 
-    if (node->children.size() >= 1)
-        fn.writeLine(loadReg(code, Register::rA, node->children[0]->asExpr()->generate(code)));
-    if (node->children.size() >= 2)
-        fn.writeLine(loadReg(code, Register::rDI, node->children[1]->asExpr()->generate(code)));
-    if (node->children.size() >= 3)
-        fn.writeLine(loadReg(code, Register::rSI, node->children[2]->asExpr()->generate(code)));
-    if (node->children.size() >= 4)
-        fn.writeLine(loadReg(code, Register::rD, node->children[3]->asExpr()->generate(code)));
-    if (node->children.size() >= 5)
-        fn.writeLine(loadReg(code, Register::r10, node->children[4]->asExpr()->generate(code)));
-    if (node->children.size() >= 6)
-        fn.writeLine(loadReg(code, Register::r8, node->children[5]->asExpr()->generate(code)));
-    if (node->children.size() >= 7)
-        fn.writeLine(loadReg(code, Register::r9, node->children[6]->asExpr()->generate(code)));
+    if (children.size() >= 1)
+        loadReg(code, Register::rA, children[0]->generate(code));
+    if (children.size() >= 2)
+        loadReg(code, Register::rDI, children[1]->generate(code));
+    if (children.size() >= 3)
+        loadReg(code, Register::rSI, children[2]->generate(code));
+    if (children.size() >= 4)
+        loadReg(code, Register::rD, children[3]->generate(code));
+    if (children.size() >= 5)
+        loadReg(code, Register::r10, children[4]->generate(code));
+    if (children.size() >= 6)
+        loadReg(code, Register::r8, children[5]->generate(code));
+    if (children.size() >= 7)
+        loadReg(code, Register::r9, children[6]->generate(code));
 
-    if (node->children.size() >= 1)
+    if (children.size() >= 1)
         code.freeRegister(Register::rA);
-    if (node->children.size() >= 2)
+    if (children.size() >= 2)
         code.freeRegister(Register::rDI);
-    if (node->children.size() >= 3)
+    if (children.size() >= 3)
         code.freeRegister(Register::rSI);
-    if (node->children.size() >= 4)
+    if (children.size() >= 4)
         code.freeRegister(Register::rD);
-    if (node->children.size() >= 5)
+    if (children.size() >= 5)
         code.freeRegister(Register::r10);
-    if (node->children.size() >= 6)
+    if (children.size() >= 6)
         code.freeRegister(Register::r8);
-    if (node->children.size() >= 7)
+    if (children.size() >= 7)
         code.freeRegister(Register::r9);
 
     fn.writeLine("syscall");
-
-    return {};
-    */
-
+    
     return nullptr;
 }
 
