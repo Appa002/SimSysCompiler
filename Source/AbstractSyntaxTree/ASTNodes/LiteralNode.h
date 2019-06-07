@@ -16,7 +16,7 @@ namespace ACC{
         LiteralNode(AstOperator op, GeneralDataStore literal, TypeId type);
 
 
-        void handleStringLiteral(std::shared_ptr<Structure> structure, ACC::Code &code, ACC::Fn &fn);
+        std::string handleStringLiteral(ACC::Code &code, ACC::Fn &fn);
         void handleNumberLiteral(std::shared_ptr<Structure> &structure, ACC::Code &code, ACC::Fn &fn);
 
     };

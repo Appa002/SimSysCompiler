@@ -5,49 +5,24 @@
 #include "LiteralNode.h"
 #include <General/builtinTypes.h>
 #include <Structure/Structures/NumIValueStructure.h>
+#include <Assembly/DataStructureMovement.h>
+#include <Structure/Structures/StackReferencingPtrRValueStructure.h>
 
 
-void ACC::LiteralNode::handleStringLiteral(std::shared_ptr<Structure> structure, ACC::Code &code, ACC::Fn &fn) {
-   /* structure.type = StructureType ::elementary;
-
+std::string ACC::LiteralNode::handleStringLiteral(ACC::Code &code, ACC::Fn &fn) {
     size_t count = 0;
-    for(size_t i = 0; i < node->data.size(); i++){
+    for(size_t i = 0; i < data.size(); i++){
         if(count == 4)
             count = 0;
         count++;
     }
     if(count == 3)
-        node->data.push(0x00);
+        data.push(0x00);
 
 
-    fn.curBpOffset += node->data.size();
-    fn.writeLine(Movs::imm2bp(node->data, -(offset_t)fn.curBpOffset));
-    size_t address = fn.curBpOffset;
-
-    structure.isStored = false;
-
-    structure.copyToStack = [=](Code& c){
-        Register reg = c.getFreeRegister();
-        std::string out = "lea " + registerToString(8, reg) + ", [rbp - " + std::to_string(address) + "]";
-        out += "\nmov [rsp], " + registerToString(8, reg);
-        c.freeRegister(reg);
-        return out;
-    };
-
-    structure.copyToBpOffset = [=](int32_t offset, Code& c){
-        Register reg = c.getFreeRegister();
-        std::string sign = offset < 0 ? ("-") : ("+");
-        offset = offset < 0 ? (offset * -1) : (offset);
-        std::string out = "lea " + registerToString(8, reg) + ", [rbp - " + std::to_string(address) + "]";
-        out += "\nmov [rbp " + sign + std::to_string(offset) + "], " + registerToString(8, reg);
-        c.freeRegister(reg);
-        return out;
-    };
-
-    structure.copyToRegister = [=](std::string reg, Code& c){
-        return "lea " + reg + ", [rbp - " + std::to_string(address) + "]";
-    };
-*/
+    fn.curBpOffset += data.size();
+    fn.writeLine(Movs::imm2bp(data, -(offset_t)fn.curBpOffset));
+    return "rbp - " + std::to_string(fn.curBpOffset);
 }
 
 std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
@@ -55,7 +30,8 @@ std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
     std::shared_ptr<Structure> out;
 
     if(this->type == BuiltIns::ptrCharType){
-        handleStringLiteral(out, code, fn);
+        std::string address = handleStringLiteral(code, fn);
+        out = std::make_shared<StackReferencingPtrRValueStructure>(address);
     }
     else if(this->type == BuiltIns::numType){
         out = std::make_shared<NumIValueStructure>(data.createNumber());
