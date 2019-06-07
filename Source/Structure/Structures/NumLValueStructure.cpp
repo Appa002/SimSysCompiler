@@ -6,17 +6,38 @@
 
 #include "NumLValueStructure.h"
 #include "NumRValueStructure.h"
+#include "NumIValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorForNext(ACC::Code &code) {
-    return Structure::operatorForNext(code);
+    auto rValue = operatorAdd(std::make_shared<NumIValueStructure>(1), code);
+    rValue->operatorCopy(shared_from_this(), code);
+    return shared_from_this();
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorForDone(std::shared_ptr<Structure> limit,
                                                                         ACC::Code &code) {
-    return Structure::operatorForDone(limit, code);
+    // setting rflags such that an equals comparision is false if the loop is done
+
+
+    if(limit->vCategory == ValueCategory::ivalue){
+        auto limitAsI = dynamic_cast<NumIValueStructure*>(limit.get());
+        auto& fn = code.getFnSymbol();
+
+        Register lhs = code.getFreeRegister();
+        Register rhs = code.getFreeRegister();
+
+        this->loadToRegister(lhs, code);
+        limitAsI->loadToRegister(rhs, code);
+
+        fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+        fn.writeLine("setl " + registerToString(1, lhs));
+        fn.writeLine("cmp " + registerToString(1, lhs) + ", 1");
+    }
+
+    return shared_from_this();
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorCopy(std::shared_ptr<Structure> address,
