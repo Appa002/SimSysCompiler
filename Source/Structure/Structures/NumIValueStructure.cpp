@@ -4,9 +4,10 @@
 
 #include "NumIValueStructure.h"
 #include "NumRValueStructure.h"
+#include "NumLValueStructure.h"
 #include <Assembly/Code.h>
 
-ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value) {
+ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), ElementaryStructure(ValueCategory::ivalue, 8) {
 
 }
 
@@ -21,7 +22,13 @@ std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorForNext(ACC::Co
 
 std::shared_ptr<ACC::Structure>
 ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    return Structure::operatorCopy(address, code);
+    auto* addressAsLValue = (NumLValueStructure*)address.get();
+
+    auto& fn = code.getFnSymbol();
+
+    fn.writeLine("mov qword [" + addressAsLValue->access + "], " + std::to_string(value));
+
+    return address;
 }
 
 std::shared_ptr<ACC::Structure>
