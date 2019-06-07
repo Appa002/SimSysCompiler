@@ -4,7 +4,7 @@
 
 
 std::string loadReg(ACC::Code &code, ACC::Register reg, ACC::Structure structure) {
-    using namespace ACC;
+    /*using namespace ACC;
 
     code.reserveRegister(reg);
 
@@ -12,11 +12,11 @@ std::string loadReg(ACC::Code &code, ACC::Register reg, ACC::Structure structure
 
     code.freeRegister(structure.registerUsed);
 
-    return out;
+    return out;*/
 }
 
 ACC::Structure* ACC::SyscallTokenGenerator::generate(ACC::Code &code) {
-    auto &fn = code.getFnSymbol();
+  /*  auto &fn = code.getFnSymbol();
 
     if (node->children.size() >= 1)
         fn.writeLine(loadReg(code, Register::rA, node->children[0]->asExpr()->generate(code)));
@@ -51,4 +51,7 @@ ACC::Structure* ACC::SyscallTokenGenerator::generate(ACC::Code &code) {
     fn.writeLine("syscall");
 
     return {};
+    */
+
+    return nullptr;
 }

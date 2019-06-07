@@ -1,6 +1,6 @@
 #include "MultiplicationTokenGenerator.h"
 
-ACC::Structure ACC::MultiplicationTokenGenerator::generate(ACC::Code &code) {
+ACC::Structure* ACC::MultiplicationTokenGenerator::generate(ACC::Code &code) {
   /*  auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();

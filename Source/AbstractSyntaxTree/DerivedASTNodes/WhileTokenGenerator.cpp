@@ -2,7 +2,7 @@
 #include <builtinTypes.h>
 
 ACC::Structure* ACC::WhileTokenGenerator::generate(ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
+ /*   auto& fn = code.getFnSymbol();
 
     auto top = code.getUUID();
     auto rest = code.getUUID();
@@ -32,5 +32,6 @@ ACC::Structure* ACC::WhileTokenGenerator::generate(ACC::Code &code) {
     fn.writeLine("."+rest+":");
     code.freeRegister(body.registerUsed);
 
-    return {};
+    return {};*/
+    return nullptr;
 }

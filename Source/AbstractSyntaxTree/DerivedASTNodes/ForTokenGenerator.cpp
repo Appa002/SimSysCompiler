@@ -48,10 +48,10 @@ ACC::Structure* ACC::ForTokenGenerator::generate(ACC::Code &code) {
     code.popScope();
     code.freeRegister(body.registerUsed);
 
-    /* Adding one to the index */
+     Adding one to the index
     handleAddition(fn, code, index);
 
-    /* Looping back up / seting up rest.. */
+     Looping back up / seting up rest..
     fn.writeLine("jmp ." + top);
     fn.writeLine("."+rest+":");*/
 
