@@ -10,74 +10,93 @@
 #include <Lexical/Tokens/DeclToken.h>
 #include <Lexical/Tokens/TypeToken.h>
 #include <Lexical/Tokens/ComparisionToken.h>
+#include <AbstractSyntaxTree/ASTNodes/SeqNode.h>
+#include <AbstractSyntaxTree/ASTNodes/IfConstructNode.h>
+#include <AbstractSyntaxTree/ASTNodes/WhileNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ForNode.h>
+#include <AbstractSyntaxTree/ASTNodes/IdNode.h>
+#include <AbstractSyntaxTree/ASTNodes/FunctionNode.h>
+#include <AbstractSyntaxTree/ASTNodes/CallNode.h>
+#include <AbstractSyntaxTree/ASTNodes/AssignNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ReassignNode.h>
+#include <AbstractSyntaxTree/ASTNodes/SyscallNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ExitNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ReturnNode.h>
+#include <AbstractSyntaxTree/ASTNodes/LiteralNode.h>
+#include <AbstractSyntaxTree/ASTNodes/AddNode.h>
+#include <AbstractSyntaxTree/ASTNodes/SubtractNode.h>
+#include <AbstractSyntaxTree/ASTNodes/MultiplicationNode.h>
+#include <AbstractSyntaxTree/ASTNodes/DivisionNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
+#include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
         {{Symbol::start, {Symbol::assignment, Symbol::EOS}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::keyword, Symbol::EOS}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::function, Symbol::EXTENT}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::if_construct}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::for_construct}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::while_construct}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
         {{Symbol::start, {Symbol::call, Symbol::EOS}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::SEQ, {process(children[0], nullptr)});
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
 
 
         {{Symbol::start, {Symbol::assignment, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+            return new SeqNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::function, Symbol::EXTENT, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+            return new SeqNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::if_construct, Symbol::start}}, [](auto children, auto carry){
                 auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
-                return new ASTNode(AstOperator::SEQ, vec);
+                return new SeqNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::while_construct, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+            return new SeqNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::for_construct, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+            return new SeqNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::keyword, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+            return new SeqNode(AstOperator::SEQ, vec);
         }},
         {{Symbol::start, {Symbol::call, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
-            return new ASTNode(AstOperator::SEQ, vec);
+            return new SeqNode(AstOperator::SEQ, vec);
         }},
 
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
-            return new ASTNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
+            return new IfConstructNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
         }},
 
         {{Symbol::while_construct, {Symbol::WHILE, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
-            return new ASTNode(AstOperator::WHILE, vec);
+            return new WhileNode(AstOperator::WHILE, vec);
         }},
 
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT, Symbol::elseIf_construct}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
-            auto node = new ASTNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
+            auto node = new IfConstructNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
 
             process(children[6], node);
             return node;
@@ -85,7 +104,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT, Symbol::elseIf_construct, Symbol::else_construct}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
-            auto node = new ASTNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
+            auto node = new IfConstructNode(AstOperator::IF_CONSTRUCT, {new ASTNode(AstOperator::IF, vec)});
 
             process(children[6], node);
 
@@ -97,7 +116,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT, Symbol::else_construct}}, [](auto children, auto carry){
             auto ifVec = {process(children[1], nullptr), process(children[4], nullptr)};
             auto constructVec = {new ASTNode(AstOperator::IF, ifVec), process(children[6], nullptr)};
-            return new ASTNode(AstOperator::IF_CONSTRUCT, constructVec);
+            return new IfConstructNode(AstOperator::IF_CONSTRUCT, constructVec);
 
         }},
 
@@ -125,7 +144,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                     new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym),
                     process(children[3], nullptr),
                     process(children[6], nullptr)};
-            return new ASTNode(AstOperator::FOR, vec);
+            return new ForNode(AstOperator::FOR, vec);
 
         }},
 
@@ -134,7 +153,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                              Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
-            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
 
             vec.push_back(new ASTNode(AstOperator::TYPE_DEF,
                                       GeneralDataStore::create(dynamic_cast<TypeToken*>(children[5]->token)->typeId)));
@@ -142,8 +161,8 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
             auto params = children[3];
             while(params != nullptr){
-                auto paramsVec = {
-                        new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(params->children[0]->token)->sym),
+                std::vector<ASTNode*> paramsVec = {
+                        new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(params->children[0]->token)->sym),
                         new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(
                                 dynamic_cast<TypeToken*>(params->children[1]->token)->typeId))
 
@@ -158,26 +177,26 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
             vec.push_back(process(children[8], nullptr));
 
-            return new ASTNode(AstOperator::FUNCTION, vec);
+            return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
 
         {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET, Symbol::TYPE,
                                     Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
-            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
             vec.push_back(new ASTNode(AstOperator::TYPE_DEF,
                     GeneralDataStore::create(dynamic_cast<TypeToken*>(children[4]->token)->typeId)));
 
             vec.push_back(process(children[7], nullptr));
 
-            return new ASTNode(AstOperator::FUNCTION, vec);
+            return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
 
         {{Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
-            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
 
             ParseNode* params = children[2];
             while(params != nullptr){
@@ -188,43 +207,29 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                     params = nullptr;
             }
 
-            return new ASTNode(AstOperator::CALL, vec);
+            return new CallNode(AstOperator::CALL, vec);
         }},
 
 
         {{Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](auto children, auto carry){
             std::vector<ASTNode*> vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)};
-             return new ASTNode(AstOperator::CALL, vec);
+             return new CallNode(AstOperator::CALL, vec);
         }},
 
 
 
         {{Symbol::assignment, {Symbol::VAR, Symbol::DECL, Symbol::TYPE, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
             GeneralDataStore store = GeneralDataStore::create(dynamic_cast<TypeToken*>(children[2]->token)->typeId);
-            auto vec = {new ASTNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym),
+            std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym),
                         new ASTNode(AstOperator::TYPE_DEF, store),
                         process(children[4], nullptr)};
-            return new ASTNode(AstOperator::ASSIGN, vec);
+            return new AssignNode(AstOperator::ASSIGN, vec);
         }},
 
         {{Symbol::assignment, {Symbol::ID, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
-            auto vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym),
+            std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym),
                         process(children[2], nullptr)};
-            return new ASTNode(AstOperator::REASSIGN, vec);
-        }},
-
-        {{Symbol::ifStmt, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
-            auto vec = {process(children[1], nullptr),
-                        process(children[4], nullptr)};
-
-            return new ASTNode(AstOperator::IF, vec);
-        }},
-
-        {{Symbol::ifStmt, {Symbol::ELIF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
-            auto vec = {process(children[1], nullptr),
-                        process(children[4], nullptr)};
-
-            return new ASTNode(AstOperator::ELIF, vec);
+            return new ReassignNode(AstOperator::REASSIGN, vec);
         }},
 
 
@@ -234,7 +239,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
                     ,process(children[7], nullptr), process(children[9], nullptr), process(children[11], nullptr),
                     process(children[13], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
         {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
@@ -242,7 +247,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
          [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
                     , process(children[7], nullptr), process(children[9], nullptr), process(children[11], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
 
@@ -250,7 +255,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                             Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
                     , process(children[7], nullptr), process(children[9], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
 
@@ -258,50 +263,50 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                             Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)
                     , process(children[7], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
 
         {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr}},
          [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[3], nullptr), process(children[5], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
 
         {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[3], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
         {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr)};
-            return new ASTNode(AstOperator::SYSCALL, vec);
+            return new SyscallNode(AstOperator::SYSCALL, vec);
         }},
 
         {{Symbol::keyword, {Symbol::EXIT, Symbol::expr}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::EXIT,
+            return new ExitNode(AstOperator::EXIT,
                                {process(children[1], nullptr)});
         }},
 
         {{Symbol::keyword, {Symbol::RETURN, Symbol::expr}}, [](auto children, auto carry){
-            return new ASTNode(AstOperator::RETURN,
+            return new ReturnNode(AstOperator::RETURN,
                                {process(children[1], nullptr)});
         }},
         {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-                return new ASTNode(AstOperator::CALL,
-                                   {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
+                return new CallNode(AstOperator::CALL,
+                                   {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
         }},
 
         {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            auto call = new ASTNode(AstOperator::CALL,
-                               {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
+            auto call = new CallNode(AstOperator::CALL,
+                               {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
             return process(children[3], call);
         }},
 
         {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             std::vector<ASTNode*> vec;
-            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
 
             ParseNode* params = children[2];
             while(params != nullptr){
@@ -312,12 +317,12 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                     params = nullptr;
             }
 
-            return new ASTNode(AstOperator::CALL, vec);
+            return new CallNode(AstOperator::CALL, vec);
         }},
 
         {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             std::vector<ASTNode*> vec;
-            vec.push_back(new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
 
             ParseNode* params = children[2];
             while(params != nullptr){
@@ -328,27 +333,27 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                     params = nullptr;
             }
 
-            auto call = new ASTNode(AstOperator::CALL, vec);
+            auto call = new CallNode(AstOperator::CALL, vec);
             return process(children[4], call);
         }},
 
         {{Symbol::expr, {Symbol::LITERAL}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
-            return new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
+            return new LiteralNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
         }},
 
         {{Symbol::expr, {Symbol::LITERAL, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
-            auto literal = new ASTNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
+            auto literal = new LiteralNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
             return process(children[1], literal);
         }},
 
         {{Symbol::expr, {Symbol::ID}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            return new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
+            return new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
         }},
 
         {{Symbol::expr, {Symbol::ID, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            auto id = new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
+            auto id = new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
             return process(children[1], id);
         }},
 
@@ -360,41 +365,41 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return process(children[3], process(children[1]));
         }},
 
-         {{Symbol::expr, {Symbol::MATH_OPERATOR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+         {{Symbol::expr, {Symbol::MATH_OPERATOR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
              auto vec = {carry, process(children[1], nullptr)};
              switch (dynamic_cast<MathOperatorToken*>(children[0]->token)->kind){
                  case MathOperators::PLUS:
-                     return new ASTNode(AstOperator::PLUS, vec);
+                     return new AddNode(AstOperator::PLUS, vec);
                  case MathOperators::MINUS:
-                      return new ASTNode(AstOperator::MINUS, vec);
+                      return new SubtractNode(AstOperator::MINUS, vec);
                  case MathOperators::MULTIPLICATION:
-                     return new ASTNode(AstOperator::MULTIPLICATION, vec);
+                     return new MultiplicationNode(AstOperator::MULTIPLICATION, vec);
                  case MathOperators::DIVISION:
-                     return new ASTNode(AstOperator::DIVISION, vec);
+                     return new DivisionNode(AstOperator::DIVISION, vec);
              }
          }},
 
-        {{Symbol::expr, {Symbol::CMP, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+        {{Symbol::expr, {Symbol::CMP, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
             auto vec = {carry, process(children[1], nullptr)};
 
             switch (dynamic_cast<ComparisionToken*>(children[0]->token)->kind){
                 case ComparisionTokenKind::Equal:
-                    return new ASTNode(AstOperator::EQUAL, vec);
+                    return new ComparisionNode(AstOperator::EQUAL, vec, ComparisionType::EQ);
                 case ComparisionTokenKind::NotEqual:
-                    return new ASTNode(AstOperator::NOT_EQUAL, vec);
+                    return new ComparisionNode(AstOperator::NOT_EQUAL, vec, ComparisionType::NEQ);
                 case ComparisionTokenKind::Less:
-                    return new ASTNode(AstOperator::LESS, vec);
+                    return new ComparisionNode(AstOperator::LESS, vec, ComparisionType::LT);
                 case ComparisionTokenKind::Greater:
-                    return new ASTNode(AstOperator::GREATER, vec);
+                    return new ComparisionNode(AstOperator::GREATER, vec, ComparisionType::GT);
                 case ComparisionTokenKind::LessEqual:
-                    return new ASTNode(AstOperator::LESS_EQUAL, vec);
+                    return new ComparisionNode(AstOperator::LESS_EQUAL, vec, ComparisionType::LET);
                 case ComparisionTokenKind::GreaterEqual:
-                    return new ASTNode(AstOperator::GREATER_EQUAL, vec);
+                    return new ComparisionNode(AstOperator::GREATER_EQUAL, vec, ComparisionType::GET);
             }
         }},
 
         {{Symbol::expr, {Symbol::NOT, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            return new ASTNode(AstOperator::NOT, {process(children[1])});
+            return new NotNode(AstOperator::NOT, {process(children[1])});
         }},
     };
 }
