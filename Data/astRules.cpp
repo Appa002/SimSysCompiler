@@ -140,8 +140,8 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
         {{Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::GOES_TO, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
-            auto vec = {
-                    new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym),
+            std::vector<ASTNode*> vec = {
+                    new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym),
                     process(children[3], nullptr),
                     process(children[6], nullptr)};
             return new ForNode(AstOperator::FOR, vec);
