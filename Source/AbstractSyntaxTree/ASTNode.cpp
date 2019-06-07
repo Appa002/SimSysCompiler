@@ -7,8 +7,6 @@
 #include <utility>
 #include "ASTNode.h"
 #include <AbstractSyntaxTree/process.h>
-#include <Assembly/Stmt.h>
-#include <Assembly/Expr.h>
 #include <Logger/Logger.h>
 
 #include <AbstractSyntaxTree/ASTNodes/AddNode.h>

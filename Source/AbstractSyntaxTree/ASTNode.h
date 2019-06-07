@@ -58,10 +58,6 @@ namespace ACC {
         __CONTAINER
     };
 
-    class Expr;
-
-    class Stmt;
-
     class ASTNode {
     private:
         std::string astOperator2String(AstOperator op) const;
@@ -70,11 +66,8 @@ namespace ACC {
         void _print(std::string indent, bool isLast) const;
 
         ASTNode(AstOperator op, std::vector<ASTNode *> children);
-
         ASTNode(AstOperator op, GeneralDataStore literal, TypeId type);
-
         ASTNode(AstOperator op, std::string str);
-
         ASTNode(AstOperator op, GeneralDataStore store);
 
         explicit ASTNode(AstOperator op);
