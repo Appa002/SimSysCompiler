@@ -7,6 +7,7 @@
 
 #include <string>
 #include <memory>
+#include <TypeId.h>
 
 namespace ACC {
     class Code;
@@ -37,9 +38,9 @@ namespace ACC {
 class Structure : public std::enable_shared_from_this <Structure> {
     public:
         const ValueCategory vCategory;
-        const size_t size;
+        const TypeId type;
 
-        Structure(ValueCategory valueCategory, size_t size);
+        Structure(ValueCategory valueCategory, TypeId type);
         virtual ~Structure();
 
         virtual std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code);

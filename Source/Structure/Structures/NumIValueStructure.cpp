@@ -6,8 +6,10 @@
 #include "NumRValueStructure.h"
 #include "NumLValueStructure.h"
 #include <Assembly/Code.h>
+#include <utils.h>
+#include <builtinTypes.h>
 
-ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), ElementaryStructure(ValueCategory::ivalue, 8) {
+ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), ElementaryStructure(ValueCategory::ivalue, BuiltIns::numType) {
 
 }
 
@@ -26,7 +28,10 @@ ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
 
     auto& fn = code.getFnSymbol();
 
-    fn.writeLine("mov qword [" + addressAsLValue->access + "], " + std::to_string(value));
+    std::string buffered = toHex(value);
+    buffered = std::string((4 - buffered.size()) * 2, '0') + buffered;
+
+    fn.writeLine("mov qword [" + addressAsLValue->access + "], 0x" + buffered);
 
     return address;
 }

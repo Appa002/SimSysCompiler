@@ -10,7 +10,7 @@
 namespace ACC {
     class ElementaryStructure : public Structure{
     public:
-        explicit ElementaryStructure(ValueCategory v, size_t size);
+        explicit ElementaryStructure(ValueCategory v, TypeId type);
         virtual void loadToRegister(Register reg, Code& code) = 0;
     };
 }

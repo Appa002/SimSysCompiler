@@ -61,7 +61,8 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorGreaterEqual(std::shared
     throw std::runtime_error("Operator not implemented");
 }
 
-ACC::Structure::Structure(ACC::ValueCategory valueCategory, size_t size) : vCategory(valueCategory), size(size){
+ACC::Structure::Structure(ACC::ValueCategory valueCategory, TypeId type)
+: vCategory(valueCategory), type(type){
 
 }
 
