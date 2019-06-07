@@ -8,7 +8,6 @@
 #include <fstream>
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
-#include <errors.h>
 #include <Logger/Logger.h>
 
 #include <Lexical/Tokens/LiteralToken.h>

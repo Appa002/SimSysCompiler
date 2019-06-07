@@ -11,7 +11,6 @@
 #include "ParseTree.h"
 #include "Production.h"
 #include <Logger/Logger.h>
-#include <errors.h>
 #include <Lexical/Tokens/IndentToken.h>
 #include <Logger/LogableProduction.h>
 
@@ -93,7 +92,7 @@ const ACC::ParseNode *ACC::ParseTree::getRoot() {
 
 void ACC::ParseTree::generate(ACC::LexicalAnalysis in) {
     if (generated)
-        throw repeated_step_error_t("The parse tree has already been generated.");
+        throw std::runtime_error("The parse tree has already been generated.");
     generated = true;
     LOG.createHeading("Generating Parse Tree...");
     //  root = process(const_cast<LexicalAnalysis &>(in).data(), Symbol::start);
