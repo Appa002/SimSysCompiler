@@ -13,7 +13,8 @@
 namespace ACC{
     struct LiteralNode : public ASTNode{
         Structure *generate(ACC::Code &code) override;
-        LiteralNode(AstOperator op, std::vector<ASTNode *> children);
+        LiteralNode(AstOperator op, GeneralDataStore literal, TypeId type);
+
 
         void handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn);
         void handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn);

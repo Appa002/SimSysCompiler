@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 #include "LiteralNode.h"
 #include <builtinTypes.h>
 
@@ -103,7 +105,7 @@ void ACC::LiteralNode::handleNumberLiteral(ACC::Structure &structure, ACC::Code 
     */
 }
 
-ACC::LiteralNode::LiteralNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op,
-                                                                                                   std::move(children)) {
+ACC::LiteralNode::LiteralNode(ACC::AstOperator op, ACC::GeneralDataStore literal, ACC::TypeId type) :
+ASTNode(op, std::move(literal), type) {
 
 }

@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 #include <builtinTypes.h>
 #include "ComparisionNode.h"
 
@@ -85,9 +87,7 @@ ACC::Structure* ACC::ComparisionNode::generate(ACC::Code &code) {
     return nullptr;
 }
 
-ACC::ComparisionNode::ComparisionNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op,
-                                                                                                           std::move(
-                                                                                                                   children)) {
-cmpType = ComparisionType::GET;
+ACC::ComparisionNode::ComparisionNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children,
+        ACC::ComparisionType type) : ASTNode(op, std::move(children)), cmpType(type) {
 }
 

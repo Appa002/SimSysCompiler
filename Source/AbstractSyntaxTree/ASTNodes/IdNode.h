@@ -13,7 +13,7 @@
 namespace ACC{
     struct IdNode : public ASTNode{
         Structure* generate(ACC::Code &code) override;
-        IdNode(AstOperator op, std::vector<ASTNode *> children);
+        IdNode(AstOperator op, std::string str);
 
     };
 }
