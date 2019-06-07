@@ -15,49 +15,9 @@
 #include <ScopedSymbolTable.h>
 #include "Fn.h"
 
+#include <Structure/Structure.h>
+
 namespace ACC{
-
-    enum class StructureType{
-        elementary,
-        complex, // TODO: Reserved for later.
-        NA
-    };
-
-    enum class Register;
-    class Code;
-
-    struct Structure{
-        Structure() = default;
-        explicit Structure(StructureType type) : type(type) {};
-
-        std::function<std::string (Code&)> copyToStack;
-        std::function<std::string (std::string, Code&)> copyToRegister;
-        std::function<std::string (std::string, Code&)> copyAddrToRegister;
-        std::function<std::string (int32_t , Code&)> copyToBpOffset;
-
-        StructureType type = StructureType::NA;
-        std::vector<Register> registerUsed;
-        TypeId typeId = TypeId(0, 0);
-        bool isStored = true;
-    };
-
-    enum class Register{
-        rA,
-        rB,
-        rC,
-        rD,
-        rSI,
-        rDI,
-        r8,
-        r9,
-        r10,
-        r11,
-        r12,
-        r13,
-        r14,
-        r15,
-    };
-
     std::string registerToString(size_t size, Register reg);
 
     class Code {
