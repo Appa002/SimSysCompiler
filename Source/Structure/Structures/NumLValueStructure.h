@@ -10,10 +10,8 @@
 
 namespace ACC{
     class NumLValueStructure : public ElementaryStructure{
-    private:
-        std::string access;
-
     public:
+        std::string access;
         explicit NumLValueStructure(std::string const & access);
 
         std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code) override;
