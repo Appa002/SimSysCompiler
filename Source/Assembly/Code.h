@@ -27,8 +27,8 @@ namespace ACC{
         std::unordered_map<std::string, Fn> fnTable;
         std::unordered_map<Register, bool> freeRegisterTable;
 
-        ScopedSymbolTable<Structure>* curScope = nullptr;
-        std::shared_ptr<ScopedSymbolTable<Structure>> globalScope = nullptr;
+        ScopedSymbolTable<Structure*>* curScope = nullptr;
+        std::shared_ptr<ScopedSymbolTable<Structure*>> globalScope = nullptr;
 
         Stack<std::string> fnStack;
         std::string dataSection;
@@ -43,8 +43,8 @@ namespace ACC{
         void popFnFromStack();
         Register getFreeRegister();
 
-        Structure& getVarSymbol(std::string sym);
-        Structure& emplaceVarSymbol(std::string sym, const Structure &struc);
+        Structure* getVarSymbol(std::string sym);
+        Structure* emplaceVarSymbol(std::string sym, Structure* struc);
 
         Fn& getFnSymbol(std::string sym);
         Fn& getFnSymbol();
