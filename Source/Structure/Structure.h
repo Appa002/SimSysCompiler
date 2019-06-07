@@ -34,9 +34,12 @@ namespace ACC {
         ivalue
     };
 
-    class Structure {
+class Structure : public std::enable_shared_from_this <Structure> {
     public:
-        Structure() = default;
+        const ValueCategory vCategory;
+        const size_t size;
+
+        Structure(ValueCategory valueCategory, size_t size);
         virtual ~Structure();
 
         virtual std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code);
