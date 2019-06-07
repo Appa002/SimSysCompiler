@@ -1,6 +1,7 @@
 #include <utility>
 #include <Structure/Structures/NumLValueStructure.h>
 #include <General/builtinTypes.h>
+#include <Structure/Structures/ElementaryLValueStructure.h>
 
 #include "FunctionNode.h"
 
@@ -23,8 +24,7 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
         auto loc = fn.curBpOffset + size;
         auto locStr = std::to_string(loc);
 
-        if(type == BuiltIns::numType)
-            structure = std::make_shared<NumLValueStructure>("rbp - " + locStr);
+        structure = std::make_shared<ElementaryLValueStructure>(type, "rbp - " + locStr);
 
         fn.writeLine(copyIntoStackFrame(offset, loc, size, code));
 
