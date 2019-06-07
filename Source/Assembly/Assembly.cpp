@@ -7,7 +7,7 @@
 
 ACC::Assembly::Assembly(const AbstractSyntaxTree& tree) {
     code = Code();
-    tree.getRoot()->asExpr()->generate(code);
+    tree.getRoot()->generate(code);
 }
 
 void ACC::Assembly::print() {
