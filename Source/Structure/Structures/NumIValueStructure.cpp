@@ -5,6 +5,8 @@
 #include "NumIValueStructure.h"
 #include "NumRValueStructure.h"
 #include "NumLValueStructure.h"
+#include "BoolLValueStructure.h"
+#include "BoolRValueStructure.h"
 #include <Assembly/Code.h>
 #include <General/utils.h>
 #include <General/builtinTypes.h>
@@ -88,7 +90,17 @@ ACC::NumIValueStructure::operatorDivision(std::shared_ptr<ACC::Structure> amount
 
 std::shared_ptr<ACC::Structure>
 ACC::NumIValueStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorEqual(other, code);
+    if(other->vCategory == ValueCategory::ivalue){
+        auto& fn = code.getFnSymbol();
+        auto* otherAsI = dynamic_cast<NumIValueStructure*>(other.get());
+        Register r = code.getFreeRegister();
+        if(value == otherAsI->getValue())
+            fn.writeLine("mov " + registerToString(1, r) + ", 1");
+        else
+            fn.writeLine("mov " + registerToString(1, r) + ", 0");
+        return std::make_shared<BoolRValueStructure>(r);
+    }
+    return nullptr;
 }
 
 std::shared_ptr<ACC::Structure>
