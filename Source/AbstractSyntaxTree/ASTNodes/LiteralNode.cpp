@@ -4,9 +4,10 @@
 
 #include "LiteralNode.h"
 #include <builtinTypes.h>
+#include <Structure/Structures/NumIValueStructure.h>
 
 
-void ACC::LiteralNode::handleStringLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
+void ACC::LiteralNode::handleStringLiteral(std::shared_ptr<Structure> structure, ACC::Code &code, ACC::Fn &fn) {
    /* structure.type = StructureType ::elementary;
 
     size_t count = 0;
@@ -50,24 +51,21 @@ void ACC::LiteralNode::handleStringLiteral(ACC::Structure &structure, ACC::Code 
 }
 
 std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
-    /*auto& fn = code.getFnSymbol();
+    auto& fn = code.getFnSymbol();
+    std::shared_ptr<Structure> out;
 
-    auto returnStruct = Structure();
-    returnStruct.typeId = node->type;
-
-    if(node->type == BuiltIns::ptrCharType){
-        handleStringLiteral(returnStruct, code, fn);
+    if(this->type == BuiltIns::ptrCharType){
+        handleStringLiteral(out, code, fn);
     }
-    else if(node->type == BuiltIns::numType){
-        handleNumberLiteral(returnStruct, code, fn);
+    else if(this->type == BuiltIns::numType){
+        out = std::make_shared<NumIValueStructure>(data.createNumber());
     }
 
-    return returnStruct;*/
-    return nullptr;
+    return out;
 }
 
-void ACC::LiteralNode::handleNumberLiteral(ACC::Structure &structure, ACC::Code &code, ACC::Fn &fn) {
-  /*  std::string literalEncoded = std::to_string(node->data.createNumber());
+void ACC::LiteralNode::handleNumberLiteral(std::shared_ptr<Structure> &structure, ACC::Code &code, ACC::Fn &fn) {
+    /*  std::string literalEncoded = std::to_string(node->data.createNumber());
     structure.type = StructureType::elementary;
     structure.isStored = false;
 

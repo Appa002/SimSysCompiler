@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by a_mod on 10.02.2019.
 //
@@ -8,7 +10,7 @@
 
 
 ACC::Code::Code() {
-    globalScope = std::make_shared<ScopedSymbolTable<Structure*>>();
+    globalScope = std::make_shared<ScopedSymbolTable<std::shared_ptr<Structure>>>();
     curScope = globalScope.get();
 
     emplaceFnSymbol("_start");
@@ -16,15 +18,15 @@ ACC::Code::Code() {
         freeRegisterTable[(Register) i] = true;
 };
 
-ACC::Structure* ACC::Code::getVarSymbol(std::string sym) {
+std::shared_ptr<ACC::Structure> ACC::Code::getVarSymbol(std::string sym) {
     if (!curScope->isSymbol(sym))
         throw std::runtime_error("Unknown variable: " + sym);
     else
         return curScope->getSymbol(sym);
 }
 
-ACC::Structure* ACC::Code::emplaceVarSymbol(std::string sym, Structure* struc) {
-    curScope->symbolTable[sym] = struc;
+std::shared_ptr<ACC::Structure> ACC::Code::emplaceVarSymbol(std::string sym, std::shared_ptr<Structure> struc) {
+    curScope->symbolTable[sym] = std::move(struc);
     return curScope->symbolTable[sym];
 }
 
@@ -99,7 +101,7 @@ void ACC::Code::popFnFromStack() {
 }
 
 void ACC::Code::pushScope() {
-    curScope = new ScopedSymbolTable<Structure*>(curScope);
+    curScope = new ScopedSymbolTable<std::shared_ptr<Structure>>(curScope);
 }
 
 void ACC::Code::popScope() {

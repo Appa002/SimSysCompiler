@@ -4,55 +4,62 @@
 #include <Logger/Logger.h>
 
 std::shared_ptr<ACC::Structure> ACC::AddNode::generate(ACC::Code &code) {
-   /* auto lhs = node->children[0]->asExpr()->generate(code);
-    auto rhs = node->children[1]->asExpr()->generate(code);
+    auto lhs = children[0]->generate(code);
+    auto rhs = children[1]->generate(code);
 
-   //TODO: Type conversion.
+    auto out = lhs->operatorAdd(rhs, code);
+    return out;
 
-    auto& fn = code.getFnSymbol();
+    /*
+     auto lhs = node->children[0]->asExpr()->generate(code);
+     auto rhs = node->children[1]->asExpr()->generate(code);
 
-    auto lhsRegister = code.getFreeRegister();
-    auto rhsRegister = code.getFreeRegister();
+    //TODO: Type conversion.
 
-    if(lhs.type == StructureType::elementary){
-        fn.writeLine(lhs.copyToRegister(registerToString(8, lhsRegister), code));
-    }
+     auto& fn = code.getFnSymbol();
 
-    if(rhs.type == StructureType::elementary){
-        fn.writeLine(rhs.copyToRegister(registerToString(8, rhsRegister), code));
-    }
+     auto lhsRegister = code.getFreeRegister();
+     auto rhsRegister = code.getFreeRegister();
 
-   // TODO: Implement generation for complex structures by invoking operator+ on that structure
+     if(lhs.type == StructureType::elementary){
+         fn.writeLine(lhs.copyToRegister(registerToString(8, lhsRegister), code));
+     }
 
-    fn.writeLine("add "+ registerToString(8, lhsRegister) +", "+ registerToString(8, rhsRegister));
+     if(rhs.type == StructureType::elementary){
+         fn.writeLine(rhs.copyToRegister(registerToString(8, rhsRegister), code));
+     }
 
-    auto return_struct = Structure(StructureType::elementary);
-    return_struct.typeId = lhs.typeId;
+    // TODO: Implement generation for complex structures by invoking operator+ on that structure
 
-    return_struct.copyToRegister = [=](std::string reg, Code& c){
-        if(reg != "rax")
-            return "mov " + reg + ", " + registerToString(8, lhsRegister);
-        return std::string();
-    };
+     fn.writeLine("add "+ registerToString(8, lhsRegister) +", "+ registerToString(8, rhsRegister));
 
-    return_struct.copyToStack = [=](Code& c){
-        return "mov qword [rsp], " + registerToString(8, lhsRegister);
-    };
+     auto return_struct = Structure(StructureType::elementary);
+     return_struct.typeId = lhs.typeId;
 
-    return_struct.copyToBpOffset = [=](int32_t offset, Code& c){
-        std::string sign = offset < 0 ? ("-") : ("+");
-        if(offset < 0) offset *= -1;
-        std::string offstr = std::to_string(offset);
-        return "mov qword [rbp " + sign + offstr + "], " + registerToString(8, lhsRegister);
-    };
+     return_struct.copyToRegister = [=](std::string reg, Code& c){
+         if(reg != "rax")
+             return "mov " + reg + ", " + registerToString(8, lhsRegister);
+         return std::string();
+     };
 
-    code.freeRegister(rhsRegister);
-    code.freeRegister(lhs.registerUsed);
-    code.freeRegister(rhs.registerUsed);
-    return_struct.registerUsed = {lhsRegister};
+     return_struct.copyToStack = [=](Code& c){
+         return "mov qword [rsp], " + registerToString(8, lhsRegister);
+     };
 
-    return return_struct;
-*/
+     return_struct.copyToBpOffset = [=](int32_t offset, Code& c){
+         std::string sign = offset < 0 ? ("-") : ("+");
+         if(offset < 0) offset *= -1;
+         std::string offstr = std::to_string(offset);
+         return "mov qword [rbp " + sign + offstr + "], " + registerToString(8, lhsRegister);
+     };
+
+     code.freeRegister(rhsRegister);
+     code.freeRegister(lhs.registerUsed);
+     code.freeRegister(rhs.registerUsed);
+     return_struct.registerUsed = {lhsRegister};
+
+     return return_struct;
+ */
 return nullptr;
 }
 
