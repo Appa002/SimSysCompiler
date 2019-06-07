@@ -6,7 +6,7 @@
 #include <General/builtinTypes.h>
 #include <Structure/Structures/NumIValueStructure.h>
 #include <Assembly/DataStructureMovement.h>
-#include <Structure/Structures/StackReferencingPtrRValueStructure.h>
+#include <Structure/Structures/PtrRValueStructure.h>
 
 
 std::string ACC::LiteralNode::handleStringLiteral(ACC::Code &code, ACC::Fn &fn) {
@@ -31,7 +31,7 @@ std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
 
     if(this->type == BuiltIns::ptrCharType){
         std::string address = handleStringLiteral(code, fn);
-        out = std::make_shared<StackReferencingPtrRValueStructure>(address);
+        out = std::make_shared<PtrRValueStructure>(address);
     }
     else if(this->type == BuiltIns::numType){
         out = std::make_shared<NumIValueStructure>(data.createNumber());
