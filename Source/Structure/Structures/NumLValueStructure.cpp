@@ -5,6 +5,7 @@
 //
 
 #include "NumLValueStructure.h"
+#include "NumRValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 
@@ -23,6 +24,23 @@ std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorCopy(std::share
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorAdd(std::shared_ptr<Structure> amount, ACC::Code &code) {
+    auto& fn = code.getFnSymbol();
+    auto* amountAsElem = dynamic_cast<ElementaryStructure*>(amount.get());
+
+    Register lhs = code.getFreeRegister();
+    Register rhs = code.getFreeRegister();
+
+    std::string lhsAsString = registerToString(8, lhs);
+    std::string rhsAsString = registerToString(8, rhs);
+
+    this->loadToRegister(lhs, code);
+    amountAsElem->loadToRegister(rhs, code);
+
+    fn.writeLine("add "+lhsAsString+", " + rhsAsString);
+
+    code.freeRegister(rhs);
+
+    return std::make_shared<NumRValueStructure>(lhs);
 
 }
 
@@ -69,7 +87,7 @@ std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorGreaterEqual(st
     return Structure::operatorGreaterEqual(other, code);
 }
 
-ACC::NumLValueStructure::NumLValueStructure(std::string const &access) : access(access){
+ACC::NumLValueStructure::NumLValueStructure(std::string const &access) : access(access), ElementaryStructure(ValueCategory::lvalue, 8){
 
 }
 
