@@ -69,6 +69,6 @@ ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, A
     return Structure::operatorGreaterEqual(other, code);
 }
 
-ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType)){
+ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType, t.getPointingTo())){
 
 }
