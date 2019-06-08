@@ -13,7 +13,6 @@ ACC::PtrAssignmentNode::PtrAssignmentNode(ACC::AstOperator op, std::vector<ACC::
 
 std::shared_ptr<ACC::Structure> ACC::PtrAssignmentNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
-    fn.writeLine(";Reeeeeeeeeeeeeeeeeeeeee");
 
 
     auto subject = children[0]->generate(code);
@@ -29,6 +28,5 @@ std::shared_ptr<ACC::Structure> ACC::PtrAssignmentNode::generate(ACC::Code &code
 
     expr->operatorCopy(address, code);
 
-    fn.writeLine(";Reeeeeeeeeeeeeeeeeeeeee");
     return nullptr;
 }
