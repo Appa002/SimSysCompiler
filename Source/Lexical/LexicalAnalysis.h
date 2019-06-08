@@ -45,6 +45,7 @@ namespace ACC {
         void start (size_t pos, bool shallCheckIndent = false);
         void fn(size_t pos);
         void syscall(size_t pos);
+        void salloc(size_t pos);
         void exit(size_t pos);
         void var(size_t pos);
         void assignment(size_t pos);

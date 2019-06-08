@@ -14,6 +14,7 @@
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/BracketToken.h>
+#include <Lexical/Tokens/SallocToken.h>
 #include <Lexical/Tokens/MathOperatorToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/AssignToken.h>
@@ -55,7 +56,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for", "*"
+            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for", "*", "salloc"
     };
 
     if(shallCheckIndent) {
@@ -131,6 +132,12 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             dereferencingAsignment(pos + 1);
             return;
 
+        }
+        else if ("salloc" == buffer){
+            tokens.push_back(new Salloc());
+            buffer.clear();
+            salloc(pos + 1);
+            return;
         }
     }
     else if (isSymbol(buffer) && (document.size() - 1 == pos || contains(document.at(pos + 1),
@@ -773,8 +780,36 @@ void ACC::LexicalAnalysis::dereferencingAsignment(size_t pos) {
     pos++;
     expr(pos, {";"});
     if(!matchIgnoreW(';', pos))
-        throw std::runtime_error("Missing Simicolon, at: " + std::to_string(pos));
+        throw std::runtime_error("Missing Semicolon, at: " + std::to_string(pos));
     tokens.push_back(new EOSToken);
+    start(pos + 1, true);
+}
+
+void ACC::LexicalAnalysis::salloc(size_t pos) {
+    expr(pos, {","});
+    if(!matchIgnoreW(',', pos))
+        throw std::runtime_error("Missing second argument, at: " + std::to_string(pos));
+
+    tokens.push_back(new CommaToken());
+    pos++;
+
+    readUntilNextLine(pos);
+
+    std::string buffer;
+    matchAsLongAs(pos, [&](){return !contains(document.at(pos), {";", " ", ":", "\n", "\r", "(", ")", "+", "-", "*", "/"});},
+                  [&](){
+                      buffer += document.at(pos);
+                  });
+
+    if(!curScope->isSymbolInThisScope(buffer))
+        throw std::runtime_error("Unknown variable `"+ buffer +"`, at: " + std::to_string(pos));
+
+    tokens.push_back(new IdToken(buffer));
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing Semicolon, at: " + std::to_string(pos));
+    tokens.push_back(new EOSToken);
+
     start(pos + 1, true);
 }
 
