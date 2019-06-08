@@ -1,5 +1,5 @@
 #include <utility>
-#include <Structure/Structures/BoolRValueStructure.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
 
 #include "IfConstructNode.h"
 

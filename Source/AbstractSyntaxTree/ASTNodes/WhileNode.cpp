@@ -2,7 +2,7 @@
 
 #include "WhileNode.h"
 #include <General/builtinTypes.h>
-#include <Structure/Structures/BoolRValueStructure.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
 
 std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();

@@ -8,7 +8,7 @@
 #include "NumRValueStructure.h"
 #include "NumIValueStructure.h"
 #include "Structure/Structures/GenericLValueStructure.h"
-#include "Structure/Structures/BoolRValueStructure.h"
+#include "Structure/Structures/Bool/BoolRValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>

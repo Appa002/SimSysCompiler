@@ -9,8 +9,8 @@
 #include "NumIValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
-#include <Structure/Structures/BoolRValueStructure.h>
-#include <Structure/Structures/BoolLValueStructure.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
+#include <Structure/Structures/Bool/BoolLValueStructure.h>
 #include <General/builtinTypes.h>
 
 ACC::NumStructure::NumStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type(BuiltIns::numType)) {

@@ -4,7 +4,7 @@
 
 #include <General/builtinTypes.h>
 #include "BoolRValueStructure.h"
-#include "GenericLValueStructure.h"
+#include "Structure/Structures/GenericLValueStructure.h"
 #include "BoolLValueStructure.h"
 #include <Assembly/Code.h>
 

@@ -5,8 +5,8 @@
 #include "NumIValueStructure.h"
 #include "NumRValueStructure.h"
 #include "NumLValueStructure.h"
-#include "Structure/Structures/BoolLValueStructure.h"
-#include "Structure/Structures/BoolRValueStructure.h"
+#include "Structure/Structures/Bool/BoolLValueStructure.h"
+#include "Structure/Structures/Bool/BoolRValueStructure.h"
 #include <Assembly/Code.h>
 #include <General/utils.h>
 #include <General/builtinTypes.h>

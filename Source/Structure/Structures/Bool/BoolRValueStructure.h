@@ -5,7 +5,7 @@
 #ifndef SIMSYSCOMPILER_BOOLRVALUESTRUCTURE_H
 #define SIMSYSCOMPILER_BOOLRVALUESTRUCTURE_H
 
-#include "ElementaryStructure.h"
+#include "Structure/Structures/ElementaryStructure.h"
 
 namespace ACC {
     class BoolRValueStructure : public ElementaryStructure{

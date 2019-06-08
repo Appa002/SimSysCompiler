@@ -3,8 +3,8 @@
 //
 #pragma once
 #include <Structure/Structure.h>
-#include "ElementaryStructure.h"
-#include "GenericLValueStructure.h"
+#include "Structure/Structures/ElementaryStructure.h"
+#include "Structure/Structures/GenericLValueStructure.h"
 
 namespace ACC{
     class BoolLValueStructure : public GenericLValueStructure{
