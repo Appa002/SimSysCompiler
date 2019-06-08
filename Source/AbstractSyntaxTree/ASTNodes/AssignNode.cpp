@@ -6,6 +6,7 @@
 #include <Structure/Structures/GenericLValueStructure.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
+#include <Structure/Structures/Char/CharLValueStructure.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
@@ -23,6 +24,9 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
         address = std::make_shared<NumLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     else if (type == BuiltIns::ptrType)
         address = std::make_shared<PtrLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), type);
+    else if (type == BuiltIns::charType){
+        address = std::make_shared<CharLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
+    }
 
     expr->operatorCopy(address, code);
     expr->cleanUp(code);

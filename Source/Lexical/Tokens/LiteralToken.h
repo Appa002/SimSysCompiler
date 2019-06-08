@@ -23,6 +23,12 @@ namespace ACC{
             literal.storeT(std::move(l));
         };
 
+        LiteralToken(char c, Type k) : IToken(), type(k) {
+            id = Symbol::LITERAL;
+            literal.storeT(c);
+        };
+
+
         LiteralToken(uint64_t l, Type k) : IToken(), type(k) {
             id = Symbol::LITERAL;
             if(l <= 0xFF)

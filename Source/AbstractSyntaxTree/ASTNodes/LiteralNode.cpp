@@ -7,6 +7,7 @@
 #include <Structure/Structures/Number/NumIValueStructure.h>
 #include <Assembly/DataStructureMovement.h>
 #include <Structure/Structures/Pointer/PtrRValueStructure.h>
+#include <Structure/Structures/Char/CharIValueStructure.h>
 
 
 std::string ACC::LiteralNode::handleStringLiteral(ACC::Code &code, ACC::Fn &fn) {
@@ -35,6 +36,8 @@ std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
     }
     else if(this->type == BuiltIns::numType){
         out = std::make_shared<NumIValueStructure>(data.createNumber());
+    } else if(this->type == BuiltIns::charType){
+        out = std::make_shared<CharIValueStructure>(data.createNumber());
     }
 
     return out;

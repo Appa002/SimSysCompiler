@@ -55,7 +55,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for"
+            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for", "*"
     };
 
     if(shallCheckIndent) {
@@ -125,6 +125,12 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             buffer.clear();
             forStmt(pos + 1);
             return;
+        }else if ("*" == buffer){
+            tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
+            buffer.clear();
+            dereferencingAsignment(pos + 1);
+            return;
+
         }
     }
     else if (isSymbol(buffer) && (document.size() - 1 == pos || contains(document.at(pos + 1),
@@ -321,7 +327,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
                       [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
-                                                                "<", ">", "!", ":"});},
+                                                                "<", ">", "!", ":", "\'"});},
                       [&](){
                           buffer += document.at(pos);
         });
@@ -365,6 +371,10 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
         else if(document.at(pos) == '"')
             parseStringLiteral(pos);
+        else if(document.at(pos) == '\''){
+            tokens.push_back(new LiteralToken(document.at(pos + 1), Type(BuiltIns::charType)));
+            pos += 2;
+        }
         else if (isSymbol(buffer))
             tokens.push_back(new IdToken(buffer));
         else if (document.at(pos) == '(')
@@ -752,6 +762,19 @@ void ACC::LexicalAnalysis::forStmt(size_t pos) {
     tokens.push_back(new ColonToken());
 
     pushScope();
+    start(pos + 1, true);
+}
+
+void ACC::LexicalAnalysis::dereferencingAsignment(size_t pos) {
+    expr(pos, {"="});
+    if(!matchIgnoreW('=', pos))
+        throw std::runtime_error("Expected expression, at: " + std::to_string(pos));
+    tokens.push_back(new AssignToken());
+    pos++;
+    expr(pos, {";"});
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing Simicolon, at: " + std::to_string(pos));
+    tokens.push_back(new EOSToken);
     start(pos + 1, true);
 }
 

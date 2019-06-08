@@ -57,6 +57,7 @@ namespace ACC {
         void elseStmt(size_t pos);
         void whileStmt(size_t pos);
         void forStmt(size_t pos);
+        void dereferencingAsignment(size_t pos);
 
 
     public:
