@@ -6,9 +6,17 @@
 #include "Structure/Structures/ElementaryStructure.h"
 #include "Structure/Structures/GenericLValueStructure.h"
 
+#include "BoolStructure.h"
+
 namespace ACC{
-    class BoolLValueStructure : public GenericLValueStructure{
+    class BoolLValueStructure : public BoolStructure{
+    protected:
+        std::string access;
     public:
-        explicit BoolLValueStructure(std::string const & access);
+        std::string const & getAccess();
+        explicit BoolLValueStructure(std::string access);
+
+        void loadToRegister(Register reg, Code& code) override;
+        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
     };
 }
