@@ -29,7 +29,7 @@ ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
             if(!access.empty())
                 fn.writeLine("lea " + regStr + ", [" + access + "]");
             else
-                fn.writeLine("mov " + regStr + ", [" + registerToString(8, reg) + "]");
+                fn.writeLine("mov " + regStr + ", " + registerToString(8, this->reg));
             fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
             code.freeRegister(reg);
 
@@ -44,7 +44,7 @@ ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
             if(!access.empty())
                 fn.writeLine("lea " + regStr + ", [" + access + "]");
             else
-                fn.writeLine("mov " + regStr + ", [" + registerToString(8, reg) + "]");
+                fn.writeLine("mov " + regStr + ", " + registerToString(8, this->reg));
             fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
             code.freeRegister(reg);
 

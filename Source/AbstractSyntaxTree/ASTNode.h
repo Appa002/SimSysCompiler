@@ -54,6 +54,7 @@ namespace ACC {
         WHILE,
         FOR,
         PTR_ASSIGN,
+        SALLOC,
 
         __NONE,
         __CONTAINER

@@ -141,7 +141,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         }
     }
     else if (isSymbol(buffer) && (document.size() - 1 == pos || contains(document.at(pos + 1),
-            {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=", "<", ">", "!", ":"}))) {
+            {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=", "<", ">", "!", ":", "\'"}))) {
 
         tokens.push_back(new IdToken(buffer));
         auto sym = getSymbol(buffer);
@@ -379,8 +379,25 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
         else if(document.at(pos) == '"')
             parseStringLiteral(pos);
         else if(document.at(pos) == '\''){
-            tokens.push_back(new LiteralToken(document.at(pos + 1), Type(BuiltIns::charType)));
-            pos += 2;
+            if(document.at(pos + 1) == '\\'){
+                char other = document.at(pos + 2);
+                if(other == 'n')
+                    tokens.push_back(new LiteralToken('\n', Type(BuiltIns::charType)));
+                else if(other == '\\')
+                    tokens.push_back(new LiteralToken('\\', Type(BuiltIns::charType)));
+                else if(other == 'r')
+                    tokens.push_back(new LiteralToken('\r', Type(BuiltIns::charType)));
+                else if(other == '"')
+                    tokens.push_back(new LiteralToken('\"', Type(BuiltIns::charType)));
+                else if(other == 'a')
+                    tokens.push_back(new LiteralToken('\a', Type(BuiltIns::charType)));
+                else if(other == '\'')
+                    tokens.push_back(new LiteralToken('\'', Type(BuiltIns::charType)));
+                pos += 3;
+            }else {
+                tokens.push_back(new LiteralToken(document.at(pos + 1), Type(BuiltIns::charType)));
+                pos += 2;
+            }
         }
         else if (isSymbol(buffer))
             tokens.push_back(new IdToken(buffer));
@@ -662,9 +679,8 @@ void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
                 buffer += '"';
             else if(document.at(pos) == 'a')
                 buffer += '\a';
-            else if(document.at(pos) == 'c'){
-                buffer += "\033[31;1m";
-            }
+            else if(document.at(pos) == '\'')
+                buffer += '\'';
             else
                 throw std::runtime_error("Escape sequence with out escapee, at: " + std::to_string(pos));
 

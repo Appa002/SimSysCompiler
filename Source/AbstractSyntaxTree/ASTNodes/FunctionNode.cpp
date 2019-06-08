@@ -34,7 +34,8 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     }
 
     auto body = children.at(children.size() - 1)->generate(code);
-    body->cleanUp(code);
+    if(body)
+        body->cleanUp(code);
 
     code.popFnFromStack();
     code.popScope();

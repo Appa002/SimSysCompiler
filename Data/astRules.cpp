@@ -17,6 +17,7 @@
 #include <AbstractSyntaxTree/ASTNodes/IdNode.h>
 #include <AbstractSyntaxTree/ASTNodes/FunctionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/CallNode.h>
+#include <AbstractSyntaxTree/ASTNodes/SallocNode.h>
 #include <AbstractSyntaxTree/ASTNodes/AssignNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ReassignNode.h>
 #include <AbstractSyntaxTree/ASTNodes/SyscallNode.h>
@@ -30,6 +31,7 @@
 #include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
+#include <Lexical/Tokens/SallocToken.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -308,6 +310,13 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new ReturnNode(AstOperator::RETURN,
                                {process(children[1], nullptr)});
         }},
+
+        {{Symbol::keyword, {Symbol::SALLOC, Symbol::expr, Symbol::COMMA, Symbol::ID}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {process(children[1], nullptr),
+                        new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[3]->token)->sym)};
+            return new SallocNode(AstOperator::SALLOC, vec);
+        }},
+
         {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
                 return new CallNode(AstOperator::CALL,
                                    {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});

@@ -296,6 +296,14 @@ ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::keyword, {Symbol::SALLOC, Symbol::expr, Symbol::COMMA, Symbol::ID});
+    START_PRODUCTION()
+            TERMINAL(SALLOC)
+            NONE_TERMINAL(expr)
+            TERMINAL(COMMA)
+            TERMINAL(ID)
+    END_PRODUCTION()
+
     logable.loadProduction(Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA});
     START_PRODUCTION()
             std::vector<Symbol> vec = {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA};

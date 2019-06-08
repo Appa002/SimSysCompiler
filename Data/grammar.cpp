@@ -17,13 +17,13 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
         case Symbol::BRACKET:
             return "bracket";
         case Symbol::MATH_OPERATOR:
-            return "math operator";
+            return "math_operator";
         case Symbol::SYSCALL:
             return "syscall";
         case Symbol::LITERAL:
             return "data";
         case Symbol::EOS:
-            return "end of statement";
+            return "end_of_statement";
         case Symbol::expr:
             return "expr";
         case Symbol::stmt:
@@ -92,6 +92,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "FOR";
         case Symbol::ptr_assign:
             return "ptr_assign";
+        case Symbol::SALLOC:
+            return "SALLOC";
     }
     throw std::runtime_error("Symbol not known.");
 }

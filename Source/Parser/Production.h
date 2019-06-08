@@ -16,6 +16,7 @@ namespace ACC {
         GOES_TO,
         FOR,
         ID,
+        SALLOC,
         CMP,
         BRACKET,
         MATH_OPERATOR,
