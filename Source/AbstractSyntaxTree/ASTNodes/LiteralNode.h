@@ -17,7 +17,6 @@ namespace ACC{
 
 
         std::string handleStringLiteral(ACC::Code &code, ACC::Fn &fn);
-        void handleNumberLiteral(std::shared_ptr<Structure> &structure, ACC::Code &code, ACC::Fn &fn);
 
     };
 }
