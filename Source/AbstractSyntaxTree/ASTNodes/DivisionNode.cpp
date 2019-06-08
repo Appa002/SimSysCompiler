@@ -3,6 +3,12 @@
 #include "DivisionNode.h"
 
 std::shared_ptr<ACC::Structure> ACC::DivisionNode::generate(ACC::Code &code) {
+    auto lhs = children[0]->generate(code);
+    auto rhs = children[1]->generate(code);
+
+    auto out = lhs->operatorDivision(rhs, code);
+    return out;
+
     /*auto lhs = node->children[0]->asExpr()->generate(code);
     auto rhs = node->children[1]->asExpr()->generate(code);
     auto& fn = code.getFnSymbol();

@@ -3,6 +3,10 @@
 #include "NotNode.h"
 
 std::shared_ptr<ACC::Structure> ACC::NotNode::generate(ACC::Code &code) {
+    auto &fn = code.getFnSymbol();
+    auto expr = children[0]->generate(code);
+    expr->operatorNot(code);
+
     /*auto &fn = code.getFnSymbol();
     auto expr = node->children[0]->asExpr()->generate(code);
 
