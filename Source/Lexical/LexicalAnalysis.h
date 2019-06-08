@@ -22,7 +22,7 @@ namespace ACC {
         std::vector<IToken*> tokens;
         std::string document;
         int refCount = 0;
-        std::unordered_map<std::string, Type> typesTable;
+        std::unordered_map<std::string, TypeId> typesTable;
 
         ScopedSymbolTable<Symbol>* curScope;
         ScopedSymbolTable<Symbol>* globalScope;
@@ -32,7 +32,7 @@ namespace ACC {
         void emplaceSymbol(std::string idf, Symbol symbol);
         bool isNumber(char c);
         bool isNumber(std::string str);
-        Type isType(std::string str);
+        TypeId isType(std::string str);
         void pushScope();
         void popScope();
         Symbol getSymbol(std::string sym);
@@ -57,7 +57,6 @@ namespace ACC {
         void elseStmt(size_t pos);
         void whileStmt(size_t pos);
         void forStmt(size_t pos);
-        void declExpr(size_t& pos);
 
 
     public:

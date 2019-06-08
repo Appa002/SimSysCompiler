@@ -13,7 +13,7 @@
 #include <Structure/Structures/BoolLValueStructure.h>
 #include <General/builtinTypes.h>
 
-ACC::NumStructure::NumStructure(ACC::ValueCategory v) : ElementaryStructure(v, BuiltIns::numType) {
+ACC::NumStructure::NumStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type(BuiltIns::numType)) {
 
 }
 

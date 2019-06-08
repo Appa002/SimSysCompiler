@@ -29,9 +29,9 @@ std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     std::shared_ptr<Structure> out;
 
-    if(this->type == BuiltIns::ptrCharType){
+    if(this->type == BuiltIns::ptrType && this->type.getPointingTo() == BuiltIns::charType){
         std::string address = handleStringLiteral(code, fn);
-        out = std::make_shared<PtrRValueStructure>(address);
+        out = std::make_shared<PtrRValueStructure>(address, Type(this->type.getPointingTo()));
     }
     else if(this->type == BuiltIns::numType){
         out = std::make_shared<NumIValueStructure>(data.createNumber());

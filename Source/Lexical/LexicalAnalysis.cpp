@@ -286,7 +286,7 @@ void ACC::LexicalAnalysis::type(size_t &pos) {
 
     Type id;
 
-    if(isType(buffer) == Type(0,0) && matchIgnoreW('<', pos)){
+    if(isType(buffer) == TypeId(0,0) && matchIgnoreW('<', pos)){
         pos++;
         readUntilNextLine(pos);
         std::string typeName;
@@ -301,8 +301,13 @@ void ACC::LexicalAnalysis::type(size_t &pos) {
             throw std::runtime_error("Syntax error, at: " + std::to_string(pos));
         pos++;
 
-        if(buffer == "ptr")
-            id = isType(typeName + "*"); //TODO: Better way to refer to special types
+        if(buffer == "ptr"){
+            if(isType(typeName) != TypeId(0, 0))
+                id = Type(BuiltIns::ptrType, isType(typeName));
+            else
+                throw std::runtime_error("Not a type " + typeName);
+
+        }
     }else
         id = isType(buffer);
 
@@ -326,7 +331,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
 
         if(isNumber(buffer))
-            tokens.push_back(new LiteralToken(std::stoul(buffer), BuiltIns::numType));
+            tokens.push_back(new LiteralToken(std::stoul(buffer), Type(BuiltIns::numType)));
 
         else if (pos + 1 < document.size() && document.at(pos) == '!' && document.at(pos + 1) == '=') {
             tokens.push_back(new ComparisionToken(ComparisionTokenKind::NotEqual));
@@ -659,10 +664,10 @@ void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
     tokens.push_back(new LiteralToken(buffer, Type(BuiltIns::ptrType, BuiltIns::charType)));
 }
 
-ACC::Type ACC::LexicalAnalysis::isType(std::string str) {
+ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
     if (typesTable.find(str) != typesTable.cend())
         return typesTable.at(str);
-    return Type(0, 0);
+    return TypeId(0, 0);
 }
 
 void ACC::LexicalAnalysis::emplaceSymbol(std::string idf, ACC::Symbol symbol) {

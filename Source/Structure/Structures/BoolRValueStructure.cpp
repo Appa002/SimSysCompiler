@@ -9,7 +9,7 @@
 #include <Assembly/Code.h>
 
 ACC::BoolRValueStructure::BoolRValueStructure(ACC::Register reg) : ElementaryStructure(ValueCategory::rvalue,
-BuiltIns::boolType), reg(reg){
+Type(BuiltIns::boolType)), reg(reg){
 
 }
 

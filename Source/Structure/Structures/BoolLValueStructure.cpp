@@ -7,6 +7,6 @@
 #include <General/utils.h>
 #include <General/builtinTypes.h>
 
-ACC::BoolLValueStructure::BoolLValueStructure(std::string const & access) : GenericLValueStructure(BuiltIns::numType, access) {
+ACC::BoolLValueStructure::BoolLValueStructure(std::string const & access) : GenericLValueStructure(Type(BuiltIns::numType), access) {
 
 }
