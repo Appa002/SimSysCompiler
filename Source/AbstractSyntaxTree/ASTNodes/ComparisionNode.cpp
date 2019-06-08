@@ -11,21 +11,31 @@ std::shared_ptr<ACC::Structure> ACC::ComparisionNode::generate(ACC::Code &code) 
     auto rhs = children[1]->generate(code);
     auto& fn = code.getFnSymbol();
 
+    std::shared_ptr<Structure> out;
+
     switch (cmpType){
         case ComparisionType::EQ:
-            return lhs->operatorEqual(rhs, code);
+             out = lhs->operatorEqual(rhs, code);
+            break;
         case ComparisionType::LT:
-            return lhs->operatorLess(rhs, code);
+             out = lhs->operatorLess(rhs, code);
+            break;
         case ComparisionType::GT:
-            return lhs->operatorGreater(rhs, code);
+             out = lhs->operatorGreater(rhs, code);
+            break;
         case ComparisionType::NEQ:
-            return lhs->operatorNotEqual(rhs, code);
+             out = lhs->operatorNotEqual(rhs, code);
+            break;
         case ComparisionType::LET:
-            return lhs->operatorLessEqual(rhs, code);
+             out = lhs->operatorLessEqual(rhs, code);
+            break;
         case ComparisionType::GET:
-            return lhs->operatorGreaterEqual(rhs, code);
+             out = lhs->operatorGreaterEqual(rhs, code);
+            break;
     }
-    return nullptr;
+    lhs->cleanUp(code);
+    rhs->cleanUp(code);
+    return out;
 }
 
 ACC::ComparisionNode::ComparisionNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children,

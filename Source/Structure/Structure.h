@@ -40,6 +40,8 @@ class Structure : public std::enable_shared_from_this <Structure> {
         const ValueCategory vCategory;
         const Type type;
 
+        std::vector<Register> registerInUse;
+
         Structure(ValueCategory valueCategory, Type type);
         virtual ~Structure();
 
@@ -63,6 +65,7 @@ class Structure : public std::enable_shared_from_this <Structure> {
 
         virtual std::shared_ptr<Structure> operatorNot(Code &code);
 
+        void cleanUp(Code& code);
 
     };
 }

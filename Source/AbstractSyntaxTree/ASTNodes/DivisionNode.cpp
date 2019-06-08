@@ -7,6 +7,10 @@ std::shared_ptr<ACC::Structure> ACC::DivisionNode::generate(ACC::Code &code) {
     auto rhs = children[1]->generate(code);
 
     auto out = lhs->operatorDivision(rhs, code);
+
+    lhs->cleanUp(code);
+    rhs->cleanUp(code);
+
     return out;
 }
 

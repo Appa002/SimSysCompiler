@@ -12,6 +12,7 @@ std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
 
     fn.writeLine("."+top+":");
     auto condition = children[0]->generate(code);
+    condition->cleanUp(code);
     auto conditionAsBool = dynamic_cast<BoolStructure*>(condition.get());
 
     Register reg = code.getFreeRegister();
@@ -25,6 +26,7 @@ std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
     code.pushScope();
     auto body = children[1]->generate(code);
     code.popScope();
+    body->cleanUp(code);
 
     fn.writeLine("jmp ." + top);
 

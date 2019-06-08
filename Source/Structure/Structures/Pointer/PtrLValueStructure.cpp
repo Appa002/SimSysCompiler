@@ -30,6 +30,7 @@ ACC::PtrLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
 
         fn.writeLine("mov " + regStr + ", [" + access + "]");
         fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+        code.freeRegister(reg);
 
         return address;
     }

@@ -9,7 +9,7 @@
 #include <Assembly/Code.h>
 
 ACC::BoolRValueStructure::BoolRValueStructure(ACC::Register reg) : BoolStructure(ValueCategory::rvalue), reg(reg){
-
+    registerInUse.push_back(reg);
 }
 
 std::shared_ptr<ACC::Structure>

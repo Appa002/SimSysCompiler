@@ -8,6 +8,10 @@ std::shared_ptr<ACC::Structure> ACC::AddNode::generate(ACC::Code &code) {
     auto rhs = children[1]->generate(code);
 
     auto out = lhs->operatorAdd(rhs, code);
+
+    lhs->cleanUp(code);
+    rhs->cleanUp(code);
+
     return out;
 }
 

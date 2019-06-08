@@ -34,6 +34,8 @@ ACC::BoolLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, 
         fn.writeLine("mov " + regStr + ", [" + access + "]");
         fn.writeLine("mov [ " + addressAsLValue->access + " ], " + regStr);
 
+        code.freeRegister(reg);
+
         return address;
     }
     return nullptr;

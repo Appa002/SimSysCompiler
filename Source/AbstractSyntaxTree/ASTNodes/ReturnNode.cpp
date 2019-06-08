@@ -13,6 +13,8 @@ std::shared_ptr<ACC::Structure> ACC::ReturnNode::generate(ACC::Code &code) {
     else
         ; //TODO: Figure out what to do for none elementary types....
 
+    returnValue->cleanUp(code);
+
     fn.writeLine("add rsp, " + std::to_string(fn.curBpOffset));
     fn.writeLine("pop rbp");
     fn.writeLine("ret");

@@ -5,6 +5,7 @@
 #include "Structure.h"
 #include <stdexcept>
 #include <Structure/Structure.h>
+#include <Assembly/Code.h>
 
 ACC::Structure::~Structure() = default;
 
@@ -68,5 +69,9 @@ ACC::Structure::Structure(ACC::ValueCategory valueCategory, Type type)
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorNot(ACC::Code &code) {
     throw std::runtime_error("Operator not implemented");
+}
+
+void ACC::Structure::cleanUp(Code& code) {
+    code.freeRegister(registerInUse);
 }
 

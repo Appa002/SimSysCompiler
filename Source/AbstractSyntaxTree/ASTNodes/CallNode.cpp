@@ -16,6 +16,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
         totalRspSubtracted += value->type.getSize();
 
         value->operatorCopy(std::make_shared<GenericLValueStructure>(value->type, "rsp"), code);
+        value->cleanUp(code);
     }
 
     auto name = children[0]->data.asT<std::string>();

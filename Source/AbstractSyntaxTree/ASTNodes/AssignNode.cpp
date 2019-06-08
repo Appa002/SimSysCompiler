@@ -25,6 +25,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
         address = std::make_shared<PtrLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), type);
 
     expr->operatorCopy(address, code);
+    expr->cleanUp(code);
 
     code.emplaceVarSymbol(id, address);
     return nullptr;

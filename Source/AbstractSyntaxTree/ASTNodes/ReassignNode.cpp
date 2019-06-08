@@ -8,7 +8,9 @@ std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
     auto expr = children[1]->generate(code);
     auto var = code.getVarSymbol(id);
 
-    expr->operatorCopy(var, code);
+    auto out = expr->operatorCopy(var, code);
+
+    expr->cleanUp(code);
 
     return nullptr;
 }

@@ -14,6 +14,8 @@ std::shared_ptr<ACC::Structure> ACC::ExitNode::generate(ACC::Code &code) {
     fn.writeLine("mov rax, 60");
     fn.writeLine("syscall");
 
+    expr->cleanUp(code);
+
     return nullptr;
 }
 

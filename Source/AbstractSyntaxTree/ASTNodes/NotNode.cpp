@@ -5,8 +5,11 @@
 std::shared_ptr<ACC::Structure> ACC::NotNode::generate(ACC::Code &code) {
     auto &fn = code.getFnSymbol();
     auto expr = children[0]->generate(code);
-    expr->operatorNot(code);
-    return nullptr;
+    auto out = expr->operatorNot(code);
+
+    expr->cleanUp(code);
+
+    return out;
 }
 
 ACC::NotNode::NotNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op, std::move(children)) {

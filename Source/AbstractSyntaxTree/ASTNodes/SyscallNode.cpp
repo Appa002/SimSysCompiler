@@ -13,6 +13,7 @@ void loadReg(ACC::Code &code, ACC::Register reg, const std::shared_ptr<ACC::Stru
     code.reserveRegister(reg);
 
     structureAsElementary->loadToRegister(reg, code);
+    structure->cleanUp(code);
 }
 
 std::shared_ptr<ACC::Structure> ACC::SyscallNode::generate(ACC::Code &code) {

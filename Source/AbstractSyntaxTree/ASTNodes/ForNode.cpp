@@ -27,6 +27,11 @@ std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
     // Looping back up / seting up rest..
     fn.writeLine("jmp ." + top);
     fn.writeLine("."+rest+":");
+
+
+    index->cleanUp(code);
+    limit->cleanUp(code);
+
     return nullptr;
 }
 

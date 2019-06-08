@@ -10,7 +10,7 @@
 
 ACC::NumRValueStructure::NumRValueStructure(ACC::Register reg)
 : reg(reg), NumStructure(ValueCategory::rvalue){
-
+    registerInUse.push_back(reg);
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorCopy(std::shared_ptr<Structure> address,

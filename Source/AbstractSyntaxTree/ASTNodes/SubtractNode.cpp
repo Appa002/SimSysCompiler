@@ -9,6 +9,10 @@ std::shared_ptr<ACC::Structure> ACC::SubtractNode::generate(ACC::Code &code){
     auto rhs = children[1]->generate(code);
 
     auto out = lhs->operatorSubtract(rhs, code);
+
+    lhs->cleanUp(code);
+    rhs->cleanUp(code);
+
     return out;
 }
 

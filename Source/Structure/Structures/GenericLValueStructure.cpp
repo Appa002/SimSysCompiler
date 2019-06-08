@@ -33,6 +33,7 @@ ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> addres
 
         fn.writeLine("mov " + regStr + ", [" + access + "]");
         fn.writeLine("mov [ " + addressAsLValue->access + " ], " + regStr);
+        code.freeRegister(reg);
 
         return address;
     }

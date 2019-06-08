@@ -33,7 +33,9 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
         fn.curBpOffset += size;
     }
 
-    children.at(children.size() - 1)->generate(code);
+    auto body = children.at(children.size() - 1)->generate(code);
+    body->cleanUp(code);
+
     code.popFnFromStack();
     code.popScope();
     return nullptr;

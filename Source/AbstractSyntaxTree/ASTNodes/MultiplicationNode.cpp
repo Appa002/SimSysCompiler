@@ -7,6 +7,10 @@ std::shared_ptr<ACC::Structure> ACC::MultiplicationNode::generate(ACC::Code &cod
     auto rhs = children[1]->generate(code);
 
     auto out = lhs->operatorMultiplication(rhs, code);
+
+    lhs->cleanUp(code);
+    rhs->cleanUp(code);
+
     return out;
 }
 

@@ -42,6 +42,8 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorForDone(std::shared_p
     fn.writeLine("setl " + registerToString(1, lhs));
     fn.writeLine("cmp " + registerToString(1, lhs) + ", 1");
 
+    code.freeRegister({lhs, rhs});
+
     return nullptr;
 }
 
@@ -63,6 +65,7 @@ ACC::NumStructure::operatorAdd(std::shared_ptr<Structure> amount, ACC::Code &cod
     fn.writeLine("add " + lhsAsString + ", " + rhsAsString);
 
     code.freeRegister(rhs);
+    
 
     return std::make_shared<NumRValueStructure>(lhs);
 
@@ -85,6 +88,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorSubtract(std::shared_
     fn.writeLine("sub " + lhsAsString + ", " + rhsAsString);
 
     code.freeRegister(rhs);
+    
 
     return std::make_shared<NumRValueStructure>(lhs);
 }
@@ -106,6 +110,7 @@ ACC::NumStructure::operatorMultiplication(std::shared_ptr<Structure> amount, ACC
     fn.writeLine("imul " + lhsAsString + ", " + rhsAsString);
 
     code.freeRegister(rhs);
+    
 
     return std::make_shared<NumRValueStructure>(lhs);
 }
@@ -152,7 +157,7 @@ ACC::NumStructure::operatorEqual(std::shared_ptr<Structure> other, ACC::Code &co
     fn.writeLine("sete " + registerToString(1, lhs));
 
     code.freeRegister(rhs);
-
+    
 
     return std::make_shared<BoolRValueStructure>(lhs);
 }
@@ -172,6 +177,8 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorNotEqual(std::shared_
     fn.writeLine("setne " + registerToString(1, lhs));
 
     code.freeRegister(rhs);
+    
+
     return std::make_shared<BoolRValueStructure>(lhs);
 }
 
@@ -190,6 +197,8 @@ ACC::NumStructure::operatorLess(std::shared_ptr<Structure> other, ACC::Code &cod
     fn.writeLine("setl " + registerToString(1, lhs));
 
     code.freeRegister(rhs);
+    
+
     return std::make_shared<BoolRValueStructure>(lhs);
 }
 
@@ -208,6 +217,8 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreater(std::shared_p
     fn.writeLine("setg " + registerToString(1, lhs));
 
     code.freeRegister(rhs);
+    
+
     return std::make_shared<BoolRValueStructure>(lhs);
 }
 
@@ -226,6 +237,8 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorLessEqual(std::shared
     fn.writeLine("setle " + registerToString(1, lhs));
 
     code.freeRegister(rhs);
+    
+
     return std::make_shared<BoolRValueStructure>(lhs);
 }
 
@@ -244,5 +257,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreaterEqual(std::sha
     fn.writeLine("setge " + registerToString(1, lhs));
 
     code.freeRegister(rhs);
+    
+
     return std::make_shared<BoolRValueStructure>(lhs);
 }
