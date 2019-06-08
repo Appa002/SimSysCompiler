@@ -9,15 +9,15 @@
 #pragma once
 
 #include <Lexical/IToken.h>
-#include <General/TypeId.h>
+#include <General/Type.h>
 
 namespace ACC{
     struct TypeToken : public IToken{
         TypeToken() : IToken() {this->id = Symbol::TYPE;}
-        TypeToken(std::string str, TypeId typeId) : type(std::move(str)), typeId(typeId) {this->id = Symbol::TYPE;}
+        TypeToken(std::string str, Type typeId) : type(std::move(str)), typeId(typeId) {this->id = Symbol::TYPE;}
 
         std::string type;
-        TypeId typeId = TypeId(0, 0);
+        Type typeId = Type(0, 0);
 
         std::string getIdentifier() override{
             return "Type \'" + type + "\' Id: " + std::to_string(typeId.getId());

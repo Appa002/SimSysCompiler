@@ -12,18 +12,18 @@
 #include <Lexical/IToken.h>
 #include <General/GeneralDataStore.h>
 #include <General/utils.h>
-#include <General/TypeId.h>
+#include <General/Type.h>
 #include <General/builtinTypes.h>
 
 namespace ACC{
 
     struct LiteralToken : public IToken{
-        LiteralToken(std::string l, TypeId k) : IToken(), type(k) {
+        LiteralToken(std::string l, Type k) : IToken(), type(k) {
             id = Symbol::LITERAL;
             literal.storeT(std::move(l));
         };
 
-        LiteralToken(uint64_t l, TypeId k) : IToken(), type(k) {
+        LiteralToken(uint64_t l, Type k) : IToken(), type(k) {
             id = Symbol::LITERAL;
             if(l <= 0xFF)
                 literal.storeT((uint8_t)l);
@@ -36,14 +36,14 @@ namespace ACC{
         };
 
         GeneralDataStore literal;
-        TypeId type;
+        Type type;
 
 
         std::string getIdentifier() override {
             if(type == BuiltIns::charType || type == BuiltIns::numType){
                 return "Literal (Arithmetic): 0x" + toHex(literal.createNumber());
             }
-            else if(type == BuiltIns::ptrCharType){
+            else if(type == BuiltIns::ptrType){
                 return "Literal (String): \"" + literal.asT<std::string>() +"\"";
             }
             else{
@@ -65,5 +65,4 @@ namespace ACC{
         }
     };
 }
-
 #endif //SIMSYSCOMPILER_LITERALTOKEN_H

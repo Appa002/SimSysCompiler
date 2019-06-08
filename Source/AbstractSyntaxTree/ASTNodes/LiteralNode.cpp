@@ -40,7 +40,7 @@ std::shared_ptr<ACC::Structure> ACC::LiteralNode::generate(ACC::Code &code) {
     return out;
 }
 
-ACC::LiteralNode::LiteralNode(ACC::AstOperator op, ACC::GeneralDataStore literal, ACC::TypeId type) :
+ACC::LiteralNode::LiteralNode(ACC::AstOperator op, ACC::GeneralDataStore literal, ACC::Type type) :
 ASTNode(op, std::move(literal), type) {
 
 }

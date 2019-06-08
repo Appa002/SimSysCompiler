@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <General/TypeId.h>
+#include <General/Type.h>
 #include <functional>
 #include <General/Stack.h>
 #include <memory>

@@ -4,7 +4,7 @@
 
 #include "ElementaryStructure.h"
 
-ACC::ElementaryStructure::ElementaryStructure(ACC::ValueCategory v, TypeId type)
+ACC::ElementaryStructure::ElementaryStructure(ACC::ValueCategory v, Type type)
 : Structure(v, type) {
 
 }

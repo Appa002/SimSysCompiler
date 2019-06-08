@@ -6,7 +6,7 @@
 #define SIMSYSCOMPILER_FN_H
 
 #include <string>
-#include <General/TypeId.h>
+#include <General/Type.h>
 
 namespace ACC {
 
@@ -17,7 +17,7 @@ namespace ACC {
 
         void writeLine(std::string const & line);
         std::string generate();
-        TypeId returnType = TypeId(0, 0);
+        Type returnType = Type(0, 0);
     };
 }
 

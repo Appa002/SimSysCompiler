@@ -7,7 +7,7 @@
 #include <Assembly/Code.h>
 #include "GenericLValueStructure.h"
 
-ACC::GenericLValueStructure::GenericLValueStructure(ACC::TypeId type, std::string access)
+ACC::GenericLValueStructure::GenericLValueStructure(ACC::Type type, std::string access)
 : ElementaryStructure(ValueCategory::lvalue, type), access(std::move(access))
 {
 

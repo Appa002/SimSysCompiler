@@ -284,9 +284,9 @@ void ACC::LexicalAnalysis::type(size_t &pos) {
     if(!matched)
         throw std::runtime_error("Syntax error, at: " + std::to_string(pos));
 
-    TypeId id;
+    Type id;
 
-    if(isType(buffer) == TypeId(0,0) && matchIgnoreW('<', pos)){
+    if(isType(buffer) == Type(0,0) && matchIgnoreW('<', pos)){
         pos++;
         readUntilNextLine(pos);
         std::string typeName;
@@ -504,8 +504,6 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
 
     typesTable["num"] = BuiltIns::numType;
     typesTable["char"] = BuiltIns::charType;
-    typesTable["num*"] = BuiltIns::ptrNumType;
-    typesTable["char*"] = BuiltIns::ptrCharType;
 
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
@@ -658,13 +656,13 @@ void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
     if(document.at(pos) != '"')
         throw std::runtime_error("String literal not ending with `\"`, at:" + std::to_string(pos));
 
-    tokens.push_back(new LiteralToken(buffer, BuiltIns::ptrCharType));
+    tokens.push_back(new LiteralToken(buffer, Type(BuiltIns::ptrType, BuiltIns::charType)));
 }
 
-ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
+ACC::Type ACC::LexicalAnalysis::isType(std::string str) {
     if (typesTable.find(str) != typesTable.cend())
         return typesTable.at(str);
-    return TypeId(0, 0);
+    return Type(0, 0);
 }
 
 void ACC::LexicalAnalysis::emplaceSymbol(std::string idf, ACC::Symbol symbol) {

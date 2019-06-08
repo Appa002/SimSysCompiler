@@ -9,7 +9,7 @@
 
 std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     auto& fn = code.emplaceFnSymbol(children[0]->data.asT<std::string>());
-    fn.returnType = children[1]->data.asT<TypeId>();
+    fn.returnType = children[1]->data.asT<Type>();
 
     size_t offset = 16;
 
@@ -18,7 +18,7 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     for(size_t i = 2; i < children.size() - 1; i++){
 
         auto container = children[i];
-        auto type = container->children[1]->data.asT<TypeId>();
+        auto type = container->children[1]->data.asT<Type>();
         auto size = type.getSize();
         auto sym = container->children[0]->data.asT<std::string>();
         auto loc = fn.curBpOffset + size;

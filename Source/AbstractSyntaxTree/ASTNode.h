@@ -9,7 +9,7 @@
 #include <Parser/ParseNode.h>
 #include <memory>
 #include <General/GeneralDataStore.h>
-#include <General/TypeId.h>
+#include <General/Type.h>
 #include <Structure/Structure.h>
 
 namespace ACC {
@@ -66,7 +66,7 @@ namespace ACC {
         void _print(std::string indent, bool isLast) const;
 
         ASTNode(AstOperator op, std::vector<ASTNode *> children);
-        ASTNode(AstOperator op, GeneralDataStore literal, TypeId type);
+        ASTNode(AstOperator op, GeneralDataStore literal, Type type);
         ASTNode(AstOperator op, std::string str);
         ASTNode(AstOperator op, GeneralDataStore store);
 
@@ -80,7 +80,7 @@ namespace ACC {
 
         AstOperator op;
         GeneralDataStore data;
-        TypeId type;
+        Type type;
     };
 
 }

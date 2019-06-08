@@ -38,7 +38,7 @@ ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->type = BuiltIns::__none;
 }
 
-ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, TypeId type) {
+ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, Type type) {
     this->op = op;
     this->data = std::move(literal);
     this->type = type;
@@ -93,7 +93,7 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
         case AstOperator::LITERAL:{
             if(type == BuiltIns::numType || type == BuiltIns::charType)
                 return "Lit: " + std::to_string(data.createNumber());
-            else if(type == BuiltIns::ptrCharType)
+            else if(type == BuiltIns::ptrType)
                 return std::string("Lit: ") + "\"" + data.asT<std::string>() +"\"";
             else{
                 std::string data = "[ ";
@@ -130,8 +130,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
         case AstOperator::__NONE:
             return "__none";
         case AstOperator::TYPE_DEF:
-            return "type def; id: " + std::to_string(data.asT<TypeId>().getId()) +
-            " size: " +  std::to_string(data.asT<TypeId>().getSize());
+            return "type def; id: " + std::to_string(data.asT<Type>().getId()) +
+            " size: " +  std::to_string(data.asT<Type>().getSize());
         case AstOperator::__CONTAINER:
             return "__container";
         case AstOperator::REASSIGN:

@@ -8,7 +8,7 @@
 #include <Lexical/IToken.h>
 #include <functional>
 #include <unordered_map>
-#include <General/TypeId.h>
+#include <General/Type.h>
 #include <memory>
 #include <General/ScopedSymbolTable.h>
 
@@ -22,7 +22,7 @@ namespace ACC {
         std::vector<IToken*> tokens;
         std::string document;
         int refCount = 0;
-        std::unordered_map<std::string, TypeId> typesTable;
+        std::unordered_map<std::string, Type> typesTable;
 
         ScopedSymbolTable<Symbol>* curScope;
         ScopedSymbolTable<Symbol>* globalScope;
@@ -32,7 +32,7 @@ namespace ACC {
         void emplaceSymbol(std::string idf, Symbol symbol);
         bool isNumber(char c);
         bool isNumber(std::string str);
-        TypeId isType(std::string str);
+        Type isType(std::string str);
         void pushScope();
         void popScope();
         Symbol getSymbol(std::string sym);
