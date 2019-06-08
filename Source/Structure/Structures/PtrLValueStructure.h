@@ -2,10 +2,10 @@
 // Created by a_mod on 07.06.2019.
 //
 #pragma once
-#include <Structure/Structures/ElementaryLValueStructure.h>
+#include <Structure/Structures/GenericLValueStructure.h>
 
 namespace ACC {
-    class PtrLValueStructure : public ElementaryLValueStructure {
+    class PtrLValueStructure : public GenericLValueStructure {
     public:
         explicit PtrLValueStructure(std::string access);
 

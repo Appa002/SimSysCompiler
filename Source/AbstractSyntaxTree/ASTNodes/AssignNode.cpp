@@ -3,7 +3,7 @@
 
 #include "AssignNode.h"
 #include <memory>
-#include <Structure/Structures/ElementaryLValueStructure.h>
+#include <Structure/Structures/GenericLValueStructure.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/PtrLValueStructure.h>
 

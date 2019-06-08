@@ -4,10 +4,10 @@
 #pragma once
 #include <Structure/Structure.h>
 #include "ElementaryStructure.h"
-#include "ElementaryLValueStructure.h"
+#include "GenericLValueStructure.h"
 
 namespace ACC{
-    class BoolLValueStructure : public ElementaryLValueStructure{
+    class BoolLValueStructure : public GenericLValueStructure{
     public:
         explicit BoolLValueStructure(std::string const & access);
     };

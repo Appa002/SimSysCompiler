@@ -1,7 +1,7 @@
 #include <utility>
 #include <Structure/Structures/Number/NumLValueStructure.h>
 #include <General/builtinTypes.h>
-#include <Structure/Structures/ElementaryLValueStructure.h>
+#include <Structure/Structures/GenericLValueStructure.h>
 
 #include "FunctionNode.h"
 
@@ -16,7 +16,7 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     code.pushScope();
 
     for(size_t i = 2; i < children.size() - 1; i++){
-        std::shared_ptr<Structure> structure;
+
         auto container = children[i];
         auto type = container->children[1]->data.asT<TypeId>();
         auto size = type.getSize();
@@ -24,7 +24,7 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
         auto loc = fn.curBpOffset + size;
         auto locStr = std::to_string(loc);
 
-        structure = std::make_shared<ElementaryLValueStructure>(type, "rbp - " + locStr);
+        auto structure = std::make_shared<GenericLValueStructure>(type, "rbp - " + locStr);
 
         fn.writeLine(copyIntoStackFrame(offset, loc, size, code));
 

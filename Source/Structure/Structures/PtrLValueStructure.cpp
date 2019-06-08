@@ -11,7 +11,7 @@
 #include <General/builtinTypes.h>
 
 ACC::PtrLValueStructure::PtrLValueStructure(std::string access)
-: ElementaryLValueStructure(BuiltIns::ptrCharType, access) {
+: GenericLValueStructure(BuiltIns::ptrCharType, access) {
 
 }
 

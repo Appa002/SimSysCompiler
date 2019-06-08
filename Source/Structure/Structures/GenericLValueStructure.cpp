@@ -5,28 +5,28 @@
 //
 
 #include <Assembly/Code.h>
-#include "ElementaryLValueStructure.h"
+#include "GenericLValueStructure.h"
 
-ACC::ElementaryLValueStructure::ElementaryLValueStructure(ACC::TypeId type, std::string access)
+ACC::GenericLValueStructure::GenericLValueStructure(ACC::TypeId type, std::string access)
 : ElementaryStructure(ValueCategory::lvalue, type), access(std::move(access))
 {
 
 }
 
-std::string const &ACC::ElementaryLValueStructure::getAccess() {
+std::string const &ACC::GenericLValueStructure::getAccess() {
     return access;
 }
 
-void ACC::ElementaryLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
+void ACC::GenericLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(8, reg) + ", [" + access + "]");
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::ElementaryLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
+ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->vCategory == ValueCategory::lvalue) {
         auto &fn = code.getFnSymbol();
-        auto *addressAsLValue = dynamic_cast<ElementaryLValueStructure *>(address.get());
+        auto *addressAsLValue = dynamic_cast<GenericLValueStructure *>(address.get());
 
         Register reg = code.getFreeRegister();
         std::string regStr = registerToString(8, reg);

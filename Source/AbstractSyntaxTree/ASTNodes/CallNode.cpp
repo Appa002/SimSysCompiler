@@ -2,7 +2,7 @@
 #include <Structure/Structures/Number/NumLValueStructure.h>
 #include <Structure/Structures/Number/NumRValueStructure.h>
 #include <General/builtinTypes.h>
-#include <Structure/Structures/ElementaryLValueStructure.h>
+#include <Structure/Structures/GenericLValueStructure.h>
 
 #include "CallNode.h"
 
@@ -15,7 +15,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
         fn.writeLine("sub rsp, " + std::to_string(value->type.getSize()));
         totalRspSubtracted += value->type.getSize();
 
-        value->operatorCopy(std::make_shared<ElementaryLValueStructure>(value->type, "rsp"), code);
+        value->operatorCopy(std::make_shared<GenericLValueStructure>(value->type, "rsp"), code);
     }
 
     auto name = children[0]->data.asT<std::string>();

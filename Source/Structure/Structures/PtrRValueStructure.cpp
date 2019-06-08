@@ -27,7 +27,7 @@ std::shared_ptr<ACC::Structure>
 ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->vCategory == ValueCategory::lvalue){
         auto &fn = code.getFnSymbol();
-        auto *addressAsLValue = dynamic_cast<ElementaryLValueStructure *>(address.get());
+        auto *addressAsLValue = dynamic_cast<GenericLValueStructure *>(address.get());
 
         Register reg = code.getFreeRegister();
         std::string regStr = registerToString(8, reg);

@@ -5,7 +5,7 @@
 #ifndef SIMSYSCOMPILER_PTRRVALUE_H
 #define SIMSYSCOMPILER_PTRRVALUE_H
 
-#include <Structure/Structures/ElementaryLValueStructure.h>
+#include <Structure/Structures/GenericLValueStructure.h>
 
 namespace ACC {
     class PtrRValueStructure : public ElementaryStructure {
