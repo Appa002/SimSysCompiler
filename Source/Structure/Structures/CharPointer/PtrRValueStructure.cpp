@@ -26,7 +26,7 @@ ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
         fn.writeLine("lea " + regStr + ", [" + access + "]");
         fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
 
-        return std::make_shared<PtrLValueStructure>(addressAsLValue->getAccess());
+        return std::make_shared<PtrLValueStructure>(addressAsLValue->getAccess(), type);
     }
     return nullptr;
 }
