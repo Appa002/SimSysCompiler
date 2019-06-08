@@ -53,6 +53,7 @@ namespace ACC {
         GREATER_EQUAL,
         WHILE,
         FOR,
+        PTR_ASSIGN,
 
         __NONE,
         __CONTAINER

@@ -11,9 +11,11 @@
 namespace ACC {
     class PtrRValueStructure : public PtrStructure {
     public:
+        Register reg;
         std::string access;
 
-        explicit PtrRValueStructure(std::string access, Type type);
+        PtrRValueStructure(Register reg, Type type);
+        PtrRValueStructure(std::string access, Type type);
 
         std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> other, Code &code) override;
 

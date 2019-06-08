@@ -190,6 +190,13 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::start, {Symbol::ptr_assign, Symbol::start});
+    START_PRODUCTION()
+            NONE_TERMINAL(ptrAssign)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
     LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
@@ -615,6 +622,33 @@ ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
     pos = oldPos;
     delete node;
     return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::ptrAssign(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [ptr_assign]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::ptr_assign;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::ptr_assign, {Symbol::expr, Symbol::ASSIGN, Symbol::expr, Symbol::EOS});
+    START_PRODUCTION()
+            NONE_TERMINAL(expr)
+            TERMINAL(ASSIGN)
+            NONE_TERMINAL(expr)
+            TERMINAL(EOS)
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+
 }
 
 

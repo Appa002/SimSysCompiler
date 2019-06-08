@@ -36,6 +36,7 @@ namespace ACC {
         ELSE,
         WHILE,
 
+        ptr_assign,
         for_construct,
         while_construct,
         if_construct,

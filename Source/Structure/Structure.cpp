@@ -75,3 +75,7 @@ void ACC::Structure::cleanUp(Code& code) {
     code.freeRegister(registerInUse);
 }
 
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorDereference(ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+

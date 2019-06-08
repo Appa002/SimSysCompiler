@@ -24,6 +24,8 @@ namespace ACC {
         std::shared_ptr<Structure> operatorGreater(std::shared_ptr<Structure> other, Code &code) override;
         std::shared_ptr<Structure> operatorLessEqual(std::shared_ptr<Structure> other, Code &code) override;
         std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorDereference(Code &code) override;
+
     };
 }
 

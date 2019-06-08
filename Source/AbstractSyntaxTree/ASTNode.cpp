@@ -162,6 +162,8 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "while";
         case AstOperator::FOR:
             return "for";
+        case AstOperator::PTR_ASSIGN:
+            return "ptr_assign";
     }
     throw std::runtime_error("Unknown Symbol!");
 }

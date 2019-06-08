@@ -9,6 +9,7 @@
 #include "PtrStructure.h"
 #include <General/builtinTypes.h>
 #include <Assembly/Code.h>
+#include <Structure/Structures/Number/NumRValueStructure.h>
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorForDone(std::shared_ptr<ACC::Structure> limit, ACC::Code &code) {
@@ -21,7 +22,23 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorForNext(ACC::Code & c
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    return Structure::operatorAdd(amount, code);
+    auto &fn = code.getFnSymbol();
+    auto *amountAsElem = dynamic_cast<ElementaryStructure *>(amount.get());
+
+    Register lhs = code.getFreeRegister();
+    Register rhs = code.getFreeRegister();
+
+    std::string lhsAsString = registerToString(8, lhs);
+    std::string rhsAsString = registerToString(8, rhs);
+
+    this->loadToRegister(lhs, code);
+    amountAsElem->loadToRegister(rhs, code);
+
+    fn.writeLine("add " + lhsAsString + ", " + rhsAsString);
+
+    code.freeRegister(rhs);
+
+    return std::make_shared<PtrRValueStructure>(lhs, Type(type.getPointingTo()));
 }
 
 std::shared_ptr<ACC::Structure>
@@ -71,4 +88,13 @@ ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, A
 
 ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType, t.getPointingTo())){
 
+}
+
+std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDereference(ACC::Code &code) {
+    auto& fn = code.getFnSymbol();
+    Register reg = code.getFreeRegister();
+
+    this->loadToRegister(reg, code);
+    fn.writeLine("mov "+registerToString(type.getPointingTo().getSize(), reg)+", ["+registerToString(8, reg)+"]");
+    return std::make_shared<NumRValueStructure>(reg);
 }

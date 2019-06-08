@@ -90,6 +90,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "GOES_TO";
         case Symbol::FOR:
             return "FOR";
+        case Symbol::ptr_assign:
+            return "ptr_assign";
     }
     throw std::runtime_error("Symbol not known.");
 }

@@ -29,9 +29,14 @@
 #include <AbstractSyntaxTree/ASTNodes/DivisionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
+#include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
+        {{Symbol::start, {Symbol::ptr_assign}}, [](auto children, auto carry){
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
+
+        }},
         {{Symbol::start, {Symbol::assignment, Symbol::EOS}}, [](auto children, auto carry){
             return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
@@ -67,6 +72,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                 auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
                 return new SeqNode(AstOperator::SEQ, vec);
         }},
+        {{Symbol::start, {Symbol::ptr_assign, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
+            return new SeqNode(AstOperator::SEQ, vec);
+        }},
         {{Symbol::start, {Symbol::while_construct, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
             return new SeqNode(AstOperator::SEQ, vec);
@@ -83,6 +92,12 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
             return new SeqNode(AstOperator::SEQ, vec);
         }},
+
+        {{Symbol::ptr_assign, {Symbol::expr, Symbol::ASSIGN, Symbol::expr, Symbol::EOS}}, [](auto children, auto carry){
+            auto vec = {process(children[0]->children[1], nullptr), process(children[2], nullptr)};
+            return new PtrAssignmentNode(AstOperator::PTR_ASSIGN, vec);
+        }},
+
 
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
@@ -366,7 +381,12 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
          {{Symbol::expr, {Symbol::MATH_OPERATOR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-             auto vec = {carry, process(children[1], nullptr)};
+             std::vector<ASTNode*> vec;
+             if(carry != nullptr)
+                 vec = {carry, process(children[1], nullptr)};
+             else
+                 vec = {process(children[1], nullptr)};
+
              switch (dynamic_cast<MathOperatorToken*>(children[0]->token)->kind){
                  case MathOperators::PLUS:
                      return new AddNode(AstOperator::PLUS, vec);

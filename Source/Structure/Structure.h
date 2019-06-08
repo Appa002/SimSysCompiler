@@ -13,6 +13,7 @@ namespace ACC {
     class Code;
 
     enum class Register{
+        NONE,
         rA,
         rB,
         rC,
@@ -64,6 +65,7 @@ class Structure : public std::enable_shared_from_this <Structure> {
         virtual std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code);
 
         virtual std::shared_ptr<Structure> operatorNot(Code &code);
+        virtual std::shared_ptr<Structure> operatorDereference(Code &code);
 
         void cleanUp(Code& code);
 

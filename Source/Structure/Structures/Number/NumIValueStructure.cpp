@@ -22,10 +22,8 @@ ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
 
         auto &fn = code.getFnSymbol();
 
-        std::string buffered = toHex(value);
-        buffered = std::string((4 - buffered.size()) * 2, '0') + buffered;
 
-        fn.writeLine("mov qword [" + addressAsLValue->getAccess() + "], 0x" + buffered);
+        fn.writeLine("mov qword [" + addressAsLValue->getAccess() + "], 0x" + toHex(value));
     }
     return address;
 }
