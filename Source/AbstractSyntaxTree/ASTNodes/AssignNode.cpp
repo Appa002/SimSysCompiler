@@ -5,7 +5,7 @@
 #include <memory>
 #include <Structure/Structures/GenericLValueStructure.h>
 #include <General/builtinTypes.h>
-#include <Structure/Structures/CharPointer/PtrLValueStructure.h>
+#include <Structure/Structures/Pointer/PtrLValueStructure.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {

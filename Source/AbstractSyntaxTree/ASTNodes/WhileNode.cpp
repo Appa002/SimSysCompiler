@@ -2,7 +2,7 @@
 
 #include "WhileNode.h"
 #include <General/builtinTypes.h>
-#include <Structure/Structures/Bool/BoolRValueStructure.h>
+#include <Structure/Structures/Bool/BoolStructure.h>
 
 std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
@@ -12,7 +12,7 @@ std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
 
     fn.writeLine("."+top+":");
     auto condition = children[0]->generate(code);
-    auto conditionAsBool = dynamic_cast<BoolRValueStructure*>(condition.get());
+    auto conditionAsBool = dynamic_cast<BoolStructure*>(condition.get());
 
     Register reg = code.getFreeRegister();
     conditionAsBool->loadToRegister(reg, code);

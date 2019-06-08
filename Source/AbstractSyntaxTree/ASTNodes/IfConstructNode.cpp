@@ -2,6 +2,7 @@
 #include <Structure/Structures/Bool/BoolRValueStructure.h>
 
 #include "IfConstructNode.h"
+#include <Structure/Structures/Bool/BoolStructure.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::IfConstructNode::generate(ACC::Code &code) {
@@ -15,7 +16,7 @@ std::shared_ptr<ACC::Structure> ACC::IfConstructNode::generate(ACC::Code &code) 
 
     code.pushScope();
     auto expr = children[0]->children[0]->generate(code);
-    auto* exprAsBool = dynamic_cast<BoolRValueStructure*>(expr.get());
+    auto* exprAsBool = dynamic_cast<BoolStructure*>(expr.get());
 
     Register reg = code.getFreeRegister();
     exprAsBool->loadToRegister(reg, code);
@@ -50,7 +51,7 @@ void ACC::IfConstructNode::handleElif(ACC::Fn &fn, ACC::Code &code, size_t idx, 
         next = code.getUUID();
 
     auto condition = children[idx]->children[0]->generate(code);
-    auto* conditionAsBool = dynamic_cast<BoolRValueStructure*>(condition.get());
+    auto* conditionAsBool = dynamic_cast<BoolStructure*>(condition.get());
 
     Register reg = code.getFreeRegister();
     conditionAsBool->loadToRegister(reg, code);
