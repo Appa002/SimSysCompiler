@@ -66,3 +66,7 @@ ACC::Structure::Structure(ACC::ValueCategory valueCategory, TypeId type)
 
 }
 
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorNot(ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+

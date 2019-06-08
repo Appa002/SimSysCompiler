@@ -61,6 +61,8 @@ class Structure : public std::enable_shared_from_this <Structure> {
         virtual std::shared_ptr<Structure> operatorLessEqual(std::shared_ptr<Structure> other, Code &code);
         virtual std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code);
 
+        virtual std::shared_ptr<Structure> operatorNot(Code &code);
+
 
     };
 }
