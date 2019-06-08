@@ -6,7 +6,7 @@
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Number/NumIValueStructure.h>
 #include <Assembly/DataStructureMovement.h>
-#include <Structure/Structures/PtrRValueStructure.h>
+#include <Structure/Structures/CharPointer/PtrRValueStructure.h>
 
 
 std::string ACC::LiteralNode::handleStringLiteral(ACC::Code &code, ACC::Fn &fn) {
