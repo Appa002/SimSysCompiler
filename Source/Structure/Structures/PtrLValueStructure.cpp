@@ -2,8 +2,8 @@
 // Created by a_mod on 07.06.2019.
 //
 
-#include "NumRValueStructure.h"
-#include "NumLValueStructure.h"
+#include "Structure/Structures/Number/NumRValueStructure.h"
+#include "Structure/Structures/Number/NumLValueStructure.h"
 #include "PtrLValueStructure.h"
 
 #include <Structure/Structure.h>

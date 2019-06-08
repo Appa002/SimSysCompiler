@@ -7,8 +7,8 @@
 #include "NumLValueStructure.h"
 #include "NumRValueStructure.h"
 #include "NumIValueStructure.h"
-#include "ElementaryLValueStructure.h"
-#include "BoolRValueStructure.h"
+#include "Structure/Structures/ElementaryLValueStructure.h"
+#include "Structure/Structures/BoolRValueStructure.h"
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>

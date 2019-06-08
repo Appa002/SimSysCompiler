@@ -1,6 +1,6 @@
 #include <utility>
-#include <Structure/Structures/NumLValueStructure.h>
-#include <Structure/Structures/NumRValueStructure.h>
+#include <Structure/Structures/Number/NumLValueStructure.h>
+#include <Structure/Structures/Number/NumRValueStructure.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/ElementaryLValueStructure.h>
 

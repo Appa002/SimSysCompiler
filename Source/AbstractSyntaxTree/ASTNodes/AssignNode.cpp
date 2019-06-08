@@ -1,5 +1,5 @@
 #include <utility>
-#include <Structure/Structures/NumLValueStructure.h>
+#include <Structure/Structures/Number/NumLValueStructure.h>
 
 #include "AssignNode.h"
 #include <memory>

@@ -4,7 +4,7 @@
 
 #include "LiteralNode.h"
 #include <General/builtinTypes.h>
-#include <Structure/Structures/NumIValueStructure.h>
+#include <Structure/Structures/Number/NumIValueStructure.h>
 #include <Assembly/DataStructureMovement.h>
 #include <Structure/Structures/PtrRValueStructure.h>
 
