@@ -152,7 +152,7 @@ std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorDivision(std::shared
 std::shared_ptr<ACC::Structure>
 ACC::CharStructure::operatorEqual(std::shared_ptr<Structure> other, ACC::Code &code) {
     auto &fn = code.getFnSymbol();
-    auto otherAsElementary = dynamic_cast<CharStructure *>(other.get());
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
 
     Register rhs = code.getFreeRegister();
     Register lhs = code.getFreeRegister();
@@ -172,7 +172,7 @@ ACC::CharStructure::operatorEqual(std::shared_ptr<Structure> other, ACC::Code &c
 std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorNotEqual(std::shared_ptr<Structure> other,
                                                                     ACC::Code &code) {
     auto &fn = code.getFnSymbol();
-    auto otherAsElementary = dynamic_cast<CharStructure *>(other.get());
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get()); //TODO: Proper type conversion...
 
     Register rhs = code.getFreeRegister();
     Register lhs = code.getFreeRegister();
@@ -192,7 +192,7 @@ std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorNotEqual(std::shared
 std::shared_ptr<ACC::Structure>
 ACC::CharStructure::operatorLess(std::shared_ptr<Structure> other, ACC::Code &code) {
     auto &fn = code.getFnSymbol();
-    auto otherAsElementary = dynamic_cast<CharStructure *>(other.get());
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
 
     Register rhs = code.getFreeRegister();
     Register lhs = code.getFreeRegister();
@@ -212,7 +212,7 @@ ACC::CharStructure::operatorLess(std::shared_ptr<Structure> other, ACC::Code &co
 std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorGreater(std::shared_ptr<Structure> other,
                                                                    ACC::Code &code) {
     auto &fn = code.getFnSymbol();
-    auto otherAsElementary = dynamic_cast<CharStructure *>(other.get());
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
 
     Register rhs = code.getFreeRegister();
     Register lhs = code.getFreeRegister();
@@ -232,7 +232,7 @@ std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorGreater(std::shared_
 std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorLessEqual(std::shared_ptr<Structure> other,
                                                                      ACC::Code &code) {
     auto &fn = code.getFnSymbol();
-    auto otherAsElementary = dynamic_cast<CharStructure *>(other.get());
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
 
     Register rhs = code.getFreeRegister();
     Register lhs = code.getFreeRegister();
@@ -252,7 +252,7 @@ std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorLessEqual(std::share
 std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorGreaterEqual(std::shared_ptr<Structure> other,
                                                                         ACC::Code &code) {
     auto &fn = code.getFnSymbol();
-    auto otherAsElementary = dynamic_cast<CharStructure *>(other.get());
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
 
     Register rhs = code.getFreeRegister();
     Register lhs = code.getFreeRegister();
