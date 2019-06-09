@@ -10,6 +10,8 @@
 #include <General/builtinTypes.h>
 #include <Assembly/Code.h>
 #include <Structure/Structures/Number/NumRValueStructure.h>
+#include <Structure/Structures/Char/CharRValueStructure.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorForDone(std::shared_ptr<ACC::Structure> limit, ACC::Code &code) {
@@ -58,7 +60,22 @@ ACC::PtrStructure::operatorDivision(std::shared_ptr<ACC::Structure> amount, ACC:
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorEqual(other, code);
+    auto &fn = code.getFnSymbol();
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
+
+    Register rhs = code.getFreeRegister();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+    otherAsElementary->loadToRegister(rhs, code);
+
+    fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+    fn.writeLine("sete " + registerToString(1, lhs));
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<BoolRValueStructure>(lhs);
 }
 
 std::shared_ptr<ACC::Structure>
@@ -86,7 +103,7 @@ ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, A
     return Structure::operatorGreaterEqual(other, code);
 }
 
-ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType, t.getPointingTo())){
+ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType, t.getTypeId())){
 
 }
 
@@ -96,5 +113,14 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDereference(ACC::Code
 
     this->loadToRegister(reg, code);
     fn.writeLine("mov "+registerToString(type.getPointingTo().getSize(), reg)+", ["+registerToString(8, reg)+"]");
-    return std::make_shared<NumRValueStructure>(reg);
+    if (this->type.getPointingTo() == BuiltIns::numType)
+        return std::make_shared<NumRValueStructure>(reg);
+
+    else if (this->type.getPointingTo() == BuiltIns::charType)
+        return std::make_shared<CharRValueStructure>(reg);
+
+    else if (this->type.getPointingTo() == BuiltIns::boolType)
+        return std::make_shared<BoolRValueStructure>(reg);
+    code.freeRegister(reg);
+    return nullptr;
 }
