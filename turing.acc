@@ -1,0 +1,197 @@
+fn get_line (buffer : ptr<char>, max : num): num :
+    var i : num = 0;
+    for i -> max:
+        *(buffer + i) = 0;
+
+    syscall 0, 0, buffer, max;
+    var c : char = *buffer;
+    i = 0;
+    while c != 0:
+        i = i + 1;
+        c = *(buffer + i);
+    return i;
+
+
+fn get_instruction (buffer : ptr<char>, i : num) : ptr<char>:
+    return buffer + (i * 5);
+
+fn get_mconfig (instruction : ptr<char>): char:
+    return *(instruction + 0);
+
+fn get_tape_sym (instruction : ptr<char>): char:
+    return *(instruction + 1);
+
+fn get_print_op (instruction : ptr<char>): char:
+    return *(instruction + 2);
+
+fn get_tape_op (instruction : ptr<char>): char:
+    return *(instruction + 3);
+
+fn get_new_config (instruction : ptr<char>): char:
+    return *(instruction + 4);
+
+
+
+fn print_program_tape (tape : ptr<char>, instruction_num : num) : num:
+    var i : num = 0;
+    for i -> instruction_num:
+        syscall 1, 1, tape + (i * 5), 5;
+        syscall 1, 1, "\n", 1;
+    return 0;
+
+
+fn program_instruction (dest : ptr<char>): num :
+    var input : ptr<char> = 0;
+    salloc 64, input;
+    var count : num = get_line(input, 64);
+    if count == 1:
+        return 1;
+    *(dest + 0) = *(input+0);
+    *(dest + 1) = *(input+2);
+    *(dest + 2) = *(input+4);
+    *(dest + 3) = *(input+6);
+    *(dest + 4) = *(input+8);
+    return 0;
+
+fn program_machine (tape : ptr<char>):num:
+    var i : num = 0;
+    var out : num = 0;
+    while out != 1:
+        var inst : ptr<char> = get_instruction(tape, i);
+        out = program_instruction(inst);
+        i = i + 1;
+    return i;
+
+fn enter_input_tape (tape : ptr<char>):num:
+    var input : ptr<char> = 0;
+    salloc 64, input;
+    var count : num = get_line(input, 64);
+    var index : num = 0;
+    var i : num = 0;
+    while i < count:
+        *(tape + index) = *(input + i);
+        index = index + 1;
+        i = i + 2;
+
+    return index;
+
+fn print_input_tape (tapeRhs : ptr<char>, tapeLhs : ptr<char>, count : num):num:
+    var i : num = 0;
+    var buffer : ptr<char> = 0;
+    salloc 1, buffer;
+    for i -> count:
+        var c : char = *(tapeLhs + i);
+        if c == 0:
+            c = '_';
+        *buffer = c;
+        syscall 1, 1, buffer, 1;
+        syscall 1, 1, " ", 1;
+    i = 0;
+    for i -> count:
+        var c : char = *(tapeRhs + i);
+        if c == 0:
+            c = '_';
+        *buffer = c;
+        syscall 1, 1, buffer, 1;
+        syscall 1, 1, " ", 1;
+    return 0;
+
+fn print_instruction (instruction : ptr<char>): num :
+    syscall 1, 1, instruction, 5;
+    return 0;
+
+
+fn find_instruction(state : char, tape_sym : char, inst_count: num, program_tape: ptr<char>): ptr<char>:
+    var i : num = 0;
+    for i -> inst_count:
+        var instruction : ptr<char> = get_instruction(program_tape, i);
+        if get_mconfig(instruction) == state:
+            if tape_sym == 0:
+                tape_sym = '_';
+            if get_tape_sym(instruction) == tape_sym:
+                return instruction;
+    return 0;
+
+
+fn setup_input_tape(address : ptr<char>, count : num):num:
+    var i : num = 0;
+    for i -> count:
+        *(address+i) = 0;
+    return 0;
+
+var NUM_INSTRUCTIONS : num = 16;
+var NUM_INPUT : num = 16;
+
+var program_tape : ptr<char> = 0;
+var input_rhs_tape : ptr<char> = 0;
+var input_lhs_tape : ptr<char> = 0;
+var cur_state : char = 'b';
+var head : num = 0;
+var head_direction : num = 0;
+
+
+salloc 5 * NUM_INSTRUCTIONS, program_tape; 
+salloc NUM_INPUT, input_rhs_tape; 
+salloc NUM_INPUT, input_lhs_tape;
+
+
+setup_input_tape(input_rhs_tape, NUM_INPUT);
+setup_input_tape(input_lhs_tape, NUM_INPUT);
+
+syscall 1, 1, "---Please program this Turing Machine---\n", 41;
+syscall 1, 1, "Usage (Be precise):\n", 20;
+syscall 1, 1, "<m-config> <tape symbol> <print op> <tape op> <final m-config>\n", 63;
+
+var instructionCount : num = program_machine(program_tape);
+
+syscall 1, 1, "...done\n", 8;
+
+syscall 1, 1, "---Please enter input tape---\n", 30;
+syscall 1, 1, "Usage (Be precise):\n", 20;
+syscall 1, 1, "<symbol> <symbol>...\n", 21;
+
+var inputCount : num = enter_input_tape(input_rhs_tape);
+
+syscall 1, 1, "...done\n\n", 9;
+syscall 1, 1, "\n...Starting Tape...\n", 21;
+print_input_tape (input_rhs_tape, input_lhs_tape, NUM_INSTRUCTIONS);
+syscall 1, 1, "\n...Simulating...\n", 18;
+
+while cur_state != 'A':
+    var cur_sym : ptr<char> = 0;
+    if head_direction == 0:
+        cur_sym = input_rhs_tape + head;
+    else:
+        cur_sym = input_lhs_tape + head;
+    
+    var instruction : ptr<char> = find_instruction(cur_state, *cur_sym, instructionCount, program_tape);
+
+    if instruction == 0:
+        syscall 1, 1, "\n...[MACHINE IN INVALID STATE]...\n", 34;
+        exit 1; 
+
+    cur_state = get_new_config(instruction);
+    *cur_sym = get_print_op(instruction);
+    if get_tape_op(instruction) == 'r':
+        if head_direction == 0:
+            head = head + 1;
+        elif head == 1:
+            head = 0;
+            head_direction = 0;
+    else:
+        if head_direction == 1:
+            head = head + 1;
+        elif head == 0:
+            head = 1;
+            head_direction = 1;
+
+    if head >= NUM_INPUT:
+        syscall 1, 1, "\n...[RAN OUT OF TAPE]...\n", 28;
+        exit 1; 
+
+    print_input_tape (input_rhs_tape, input_lhs_tape, NUM_INSTRUCTIONS);
+
+    syscall 1, 1, "\n", 1;
+
+syscall 1, 1, "\n...[ACCEPTING STATE]...\n", 25; 
+
