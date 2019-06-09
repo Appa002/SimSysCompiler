@@ -11,6 +11,7 @@
 #include <General/Type.h>
 #include <memory>
 #include <General/ScopedSymbolTable.h>
+#include <list>
 
 namespace ACC {
 
@@ -23,6 +24,7 @@ namespace ACC {
         std::string document;
         int refCount = 0;
         std::unordered_map<std::string, TypeId> typesTable;
+        std::vector<size_t> indentList;
 
         ScopedSymbolTable<Symbol>* curScope;
         ScopedSymbolTable<Symbol>* globalScope;
