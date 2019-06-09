@@ -30,18 +30,34 @@ void ACC::CharLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 std::shared_ptr<ACC::Structure>
 ACC::CharLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->vCategory == ValueCategory::lvalue) {
-        auto &fn = code.getFnSymbol();
         auto *addressAsLValue = dynamic_cast<GenericLValueStructure *>(address.get());
+        if(addressAsLValue) {
+            auto &fn = code.getFnSymbol();
 
-        Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(1, reg);
+            Register reg = code.getFreeRegister();
+            std::string regStr = registerToString(1, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
-        code.freeRegister(reg);
+            fn.writeLine("mov " + regStr + ", [" + access + "]");
+            fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+            code.freeRegister(reg);
 
-        return address;
+            return address;
+        }
+        else{
+            auto *addressAsLValue = dynamic_cast<CharLValueStructure *>(address.get());
+            auto &fn = code.getFnSymbol();
+
+            Register reg = code.getFreeRegister();
+            std::string regStr = registerToString(1, reg);
+
+            fn.writeLine("mov " + regStr + ", [" + access + "]");
+            fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+            code.freeRegister(reg);
+
+            return address;
+        }
     }
+
     return nullptr;
 }
 
