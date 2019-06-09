@@ -3,6 +3,8 @@
 #include <Structure/Structures/Number/NumRValueStructure.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/GenericLValueStructure.h>
+#include <Structure/Structures/Pointer/PtrRValueStructure.h>
+#include <Structure/Structures/Char/CharRValueStructure.h>
 
 #include "CallNode.h"
 
@@ -22,7 +24,19 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
     auto name = children[0]->data.asT<std::string>();
     fn.writeLine("call " + name);
     fn.writeLine("add rsp, " + std::to_string(totalRspSubtracted));
-    return std::make_shared<NumRValueStructure>(Register::rA); // TODO: Return type
+
+    Type returnType = code.getFnSymbol(name).returnType;
+
+    if(returnType == Type(BuiltIns::numType))
+        return std::make_shared<NumRValueStructure>(Register::rA);
+
+    else if (returnType == Type(BuiltIns::ptrType))
+        return std::make_shared<PtrRValueStructure>(Register::rA, Type(type.getPointingTo()));
+
+    else if (returnType == Type(BuiltIns::charType))
+        return std::make_shared<CharRValueStructure>(Register::rA);
+
+    return nullptr;
 }
 
 ACC::CallNode::CallNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op, std::move(children)) {
