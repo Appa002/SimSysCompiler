@@ -13,7 +13,6 @@ namespace ACC {
     class Code;
 
     enum class Register{
-        NONE,
         rA,
         rB,
         rC,
