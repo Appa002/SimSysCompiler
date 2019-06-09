@@ -14,7 +14,7 @@ ACC::Code::Code() {
     curScope = globalScope.get();
 
     emplaceFnSymbol("_start");
-    for (size_t i = 0; i < 13; i++) // TODO: This is a bit disgusting.
+    for (size_t i = 0; i < 14; i++) // TODO: This is a bit disgusting.
         freeRegisterTable[(Register) i] = true;
 };
 
@@ -67,6 +67,7 @@ void ACC::Code::writeLineToData(std::string const &str) {
 }
 
 void ACC::Code::reserveRegister(ACC::Register reg) {
+    // reserve
     if (freeRegisterTable[reg] == false)
         throw std::runtime_error("Trying to reserve register which isn't free.");
     freeRegisterTable[reg] = false;
@@ -88,6 +89,7 @@ ACC::Register ACC::Code::getFreeRegister() {
 }
 
 void ACC::Code::freeRegister(ACC::Register reg) {
+    // Free
     freeRegisterTable[reg] = true;
 }
 
