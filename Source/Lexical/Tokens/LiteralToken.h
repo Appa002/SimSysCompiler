@@ -50,7 +50,17 @@ namespace ACC{
                 return "Literal (Arithmetic): 0x" + toHex(literal.createNumber());
             }
             else if(type == BuiltIns::ptrType){
-                return "Literal (String): \"" + literal.asT<std::string>() +"\"";
+                auto out = literal.asT<std::string>();
+                size_t i = 0;
+                for(char& c : out){
+                    if(c=='\n'){
+                        out.erase(i, 2);
+                        out.insert(i, "\\n");
+                    }
+                    i++;
+                }
+
+                return "Literal (String): \"" + out +"\"";
             }
             else{
                 std::string data = "[ ";
