@@ -13,7 +13,7 @@
 
 ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
 : PtrStructure(ValueCategory::rvalue, type), reg(reg) {
-
+    registerInUse.push_back(reg);
 }
 
 std::shared_ptr<ACC::Structure>
@@ -63,8 +63,7 @@ void ACC::PtrRValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code)
 }
 
 ACC::PtrRValueStructure::PtrRValueStructure(std::string access, ACC::Type type)
-: PtrStructure(ValueCategory::rvalue, type), access(std::move(access)), reg(Register::NONE){
-
+: PtrStructure(ValueCategory::rvalue, type), access(std::move(access)), reg(Register::r15){
 }
 
 

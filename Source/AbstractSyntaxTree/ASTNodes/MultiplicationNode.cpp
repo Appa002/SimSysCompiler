@@ -17,7 +17,7 @@ std::shared_ptr<ACC::Structure> ACC::MultiplicationNode::generate(ACC::Code &cod
 
     auto ptr = children[0]->generate(code);
     auto out = ptr->operatorDereference(code);
-    out->cleanUp(code);
+    ptr->cleanUp(code);
     return out;
 }
 

@@ -28,5 +28,9 @@ std::shared_ptr<ACC::Structure> ACC::PtrAssignmentNode::generate(ACC::Code &code
 
     expr->operatorCopy(address, code);
 
+    subject->cleanUp(code);
+    expr->cleanUp(code);
+    code.freeRegister(reg);
+
     return nullptr;
 }

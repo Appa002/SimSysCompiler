@@ -22,5 +22,10 @@ std::shared_ptr<ACC::Structure> ACC::SallocNode::generate(ACC::Code &code) {
     auto ptr = std::make_shared<PtrRValueStructure>(reg, Type(var->type.getPointingTo()));
 
     ptr->operatorCopy(var, code);
+
+    size->cleanUp(code);
+    code.freeRegister(reg);
+    ptr->cleanUp(code);
+
     return nullptr;
 }

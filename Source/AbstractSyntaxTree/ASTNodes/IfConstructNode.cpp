@@ -24,6 +24,7 @@ std::shared_ptr<ACC::Structure> ACC::IfConstructNode::generate(ACC::Code &code) 
     fn.writeLine("jnz ." + next);
 
     expr->cleanUp(code);
+    code.freeRegister(reg);
 
     code.pushScope();
     auto body = children[0]->children[1]->generate(code);
@@ -61,6 +62,7 @@ void ACC::IfConstructNode::handleElif(ACC::Fn &fn, ACC::Code &code, size_t idx, 
     fn.writeLine("cmp " + registerToString(1, reg) + ", 1");
     fn.writeLine("jnz ." + next);
     condition->cleanUp(code);
+    code.freeRegister(reg);
 
     code.pushScope();
     auto body = children[idx]->children[1]->generate(code);

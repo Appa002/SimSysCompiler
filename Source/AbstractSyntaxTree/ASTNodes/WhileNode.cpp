@@ -26,7 +26,8 @@ std::shared_ptr<ACC::Structure> ACC::WhileNode::generate(ACC::Code &code) {
     code.pushScope();
     auto body = children[1]->generate(code);
     code.popScope();
-    body->cleanUp(code);
+    if(body)
+        body->cleanUp(code);
 
     fn.writeLine("jmp ." + top);
 
