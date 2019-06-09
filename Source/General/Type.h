@@ -37,6 +37,7 @@ namespace ACC {
 
         size_t getId() const;
         size_t getSize() const;
+        TypeId getTypeId() const;
         TypeId getPointingTo() const;
 
         Type& operator=(TypeId const & other){

@@ -23,3 +23,7 @@ ACC::Type::Type(ACC::TypeId id) : id(id) {
 ACC::Type::Type(const ACC::TypeId & first, ACC::TypeId other) : id(first), pointingTo(other) {
 
 }
+
+ACC::TypeId ACC::Type::getTypeId() const {
+    return id;
+}
