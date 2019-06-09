@@ -23,7 +23,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     if(type == BuiltIns::numType)
         address = std::make_shared<NumLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     else if (type == BuiltIns::ptrType)
-        address = std::make_shared<PtrLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), type);
+        address = std::make_shared<PtrLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), Type(type.getPointingTo()));
     else if (type == BuiltIns::charType){
         address = std::make_shared<CharLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     }
