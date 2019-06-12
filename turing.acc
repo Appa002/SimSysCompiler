@@ -57,8 +57,7 @@ fn program_machine (tape : ptr<char>):num:
     var i : num = 0;
     var out : num = 0;
     while out != 1:
-        var inst : ptr<char> = get_instruction(tape, i);
-        out = program_instruction(inst);
+        out = program_instruction(get_instruction(tape, i));
         i = i + 1;
     return i;
 
@@ -143,6 +142,7 @@ syscall 1, 1, "Usage (Be precise):\n", 20;
 syscall 1, 1, "<m-config> <tape symbol> <print op> <tape op> <final m-config>\n", 63;
 
 var instructionCount : num = program_machine(program_tape);
+print_program_tape(program_tape, instructionCount);
 
 syscall 1, 1, "...done\n", 8;
 
