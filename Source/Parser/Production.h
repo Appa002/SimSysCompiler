@@ -36,6 +36,10 @@ namespace ACC {
         NOT,
         ELSE,
         WHILE,
+        SLASH,
+        STAR,
+        PLUS,
+        MINUS,
 
         ptr_assign,
         for_construct,

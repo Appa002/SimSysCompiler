@@ -3,7 +3,6 @@
 #include <Lexical/Tokens/LiteralToken.h>
 #include <AbstractSyntaxTree/process.h>
 #include <AbstractSyntaxTree/ASTNode.h>
-#include <Lexical/Tokens/MathOperatorToken.h>
 #include <Parser/Production.h>
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
@@ -32,6 +31,7 @@
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
 #include <Lexical/Tokens/SallocToken.h>
+#include <AbstractSyntaxTree/ASTNodes/DereferenceNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -389,24 +389,28 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return process(children[3], process(children[1]));
         }},
 
-         {{Symbol::expr, {Symbol::MATH_OPERATOR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-             std::vector<ASTNode*> vec;
-             if(carry != nullptr)
-                 vec = {carry, process(children[1], nullptr)};
-             else
-                 vec = {process(children[1], nullptr)};
+         {{Symbol::expr, {Symbol::STAR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+             if(carry != nullptr) // Its binary therefor addition
+                 return new AddNode(AstOperator::ADD, {carry, process(children[1], nullptr)});
 
-             switch (dynamic_cast<MathOperatorToken*>(children[0]->token)->kind){
-                 case MathOperators::PLUS:
-                     return new AddNode(AstOperator::PLUS, vec);
-                 case MathOperators::MINUS:
-                      return new SubtractNode(AstOperator::MINUS, vec);
-                 case MathOperators::MULTIPLICATION:
-                     return new MultiplicationNode(AstOperator::MULTIPLICATION, vec);
-                 case MathOperators::DIVISION:
-                     return new DivisionNode(AstOperator::DIVISION, vec);
-             }
+             // Its unary therefor dereference
+             return new DereferenceNode(AstOperator::DEREFERENCE, {process(children[1], nullptr)});
          }},
+
+        {{Symbol::expr, {Symbol::PLUS, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            auto vec = {carry, process(children[1], nullptr)};
+            return new AddNode(AstOperator::ADD, vec);
+        }},
+
+        {{Symbol::expr, {Symbol::MINUS, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            auto vec = {carry, process(children[1], nullptr)};
+            return new SubtractNode(AstOperator::SUBTRACT, vec);
+        }},
+
+        {{Symbol::expr, {Symbol::SLASH, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            auto vec = {carry, process(children[1], nullptr)};
+            return new DivisionNode(AstOperator::DIVISION, vec);
+        }},
 
         {{Symbol::expr, {Symbol::CMP, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
             auto vec = {carry, process(children[1], nullptr)};

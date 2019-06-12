@@ -94,6 +94,14 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "ptr_assign";
         case Symbol::SALLOC:
             return "SALLOC";
+        case Symbol::SLASH:
+            return "SLASH";
+        case Symbol::STAR:
+            return "STAR";
+        case Symbol::PLUS:
+            return "PLUS";
+        case Symbol::MINUS:
+            return "SUBTRACT";
     }
     throw std::runtime_error("Symbol not known.");
 }

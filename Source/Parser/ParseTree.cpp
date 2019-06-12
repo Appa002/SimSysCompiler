@@ -404,9 +404,27 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
     END_PRODUCTION()
 
 
-    logable.loadProduction(Symbol::expr, {Symbol::MATH_OPERATOR, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::PLUS, Symbol::expr});
     START_PRODUCTION()
-            TERMINAL(MATH_OPERATOR)
+            TERMINAL(PLUS)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::MINUS, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(MINUS)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::SLASH, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(SLASH)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::STAR, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(STAR)
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 

@@ -15,7 +15,6 @@
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/BracketToken.h>
 #include <Lexical/Tokens/SallocToken.h>
-#include <Lexical/Tokens/MathOperatorToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/AssignToken.h>
 #include <Lexical/Tokens/DeclToken.h>
@@ -34,6 +33,10 @@
 #include <Lexical/Tokens/NotToken.h>
 #include <Lexical/Tokens/ElseToken.h>
 #include <Lexical/Tokens/GoesToToken.h>
+#include <Lexical/Tokens/PlusToken.h>
+#include <Lexical/Tokens/StarToken.h>
+#include <Lexical/Tokens/MinusToken.h>
+#include <Lexical/Tokens/SlashToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -131,7 +134,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             forStmt(pos + 1);
             return;
         }else if ("*" == buffer){
-            tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
+            tokens.push_back(new StarToken());
             buffer.clear();
             dereferencingAsignment(pos + 1);
             return;
@@ -447,13 +450,13 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
         else if (document.at(pos) == ')')
             tokens.push_back(new BracketToken(BracketKind::CLOSED));
         else if (document.at(pos) == '+')
-            tokens.push_back(new MathOperatorToken(MathOperators::PLUS));
+            tokens.push_back(new PlusToken());
         else if (document.at(pos) == '-')
-            tokens.push_back(new MathOperatorToken(MathOperators::MINUS));
+            tokens.push_back(new MinusToken());
         else if (document.at(pos) == '*')
-            tokens.push_back(new MathOperatorToken(MathOperators::MULTIPLICATION));
+            tokens.push_back(new StarToken());
         else if (document.at(pos) == '/')
-            tokens.push_back(new MathOperatorToken(MathOperators::DIVISION));
+            tokens.push_back(new SlashToken());
         else if (document.at(pos) == ',')
             tokens.push_back(new CommaToken());
         else

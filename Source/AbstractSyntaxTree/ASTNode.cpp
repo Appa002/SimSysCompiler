@@ -86,9 +86,9 @@ void ACC::ASTNode::_print(std::string indent, bool isLast) const {
 
 std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
     switch (op){
-        case AstOperator::PLUS:
+        case AstOperator::ADD:
             return "+";
-        case AstOperator::MINUS:
+        case AstOperator::SUBTRACT:
             return "-";
         case AstOperator::LITERAL:{
             if(type == BuiltIns::numType || type == BuiltIns::charType)
@@ -166,78 +166,13 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "ptr_assign";
         case AstOperator::SALLOC:
             return "salloc";
+        case AstOperator::DEREFERENCE:
+            return "dereference";
     }
     throw std::runtime_error("Unknown Symbol!");
 }
 
 
-/*
-std::unique_ptr<ACC::Expr> ACC::ASTNode::asExpr() {
-    switch (op){
-        case AstOperator::PLUS:
-            return std::unique_ptr<Expr>(new AddTokenGenerator(this));
-        case AstOperator::MINUS:
-            return std::unique_ptr<Expr>(new SubtractTokenGenerator(this));
-        case AstOperator::LITERAL:
-            return std::unique_ptr<Expr>(new LiteralTokenGenerator(this));
-        case AstOperator::SEQ:
-            return std::unique_ptr<Expr>(new SeqTokenGenerator(this));
-        case AstOperator::ASSIGN:
-            return std::unique_ptr<Expr>(new AssignTokenGenerator(this));
-        case AstOperator::ID:
-            return std::unique_ptr<Expr>(new IdTokenGenerator(this));
-        case AstOperator::SYSCALL:
-            return std::unique_ptr<Expr>(new SyscallTokenGenerator(this));
-        case AstOperator::EXIT:
-            return std::unique_ptr<Expr>(new ExitTokenGenerator(this));
-        case AstOperator::MULTIPLICATION:
-            return std::unique_ptr<Expr>(new MultiplicationTokenGenerator(this));
-        case AstOperator::DIVISION:
-            return std::unique_ptr<Expr>(new DivisionTokenGenerator(this));
-        case AstOperator::FUNCTION:
-            return std::unique_ptr<Expr>(new FunctionTokenGenerator(this));
-        case AstOperator::CALL:
-            return std::unique_ptr<Expr>(new CallTokenGenerator(this));
-        case AstOperator::RETURN:
-            return std::unique_ptr<Expr>(new ReturnTokenGenerator(this));
-        case AstOperator::REASSIGN:
-            return std::unique_ptr<Expr>(new ReassignTokenGenerator(this));
-        case AstOperator::IF_CONSTRUCT:
-            return std::unique_ptr<Expr>(new IfConstructTokenGenerator(this));
-        case AstOperator::EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::EQ));
-        case AstOperator::NOT_EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::NEQ));
-        case AstOperator::LESS:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::LT));
-        case AstOperator::GREATER:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::GT));
-        case AstOperator::LESS_EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::LET));
-        case AstOperator::GREATER_EQUAL:
-            return std::unique_ptr<Expr>(new ComparisionGenerator(this, ComparisionType::GET));
-        case AstOperator::NOT:
-            return std::unique_ptr<Expr>(new NotTokenGenerator(this));
-
-        case AstOperator::__NONE:
-            throw std::runtime_error("Operator `__none` can't be interpreted as an expression.");
-        case AstOperator::TYPE_DEF:
-            throw std::runtime_error("Operator `type_def` can't be interpreted as an expression.");
-        case AstOperator::__CONTAINER:
-            throw std::runtime_error("Operator `__container` can't be interpreted as an expression.");
-        case AstOperator::IF:
-            throw std::runtime_error("Operator `if` can't be interpreted as an expression.");
-        case AstOperator::ELIF:
-            throw std::runtime_error("Operator `elif` can't be interpreted as an expression.");
-        case AstOperator::ELSE:
-            throw std::runtime_error("Operator `else` can't be interpreted as an expression.");
-        case AstOperator::WHILE:
-            return std::unique_ptr<Expr>(new WhileTokenGenerator(this));
-        case AstOperator::FOR:
-            return std::unique_ptr<Expr>(new ForTokenGenerator(this));
-    }
-    return std::unique_ptr<Expr>(nullptr);
-}*/
 
 ACC::ASTNode::~ASTNode() {
     for(const auto& child : children){
