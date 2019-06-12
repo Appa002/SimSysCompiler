@@ -12,31 +12,47 @@
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
+#include <Structure/Structures/Char/CharLValueStructure.h>
 
 ACC::NumLValueStructure::NumLValueStructure(std::string const &access)
-: NumStructure(ValueCategory::lvalue), access(access){
+        : NumStructure(ValueCategory::lvalue), access(access) {
 
 }
 
 void ACC::NumLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
-    auto& fn = code.getFnSymbol();
+    auto &fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(8, reg) + ", [" + access + "]");
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->vCategory == ValueCategory::lvalue) {
-        auto &fn = code.getFnSymbol();
+ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
+    if (address->vCategory == ValueCategory::lvalue) {
         auto *addressAsLValue = dynamic_cast<GenericLValueStructure *>(address.get());
+        if (addressAsLValue) {
+            auto &fn = code.getFnSymbol();
 
-        Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(8, reg);
+            Register reg = code.getFreeRegister();
+            std::string regStr = registerToString(8, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
-        code.freeRegister(reg);
+            fn.writeLine("mov " + regStr + ", [" + access + "]");
+            fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+            code.freeRegister(reg);
 
-        return address;
+            return address;
+        }else{
+            auto *addressAsLValue = dynamic_cast<CharLValueStructure *>(address.get());
+
+            auto &fn = code.getFnSymbol();
+
+            Register reg = code.getFreeRegister();
+            std::string regStr = registerToString(1, reg);
+
+            fn.writeLine("mov " + regStr + ", [" + access + "]");
+            fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+            code.freeRegister(reg);
+
+            return address;
+        }
     }
     return nullptr;
 }

@@ -205,6 +205,38 @@ void ACC::LexicalAnalysis::call(size_t pos){
 
 }
 
+
+void ACC::LexicalAnalysis::callExpr(size_t &pos) {
+    buffer.clear();
+    if(matchIgnoreW('(', pos))
+        tokens.push_back(new BracketToken(BracketKind::OPEN));
+    else
+        throw std::runtime_error("Call must be followed by parameter list, at: " + std::to_string(pos));
+
+
+    pos++;
+    while(pos < document.size() && document.at(pos - 1) != ')'){
+        try {
+            expr(pos, {",", ")"});
+        }catch (std::runtime_error& e){
+            throw std::runtime_error("Expected expression in parameter list, at: " + std::to_string(pos) + "\n"
+                                                                                                           "expression failed with: " + e.what());
+        }
+
+        if(pos >= document.size())
+            throw std::runtime_error("Expected expression in parameter list, at: " + std::to_string(pos));
+
+
+        if(document.at(pos) == ',')
+            tokens.push_back(new CommaToken());
+        buffer.clear();
+        pos++;
+    }
+
+    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+    pos--;
+}
+
 void ACC::LexicalAnalysis::assignment(size_t pos) {
     if(!matchIgnoreW('=', pos))
         throw std::runtime_error("Assignment needs to be followed by an expression, at:" + std::to_string(pos));
@@ -403,8 +435,13 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
                 pos += 2;
             }
         }
-        else if (isSymbol(buffer))
+        else if (isSymbol(buffer)){
             tokens.push_back(new IdToken(buffer));
+            if(getSymbol(buffer) == Symbol::FUNCTION){
+                pos++;
+                callExpr(pos);
+            }
+        }
         else if (document.at(pos) == '(')
             tokens.push_back(new BracketToken(BracketKind::OPEN));
         else if (document.at(pos) == ')')
@@ -846,6 +883,7 @@ void ACC::LexicalAnalysis::salloc(size_t pos) {
 
     start(pos + 1, true);
 }
+
 
 
 

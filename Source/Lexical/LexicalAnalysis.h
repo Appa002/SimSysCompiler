@@ -54,6 +54,7 @@ namespace ACC {
         void expr(size_t& pos, std::vector<std::string> exitTokens);
         void ret(size_t pos);
         void call(size_t pos);
+        void callExpr(size_t& pos);
         void type(size_t& pos);
         void parseStringLiteral(size_t &pos);
         void ifStmt(size_t pos);

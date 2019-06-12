@@ -24,11 +24,21 @@ std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorCopy(std::share
 
     if(address->vCategory == ValueCategory::lvalue){
         auto *addressAsLvalue = dynamic_cast<NumLValueStructure *>(address.get());
-        auto& fn = code.getFnSymbol();
+        if(addressAsLvalue) {
+            auto &fn = code.getFnSymbol();
 
-        fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(8, reg));
+            fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(8, reg));
 
-        return address;
+            return address;
+        }else{
+            auto *addressAsLvalue = dynamic_cast<GenericLValueStructure *>(address.get());
+
+            auto &fn = code.getFnSymbol();
+
+            fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(8, reg));
+
+            return address;
+        }
     }
 
     return nullptr;
