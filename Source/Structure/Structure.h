@@ -12,7 +12,7 @@
 namespace ACC {
     class Code;
 
-    enum class Register{
+    enum class Register {
         rA,
         rB,
         rC,
@@ -29,13 +29,13 @@ namespace ACC {
         r15,
     };
 
-    enum class ValueCategory{
+    enum class ValueCategory {
         rvalue,
         lvalue,
         ivalue
     };
 
-class Structure : public std::enable_shared_from_this <Structure> {
+    class Structure : public std::enable_shared_from_this<Structure> {
     public:
         const ValueCategory vCategory;
         const Type type;
@@ -43,10 +43,12 @@ class Structure : public std::enable_shared_from_this <Structure> {
         std::vector<Register> registerInUse;
 
         Structure(ValueCategory valueCategory, Type type);
+
         virtual ~Structure();
 
         virtual std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code);
         virtual std::shared_ptr<Structure> operatorForNext(Code &code);
+
         virtual std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &code);
 
         virtual std::shared_ptr<Structure> operatorAdd(std::shared_ptr<Structure> amount, Code &code);
@@ -56,17 +58,20 @@ class Structure : public std::enable_shared_from_this <Structure> {
 
         virtual std::shared_ptr<Structure> operatorEqual(std::shared_ptr<Structure> other, Code &code);
         virtual std::shared_ptr<Structure> operatorNotEqual(std::shared_ptr<Structure> other, Code &code);
-
         virtual std::shared_ptr<Structure> operatorLess(std::shared_ptr<Structure> other, Code &code);
         virtual std::shared_ptr<Structure> operatorGreater(std::shared_ptr<Structure> other, Code &code);
-
         virtual std::shared_ptr<Structure> operatorLessEqual(std::shared_ptr<Structure> other, Code &code);
         virtual std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code);
-
         virtual std::shared_ptr<Structure> operatorNot(Code &code);
+
         virtual std::shared_ptr<Structure> operatorDereference(Code &code);
 
-        void cleanUp(Code& code);
+        virtual std::shared_ptr<Structure> operatorChar(Code &code);
+        virtual std::shared_ptr<Structure> operatorNum(Code &code);
+        virtual std::shared_ptr<Structure> operatorBool(Code &code);
+        virtual std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo);
+
+        void cleanUp(Code &code);
 
     };
 }

@@ -13,6 +13,7 @@
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/GenericLValueStructure.h>
+#include <Structure/Structures/Number/NumRValueStructure.h>
 
 ACC::CharRValueStructure::CharRValueStructure(ACC::Register reg)
         : reg(reg), CharStructure(ValueCategory::rvalue) {
@@ -21,6 +22,15 @@ ACC::CharRValueStructure::CharRValueStructure(ACC::Register reg)
 
 std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorCopy(std::shared_ptr<Structure> address,
                                                                        ACC::Code &code) {
+    if(address->type == Type(BuiltIns::numType)){
+        auto asNum = this->operatorNum(code);
+        asNum->operatorCopy(address, code);
+    }
+
+    if(address->type  != Type(BuiltIns::charType))
+        throw std::runtime_error("Can't convert type `char` to receiving type.");
+
+
     if (address->vCategory == ValueCategory::rvalue) {
         auto *addressAsNum = dynamic_cast<ElementaryStructure *>(address.get());
         Register other = code.getFreeRegister();
@@ -51,4 +61,20 @@ void ACC::CharRValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 
 ACC::Register ACC::CharRValueStructure::getRegister() const {
     return reg;
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorChar(ACC::Code &code) {
+    return shared_from_this();
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorNum(ACC::Code &code) {
+    return std::make_shared<NumRValueStructure>(reg);
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorBool(ACC::Code &code) {
+    throw std::runtime_error("Can't convert type `char` to type `bool`.");
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
+    throw std::runtime_error("Can't convert type `char` to type `ptr`.");
 }

@@ -10,6 +10,7 @@
 #include "PtrLValueStructure.h"
 #include <General/builtinTypes.h>
 #include <Assembly/Code.h>
+#include <Structure/Structures/Number/NumRValueStructure.h>
 
 ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
         : PtrStructure(ValueCategory::rvalue, type), reg(reg) {
@@ -18,6 +19,19 @@ ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
+    if(address->type == Type(BuiltIns::numType)){
+        auto thisAsNum = operatorNum(code);
+        return thisAsNum->operatorCopy(address, code);
+    }
+
+    if(address->type != Type(BuiltIns::ptrType))
+        throw std::runtime_error("Can't convert type `ptr` to receiving type.");
+
+
+    if(address->type != Type(BuiltIns::ptrType))
+        throw std::runtime_error("Can't convert type `num` to receiving type.");
+
+
     if (address->vCategory == ValueCategory::lvalue) {
         auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
         auto &fn = code.getFnSymbol();
@@ -51,6 +65,22 @@ ACC::PtrRValueStructure::PtrRValueStructure(std::string access, ACC::Type type)
 
 ACC::Register ACC::PtrRValueStructure::getRegister() const {
     return reg;
+}
+
+std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorChar(ACC::Code &code) {
+    throw std::runtime_error("Can't convert type `ptr` to type `char`.");
+}
+
+std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorNum(ACC::Code &code) {
+    return std::make_shared<NumRValueStructure>(reg);
+}
+
+std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorBool(ACC::Code &code) {
+    throw std::runtime_error("Can't convert type `ptr` to type `char`.");
+}
+
+std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
+    return std::make_shared<PtrRValueStructure>(reg, pointingTo);
 }
 
 

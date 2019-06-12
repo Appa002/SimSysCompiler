@@ -29,6 +29,15 @@ void ACC::CharLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 
 std::shared_ptr<ACC::Structure>
 ACC::CharLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
+    if(address->type == Type(BuiltIns::numType)){
+        auto asNum = this->operatorNum(code);
+        asNum->operatorCopy(address, code);
+    }
+
+    if(address->type  != Type(BuiltIns::charType))
+        throw std::runtime_error("Can't convert type `char` to receiving type.");
+
+
     if (address->vCategory == ValueCategory::lvalue) {
         auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
         auto &fn = code.getFnSymbol();
@@ -50,5 +59,21 @@ std::string const &ACC::CharLValueStructure::getAccess() const {
     return access;
 }
 
+
+std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorChar(ACC::Code &code) {
+    return shared_from_this();
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorNum(ACC::Code &code) {
+    return std::make_shared<CharLValueStructure>(access);
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorBool(ACC::Code &code) {
+    throw std::runtime_error("Can't convert type `char` to type `bool`.");
+}
+
+std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorPtr(ACC::Code &code, ACC::Type) {
+    throw std::runtime_error("Can't convert type `char` to type `ptr`.");
+}
 
 

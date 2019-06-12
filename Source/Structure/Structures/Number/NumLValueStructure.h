@@ -21,6 +21,11 @@ namespace ACC{
         std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
         std::string const & getAccess() const override;
 
+        std::shared_ptr<Structure> operatorChar(Code & code) override;
+        std::shared_ptr<Structure> operatorNum(Code & code) override;
+        std::shared_ptr<Structure> operatorBool(Code & code) override;
+        std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo) override;
+
     };
 }
 

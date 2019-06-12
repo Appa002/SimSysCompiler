@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
+#include <General/builtinTypes.h>
 
 ACC::Structure::~Structure() = default;
 
@@ -78,4 +79,23 @@ void ACC::Structure::cleanUp(Code& code) {
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorDereference(ACC::Code &code) {
     throw std::runtime_error("Operator not implemented");
 }
+
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorChar(ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorNum(ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorBool(ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorPtr(Code &code, Type pointingTo) {
+    throw std::runtime_error("Operator not implemented");
+}
+
+
+
 

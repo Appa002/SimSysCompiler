@@ -5,6 +5,14 @@
 //
 
 #include <Assembly/Code.h>
+#include <Structure/Structures/Char/CharRValueStructure.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
+#include <Structure/Structures/Number/NumRValueStructure.h>
+#include <Structure/Structures/Pointer/PtrRValueStructure.h>
+#include <Structure/Structures/Char/CharLValueStructure.h>
+#include <Structure/Structures/Number/NumLValueStructure.h>
+#include <Structure/Structures/Bool/BoolLValueStructure.h>
+#include <Structure/Structures/Pointer/PtrLValueStructure.h>
 #include "GenericLValueStructure.h"
 
 ACC::GenericLValueStructure::GenericLValueStructure(ACC::Type type, std::string access)
@@ -38,5 +46,22 @@ ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> addres
 
 std::string const &ACC::GenericLValueStructure::getAccess() const {
     return access;
+}
+
+std::shared_ptr<ACC::Structure> ACC::GenericLValueStructure::operatorChar(ACC::Code &code) {
+    return std::make_shared<CharLValueStructure>(access);
+}
+
+std::shared_ptr<ACC::Structure> ACC::GenericLValueStructure::operatorNum(ACC::Code &code) {
+    return std::make_shared<NumLValueStructure>(access);
+}
+
+std::shared_ptr<ACC::Structure> ACC::GenericLValueStructure::operatorBool(ACC::Code &code) {
+    return std::make_shared<BoolLValueStructure>(access);
+}
+
+std::shared_ptr<ACC::Structure> ACC::GenericLValueStructure::operatorPtr(Code &code, Type pointingTo) {
+    return std::make_shared<PtrLValueStructure>(access, pointingTo);
+
 }
 
