@@ -166,7 +166,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl, Symbol::BRACKET,
+        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::OPEN_BRACKET, Symbol::paramsDecl, Symbol::CLOSED_BRACKET,
                              Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
@@ -197,7 +197,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
 
-        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::BRACKET, Symbol::TYPE,
+        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::TYPE,
                                     Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
@@ -210,7 +210,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
 
-        {{Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}}, [](auto children, auto carry){
+        {{Symbol::call, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
             vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
@@ -228,7 +228,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](auto children, auto carry){
+        {{Symbol::call, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
             std::vector<ASTNode*> vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)};
              return new CallNode(AstOperator::CALL, vec);
         }},
@@ -317,18 +317,18 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new SallocNode(AstOperator::SALLOC, vec);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
                 return new CallNode(AstOperator::CALL,
                                    {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             auto call = new CallNode(AstOperator::CALL,
                                {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
             return process(children[3], call);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             std::vector<ASTNode*> vec;
             vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
 
@@ -344,7 +344,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new CallNode(AstOperator::CALL, vec);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             std::vector<ASTNode*> vec;
             vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
 
@@ -381,11 +381,11 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return process(children[1], id);
         }},
 
-         {{Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+         {{Symbol::expr, {Symbol::OPEN_BRACKET, Symbol::expr, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry){
              return process(children[1], nullptr);
          }},
 
-        {{Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+        {{Symbol::expr, {Symbol::OPEN_BRACKET, Symbol::expr, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry){
             return process(children[3], process(children[1]));
         }},
 

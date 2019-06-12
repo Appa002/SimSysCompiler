@@ -7,7 +7,7 @@
 #include <Lexical/Tokens/MathOperatorToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/EOSToken.h>
-#include <Lexical/Tokens/BracketToken.h>
+#include <Lexical/Tokens/ClosedBracketToken.h>
 #include "Production.h"
 
 using namespace ACC;
@@ -31,15 +31,15 @@ TEST(ExpressionizedInputSuit, Parsing) {
             new IdToken("c"),
             new IdToken("a"),
             new MathOperatorToken(MathOperators::PLUS),
-            new BracketToken(BracketKind::OPEN),
+            new ClosedBracketToken(BracketKind::OPEN),
             new IdToken("b"),
             new MathOperatorToken(MathOperators::MINUS),
-            new BracketToken(BracketKind::OPEN),
+            new ClosedBracketToken(BracketKind::OPEN),
             new LiteralToken("1"),
             new MathOperatorToken(MathOperators::PLUS),
             new LiteralToken("2"),
-            new BracketToken(BracketKind::CLOSED),
-            new BracketToken(BracketKind::CLOSED),
+            new ClosedBracketToken(BracketKind::CLOSED),
+            new ClosedBracketToken(BracketKind::CLOSED),
             new EOSToken(),
 
             new PrintToken("c"),
@@ -58,7 +58,7 @@ TEST(ExpressionizedInputSuit, Parsing) {
                 EXPECT_EQ(*(IdToken*)token, *(IdToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";
                 break;
             case Symbol::BRACKET:
-                EXPECT_EQ(*(BracketToken*)token, *(BracketToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";
+                EXPECT_EQ(*(ClosedBracketToken*)token, *(ClosedBracketToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";
                 break;
             case Symbol::MATH_OPERATOR:
                 EXPECT_EQ(*(MathOperatorToken*)token, *(MathOperatorToken*)truth[idx]) << "Token at [" << idx << "] was parsed incorrectly ";

@@ -6,7 +6,7 @@
 
 #include <exception>
 #include <Lexical/Tokens/VarToken.h>
-#include <Lexical/Tokens/BracketToken.h>
+#include <Lexical/Tokens/ClosedBracketToken.h>
 #include <iostream>
 #include "ParseTree.h"
 #include "Production.h"
@@ -251,14 +251,14 @@ ACC::ParseNode *ACC::ParseTree::function(size_t &pos) {
 
     ParseNode *other;
 
-    logable.loadProduction(Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::BRACKET, Symbol::paramsDecl,
-                                              Symbol::BRACKET, Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start});
+    logable.loadProduction(Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::OPEN_BRACKET, Symbol::paramsDecl,
+                                              Symbol::CLOSED_BRACKET, Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start});
     START_PRODUCTION()
             TERMINAL(FUNCTION)
             TERMINAL(DECL)
-            TERMINAL(BRACKET)
+            TERMINAL(OPEN_BRACKET)
             OPTIONAL_NONE_TERMINAL(paramDecl)
-            TERMINAL(BRACKET)
+            TERMINAL(CLOSED_BRACKET)
             TERMINAL(TYPE)
             TERMINAL(COLON)
             TERMINAL(INDENT)
@@ -339,12 +339,12 @@ ACC::ParseNode *ACC::ParseTree::call(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::call, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList,Symbol::BRACKET});
+    logable.loadProduction(Symbol::call, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList,Symbol::CLOSED_BRACKET});
     START_PRODUCTION()
             TERMINAL(ID)
-            TERMINAL(BRACKET)
+            TERMINAL(OPEN_BRACKET)
             OPTIONAL_NONE_TERMINAL(paramList)
-            TERMINAL(BRACKET)
+            TERMINAL(CLOSED_BRACKET)
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
@@ -365,28 +365,28 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::BRACKET, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::expr});
     START_PRODUCTION()
         TERMINAL(ID)
-        TERMINAL(BRACKET)
-        TERMINAL(BRACKET)
+        TERMINAL(OPEN_BRACKET)
+        TERMINAL(CLOSED_BRACKET)
         OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::BRACKET, Symbol::paramsList, Symbol::BRACKET, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr});
     START_PRODUCTION()
             TERMINAL(ID)
-            TERMINAL(BRACKET)
+            TERMINAL(OPEN_BRACKET)
             NONE_TERMINAL(paramList)
-            TERMINAL(BRACKET)
+            TERMINAL(CLOSED_BRACKET)
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::expr, {Symbol::BRACKET, Symbol::expr, Symbol::BRACKET, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::OPEN_BRACKET, Symbol::expr, Symbol::CLOSED_BRACKET, Symbol::expr});
     START_PRODUCTION()
-            TERMINAL(BRACKET)
+            TERMINAL(OPEN_BRACKET)
             NONE_TERMINAL(expr)
-            TERMINAL(BRACKET)
+            TERMINAL(CLOSED_BRACKET)
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
@@ -492,6 +492,7 @@ ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
             OPTIONAL_TERMINAL(COMMA)
             OPTIONAL_NONE_TERMINAL(paramList)
     END_PRODUCTION()
+
 
 
     LOG() << Log::Colour::Magenta << "..done\n";

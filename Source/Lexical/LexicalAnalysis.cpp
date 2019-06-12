@@ -13,7 +13,8 @@
 #include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/VarToken.h>
-#include <Lexical/Tokens/BracketToken.h>
+#include <Lexical/Tokens/ClosedBracketToken.h>
+#include <Lexical/Tokens/OpenBracketToken.h>
 #include <Lexical/Tokens/SallocToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/AssignToken.h>
@@ -171,7 +172,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
 
 void ACC::LexicalAnalysis::call(size_t pos){
     if(matchIgnoreW('(', pos))
-        tokens.push_back(new BracketToken(BracketKind::OPEN));
+        tokens.push_back(new OpenBracketToken());
     else
         throw std::runtime_error("Call must be followed by parameter list, at: " + std::to_string(pos));
 
@@ -195,7 +196,7 @@ void ACC::LexicalAnalysis::call(size_t pos){
         pos++;
     }
 
-    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+    tokens.push_back(new ClosedBracketToken());
 
 
     if(!matchIgnoreW(';', pos))
@@ -212,7 +213,7 @@ void ACC::LexicalAnalysis::call(size_t pos){
 void ACC::LexicalAnalysis::callExpr(size_t &pos) {
     buffer.clear();
     if(matchIgnoreW('(', pos))
-        tokens.push_back(new BracketToken(BracketKind::OPEN));
+        tokens.push_back(new OpenBracketToken());
     else
         throw std::runtime_error("Call must be followed by parameter list, at: " + std::to_string(pos));
 
@@ -236,7 +237,7 @@ void ACC::LexicalAnalysis::callExpr(size_t &pos) {
         pos++;
     }
 
-    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+    tokens.push_back(new ClosedBracketToken());
     pos--;
 }
 
@@ -446,9 +447,9 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
             }
         }
         else if (document.at(pos) == '(')
-            tokens.push_back(new BracketToken(BracketKind::OPEN));
+            tokens.push_back(new OpenBracketToken());
         else if (document.at(pos) == ')')
-            tokens.push_back(new BracketToken(BracketKind::CLOSED));
+            tokens.push_back(new ClosedBracketToken());
         else if (document.at(pos) == '+')
             tokens.push_back(new PlusToken());
         else if (document.at(pos) == '-')
@@ -484,7 +485,7 @@ void ACC::LexicalAnalysis::fn(size_t pos){
 
     buffer.clear();
     if(matchIgnoreW('(', pos))
-        tokens.push_back(new BracketToken(BracketKind::OPEN));
+        tokens.push_back(new OpenBracketToken());
     else
         throw std::runtime_error("Expected parameter list after function declaration; missing `(`, at: " + std::to_string(pos));
 
@@ -525,7 +526,7 @@ void ACC::LexicalAnalysis::fn(size_t pos){
         throw std::runtime_error("Expected declaration in parameter list, at: " + std::to_string(pos));
 
 
-    tokens.push_back(new BracketToken(BracketKind::CLOSED));
+    tokens.push_back(new ClosedBracketToken());
 
     if(!matchIgnoreW(':', pos))
         throw std::runtime_error("Expected return type after function definition, at: " + std::to_string(pos));

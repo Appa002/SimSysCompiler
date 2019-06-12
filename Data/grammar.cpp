@@ -14,10 +14,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "var";
         case Symbol::ID:
             return "id";
-        case Symbol::BRACKET:
-            return "bracket";
-        case Symbol::MATH_OPERATOR:
-            return "math_operator";
+        case Symbol::OPEN_BRACKET:
+            return "open_bracket";
+        case Symbol::CLOSED_BRACKET:
+            return "closed_bracket";
         case Symbol::SYSCALL:
             return "syscall";
         case Symbol::LITERAL:
