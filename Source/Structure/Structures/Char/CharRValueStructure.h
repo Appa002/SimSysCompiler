@@ -5,10 +5,11 @@
 #ifndef SIMSYSCOMPILER_CHARRVALUESTRUCTURE_H
 #define SIMSYSCOMPILER_CHARRVALUESTRUCTURE_H
 
+#include <Structure/RegisterAccessible.h>
 #include "CharStructure.h"
 
 namespace ACC {
-    class CharRValueStructure : public CharStructure{
+    class CharRValueStructure : public CharStructure, public RegisterAccessible{
     private:
         Register reg;
     public:
@@ -18,6 +19,7 @@ namespace ACC {
 
         std::shared_ptr<ACC::Structure> operatorCopy(std::shared_ptr<Structure> address, ACC::Code &code) override;
 
+        Register getRegister() const override;
     };
 }
 

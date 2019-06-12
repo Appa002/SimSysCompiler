@@ -6,10 +6,11 @@
 #define SIMSYSCOMPILER_PTRRVALUE_H
 
 #include <Structure/Structures/GenericLValueStructure.h>
+#include <Structure/RegisterAccessible.h>
 #include "PtrStructure.h"
 
 namespace ACC {
-    class PtrRValueStructure : public PtrStructure {
+    class PtrRValueStructure : public PtrStructure, public RegisterAccessible {
     public:
         Register reg;
         std::string access;
@@ -20,6 +21,7 @@ namespace ACC {
         std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> other, Code &code) override;
 
         void loadToRegister(Register reg, Code& code) override;
+        Register getRegister() const override;
 
     };
 }

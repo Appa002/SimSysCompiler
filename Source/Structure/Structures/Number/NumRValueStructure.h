@@ -8,15 +8,17 @@
 #include <Structure/Structure.h>
 #include "Structure/Structures/ElementaryStructure.h"
 #include <Structure/Structures/Number/NumStructure.h>
+#include <Structure/RegisterAccessible.h>
 
 namespace ACC {
-    class NumRValueStructure : public NumStructure {
+    class NumRValueStructure : public NumStructure, public RegisterAccessible {
     private:
         Register reg;
     public:
         explicit NumRValueStructure(Register reg);
 
         void loadToRegister(Register reg, Code& code) override;
+        Register getRegister() const override;
 
         std::shared_ptr<ACC::Structure> operatorCopy(std::shared_ptr<Structure> address, ACC::Code &code) override;
 

@@ -49,4 +49,8 @@ ACC::PtrRValueStructure::PtrRValueStructure(std::string access, ACC::Type type)
         : PtrStructure(ValueCategory::rvalue, type), access(std::move(access)), reg(Register::r15) {
 }
 
+ACC::Register ACC::PtrRValueStructure::getRegister() const {
+    return reg;
+}
+
 

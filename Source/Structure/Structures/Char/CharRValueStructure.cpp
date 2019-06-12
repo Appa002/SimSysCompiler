@@ -48,3 +48,7 @@ void ACC::CharRValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
     auto &fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(1, reg) + ", " + registerToString(1, this->reg));
 }
+
+ACC::Register ACC::CharRValueStructure::getRegister() const {
+    return reg;
+}

@@ -36,3 +36,7 @@ void ACC::BoolRValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
     fn.writeLine("mov " + registerToString(1, reg) + ", " + registerToString(1, this->reg));
 }
 
+ACC::Register ACC::BoolRValueStructure::getRegister() const {
+    return reg;
+}
+
