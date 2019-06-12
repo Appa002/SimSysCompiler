@@ -6,13 +6,14 @@
 #define SIMSYSCOMPILER_ELEMENTARYLVALUESTRUCTURE_H
 
 #include "ElementaryStructure.h"
+#include <Structure/AsmAccessible.h>
 
 namespace ACC {
-    class GenericLValueStructure : public ElementaryStructure{
-    protected:
+    class GenericLValueStructure : public AsmAccessible, public ElementaryStructure{
+    private:
         std::string access;
     public:
-        virtual std::string const & getAccess();
+        std::string const & getAccess() const override;
         explicit GenericLValueStructure(Type type, std::string access);
 
         void loadToRegister(Register reg, Code& code) override;

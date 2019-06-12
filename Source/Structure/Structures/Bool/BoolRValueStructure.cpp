@@ -21,7 +21,7 @@ ACC::BoolRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, 
     }
 
     if(address->vCategory == ValueCategory::lvalue){
-        auto addressAsLValue = dynamic_cast<GenericLValueStructure*>(address.get());
+        auto addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
         auto& fn = code.getFnSymbol();
         fn.writeLine("mov [" + addressAsLValue->getAccess() + "], " + registerToString(1, reg));
         return std::make_shared<BoolLValueStructure>(addressAsLValue->getAccess());

@@ -11,7 +11,7 @@
 #include "Structure/Structures/GenericLValueStructure.h"
 
 namespace ACC{
-    class NumLValueStructure : public NumStructure{
+    class NumLValueStructure : public NumStructure, public AsmAccessible{
     protected:
         std::string access;
     public:
@@ -19,7 +19,7 @@ namespace ACC{
 
         void loadToRegister(Register reg, Code& code) override;
         std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
-        std::string getAccess() const;
+        std::string const & getAccess() const override;
 
     };
 }

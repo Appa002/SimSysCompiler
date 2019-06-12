@@ -6,9 +6,10 @@
 #define SIMSYSCOMPILER_CHARLVALUESTRUCTURE_H
 
 #include "CharStructure.h"
+#include <Structure/AsmAccessible.h>
 
 namespace ACC {
-    class CharLValueStructure : public CharStructure{
+    class CharLValueStructure : public CharStructure, public AsmAccessible{
     protected:
         std::string access;
     public:
@@ -16,7 +17,7 @@ namespace ACC {
 
         void loadToRegister(Register reg, Code& code) override;
         std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
-        std::string getAccess() const;
+        std::string const & getAccess() const override;
     };
 }
 

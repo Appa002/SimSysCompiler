@@ -13,30 +13,30 @@ ACC::GenericLValueStructure::GenericLValueStructure(ACC::Type type, std::string 
 
 }
 
-std::string const &ACC::GenericLValueStructure::getAccess() {
-    return access;
-}
-
 void ACC::GenericLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
-    fn.writeLine("mov " + registerToString(8, reg) + ", [" + access + "]");
+    fn.writeLine("mov " + registerToString(type.getSize(), reg) + ", [" + access + "]");
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->vCategory == ValueCategory::lvalue) {
         auto &fn = code.getFnSymbol();
-        auto *addressAsLValue = dynamic_cast<GenericLValueStructure *>(address.get());
+        auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
 
         Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(8, reg);
+        std::string regStr = registerToString(type.getSize(), reg);
 
         fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->access + " ], " + regStr);
+        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
         code.freeRegister(reg);
 
         return address;
     }
     return nullptr;
+}
+
+std::string const &ACC::GenericLValueStructure::getAccess() const {
+    return access;
 }
 

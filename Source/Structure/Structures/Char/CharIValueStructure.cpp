@@ -24,7 +24,7 @@ ACC::CharIValueStructure::CharIValueStructure(uint8_t value) : value(value), Cha
 std::shared_ptr<ACC::Structure>
 ACC::CharIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = (CharLValueStructure *) address.get();
+        auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
 
         auto &fn = code.getFnSymbol();
 

@@ -9,11 +9,11 @@
 #include "BoolStructure.h"
 
 namespace ACC{
-    class BoolLValueStructure : public BoolStructure{
+    class BoolLValueStructure : public BoolStructure, public AsmAccessible{
     protected:
         std::string access;
     public:
-        std::string const & getAccess();
+        std::string const & getAccess() const override;
         explicit BoolLValueStructure(std::string access);
 
         void loadToRegister(Register reg, Code& code) override;

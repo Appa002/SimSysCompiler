@@ -18,7 +18,7 @@ ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), NumSt
 std::shared_ptr<ACC::Structure>
 ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = (NumLValueStructure *) address.get();
+        auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
 
         auto &fn = code.getFnSymbol();
 

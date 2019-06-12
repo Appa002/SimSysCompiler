@@ -15,44 +15,36 @@
 #include <Structure/Structures/GenericLValueStructure.h>
 
 ACC::CharRValueStructure::CharRValueStructure(ACC::Register reg)
-        : reg(reg), CharStructure(ValueCategory::rvalue){
+        : reg(reg), CharStructure(ValueCategory::rvalue) {
     registerInUse.push_back(reg);
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorCopy(std::shared_ptr<Structure> address,
-                                                                      ACC::Code &code) {
-    if(address->vCategory == ValueCategory::rvalue) {
+                                                                       ACC::Code &code) {
+    if (address->vCategory == ValueCategory::rvalue) {
         auto *addressAsNum = dynamic_cast<ElementaryStructure *>(address.get());
         Register other = code.getFreeRegister();
         addressAsNum->loadToRegister(other, code);
         return std::make_shared<CharRValueStructure>(other);
     }
 
-    if(address->vCategory == ValueCategory::lvalue){
-        auto *addressAsLvalue = dynamic_cast<CharLValueStructure *>(address.get());
-        if(addressAsLvalue != nullptr) {
-            auto &fn = code.getFnSymbol();
+    if (address->vCategory == ValueCategory::lvalue) {
+        auto *addressAsLvalue = dynamic_cast<AsmAccessible *>(address.get());
 
-            fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(1, reg));
+        auto &fn = code.getFnSymbol();
 
-            return address;
-        }else{
-            auto *addressAsLvalue = dynamic_cast<GenericLValueStructure *>(address.get());
-            auto &fn = code.getFnSymbol();
+        fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(1, reg));
 
-            fn.writeLine("mov [" + addressAsLvalue->getAccess() + "], " + registerToString(1, reg));
-
-            return address;
-        }
+        return address;
     }
 
     return nullptr;
 }
 
 void ACC::CharRValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
-    if(reg == this->reg)
+    if (reg == this->reg)
         return;
 
-    auto& fn = code.getFnSymbol();
+    auto &fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(1, reg) + ", " + registerToString(1, this->reg));
 }
