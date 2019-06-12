@@ -391,7 +391,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
          {{Symbol::expr, {Symbol::STAR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
              if(carry != nullptr) // Its binary therefor addition
-                 return new AddNode(AstOperator::ADD, {carry, process(children[1], nullptr)});
+                 return new MultiplicationNode(AstOperator::MULTIPLICATION, {carry, process(children[1], nullptr)});
 
              // Its unary therefor dereference
              return new DereferenceNode(AstOperator::DEREFERENCE, {process(children[1], nullptr)});
