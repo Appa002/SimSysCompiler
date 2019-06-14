@@ -28,7 +28,7 @@ namespace ACC::Log {
     private:
         Logger& logger;
         LogLevel level;
-        Colour colour;
+        Colour colour = Colour::Cleared;
     public:
         LogStream (Logger& logger, LogLevel level);
         ~LogStream() override;
