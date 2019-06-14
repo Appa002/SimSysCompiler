@@ -179,6 +179,7 @@ void ACC::Log::Logger::logToFile(ACC::Log::LogLevel level, std::string str) {
 }
 
 void ACC::Log::Logger::createHeading(std::string str) {
+    this->lock();
     if(!isSilent)
         std::cout << ANSI_CODES::heading << str << ANSI_CODES::clear << std::endl;
     str = R"(</div><div id="heading">)" + str + R"(</div><div id="running" style="display: none;">)";
@@ -189,7 +190,7 @@ void ACC::Log::Logger::createHeading(std::string str) {
     file.flush();
 
     head += str.size();
-
+    this->unlock();
 }
 
 void ACC::Log::Logger::silence(bool b) {
