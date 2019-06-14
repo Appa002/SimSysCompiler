@@ -60,7 +60,7 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         return;
 
     std::vector<std::string> keyOptions = {
-            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for", "*", "salloc"
+            "fn", "var", "exit", "syscall", "return", "if", "elif", "else", "while", "for", "*", "salloc", "import"
     };
 
     if(shallCheckIndent) {
@@ -146,6 +146,11 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
             buffer.clear();
             salloc(pos + 1);
             return;
+        }else if ("import" == buffer){
+            buffer.clear();
+            import(pos + 1);
+            return;
+
         }
     }
     else if (isSymbol(buffer) && (document.size() - 1 == pos || contains(document.at(pos + 1),
@@ -417,7 +422,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
             tokens.push_back(new ComparisionToken(ComparisionTokenKind::Greater));
 
         else if(document.at(pos) == '"')
-            parseStringLiteral(pos);
+            tokens.push_back(new LiteralToken(parseStringLiteral(pos), Type(BuiltIns::ptrType, BuiltIns::charType)));
         else if(document.at(pos) == '\''){
             if(document.at(pos + 1) == '\\'){
                 char other = document.at(pos + 2);
@@ -592,9 +597,9 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
 
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
-
-    preProcessDocument();
     start(0);
+    postProcessDocument();
+
 }
 
 ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other) : buffer(other.buffer), tokens(other.tokens),
@@ -611,12 +616,18 @@ ACC::LexicalAnalysis::~LexicalAnalysis() {
         return;
 
     delete globalScope;
+
+    if(!shallDeleteTokens)
+        return;
+
     for(const auto& it : tokens)
         delete it;
 }
 
-void ACC::LexicalAnalysis::preProcessDocument() {
-    document += "\nexit 0;";
+void ACC::LexicalAnalysis::postProcessDocument() {
+    for(size_t i = 1; i < indentList.size(); i++){
+        tokens.push_back(new ExtentToken());
+    }
 }
 
 void ACC::LexicalAnalysis::printToken() {
@@ -715,7 +726,7 @@ ACC::LexicalAnalysis::matchAsLongAs(size_t &pos, std::function<bool(void)> condi
     return b;
 }
 
-void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
+std::string ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
     readUntilNextLine(pos);
     if(document.at(pos) != '"')
         throw std::runtime_error("String literal not starting with `\"`");
@@ -753,7 +764,7 @@ void ACC::LexicalAnalysis::parseStringLiteral(size_t &pos) {
     if(document.at(pos) != '"')
         throw std::runtime_error("String literal not ending with `\"`, at:" + std::to_string(pos));
 
-    tokens.push_back(new LiteralToken(buffer, Type(BuiltIns::ptrType, BuiltIns::charType)));
+    return buffer;
 }
 
 ACC::TypeId ACC::LexicalAnalysis::isType(std::string str) {
@@ -888,6 +899,50 @@ void ACC::LexicalAnalysis::salloc(size_t pos) {
     start(pos + 1, true);
 }
 
+void ACC::LexicalAnalysis::import(size_t pos) {
+
+    if(!matchIgnoreW('"', pos))
+        throw std::runtime_error("Missing path after import statement, at: " + std::to_string(pos));
 
 
+    std::string path = parseStringLiteral(pos);
+    pos++;
+
+    if(!matchIgnoreW(';', pos))
+        throw std::runtime_error("Missing `;` after import statement, at: " + std::to_string(pos));
+
+    auto l = LexicalAnalysis(path);
+    integrateLexicalAnalysis(*this, l);
+    l.dontAutoDeleteTokens();
+
+    pos++;
+    buffer.clear();
+    start(pos, true);
+
+}
+
+void ACC::integrateLexicalAnalysis(ACC::LexicalAnalysis &subject, const ACC::LexicalAnalysis &other) {
+    for (auto const & sym : other.globalScope->symbolTable){
+        if(subject.globalScope->symbolTable.find(sym.first) != subject.globalScope->symbolTable.cend())
+            throw std::runtime_error("Variable redefinition.");
+        subject.globalScope->symbolTable[sym.first] = sym.second;
+    }
+
+    for (auto const & type : other.typesTable){
+        if(subject.typesTable.find(type.first) == subject.typesTable.cend())
+            subject.typesTable[type.first] = type.second;
+    }
+
+    subject.tokens.insert(subject.tokens.begin(), other.tokens.begin(), other.tokens.end());
+}
+
+void ACC::LexicalAnalysis::dontAutoDeleteTokens(bool b) {
+    shallDeleteTokens = !b;
+}
+
+void ACC::LexicalAnalysis::addZeroExit() {
+    tokens.push_back(new ExitToken());
+    tokens.push_back(new LiteralToken((uint64_t)0, Type(BuiltIns::numType)));
+    tokens.push_back(new EOSToken);
+}
 

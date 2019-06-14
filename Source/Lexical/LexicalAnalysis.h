@@ -25,11 +25,12 @@ namespace ACC {
         int refCount = 0;
         std::unordered_map<std::string, TypeId> typesTable;
         std::vector<size_t> indentList;
+        bool shallDeleteTokens = true;
 
-        ScopedSymbolTable<Symbol>* curScope;
-        ScopedSymbolTable<Symbol>* globalScope;
+        ScopedSymbolTable<Symbol>* curScope = nullptr;
+        ScopedSymbolTable<Symbol>* globalScope = nullptr;
+        void postProcessDocument();
 
-        void preProcessDocument();
         bool isSymbol(std::string idf);
         void emplaceSymbol(std::string idf, Symbol symbol);
         bool isNumber(char c);
@@ -56,12 +57,13 @@ namespace ACC {
         void call(size_t pos);
         void callExpr(size_t& pos);
         void type(size_t& pos);
-        void parseStringLiteral(size_t &pos);
+        std::string parseStringLiteral(size_t &pos);
         void ifStmt(size_t pos);
         void elseStmt(size_t pos);
         void whileStmt(size_t pos);
         void forStmt(size_t pos);
         void dereferencingAsignment(size_t pos);
+        void import(size_t pos);
 
 
     public:
@@ -74,5 +76,12 @@ namespace ACC {
         const std::vector<IToken*>::iterator begin();
         const std::vector<IToken*>::iterator end();
         std::vector<IToken*> const & data();
+
+        friend void integrateLexicalAnalysis(LexicalAnalysis & subject, LexicalAnalysis const & other);
+        void dontAutoDeleteTokens(bool b = true);
+        void addZeroExit();
+
     };
+    void integrateLexicalAnalysis(LexicalAnalysis & subject, LexicalAnalysis const & other);
+
 }

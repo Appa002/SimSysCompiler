@@ -46,6 +46,7 @@ void runToolchainLinux(std::string filePath){
 int main() {
     LOG.silence(false);
     auto l = LexicalAnalysis("./test.txt");
+    l.addZeroExit();
     l.printToken();
     auto p = ParseTree(l);
     p.getRoot()->print();
