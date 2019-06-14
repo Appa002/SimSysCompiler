@@ -9,6 +9,7 @@
 #include <sstream>
 #include <fstream>
 #include <General/Singleton.h>
+#include <mutex>
 
 #define LOG (*ACC::Log::Logger::get())
 
@@ -27,6 +28,7 @@ namespace ACC::Log {
     private:
         Logger& logger;
         LogLevel level;
+        Colour colour;
     public:
         LogStream (Logger& logger, LogLevel level);
         ~LogStream() override;
@@ -37,6 +39,7 @@ namespace ACC::Log {
 
     class Logger : public Singleton<Logger>{
     private:
+        std::mutex mtx;
         bool isSilent = false;
         Colour colour = Colour::Cleared;
         std::string path;
@@ -51,6 +54,9 @@ namespace ACC::Log {
         void loadColour(Colour colour);
         void createHeading(std::string str);
         void silence(bool b = true);
+
+        void lock();
+        void unlock();
     };
 }
 

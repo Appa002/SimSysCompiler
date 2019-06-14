@@ -72,11 +72,14 @@ logger(logger), level(level){
 }
 
 ACC::Log::LogStream::~LogStream() {
+    logger.lock();
+    this->logger.loadColour(colour);
     logger.log(level, str());
+    logger.unlock();
 }
 
 ACC::Log::LogStream &ACC::Log::LogStream::operator<<(ACC::Log::Colour colour) {
-    this->logger.loadColour(colour);
+    this->colour = colour;
     return *this;
 }
 
@@ -191,5 +194,13 @@ void ACC::Log::Logger::createHeading(std::string str) {
 
 void ACC::Log::Logger::silence(bool b) {
     isSilent = b;
+}
+
+void ACC::Log::Logger::lock() {
+    mtx.lock();
+}
+
+void ACC::Log::Logger::unlock() {
+    mtx.unlock();
 }
 
