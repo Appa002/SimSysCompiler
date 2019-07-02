@@ -592,9 +592,14 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     curScope = new ScopedSymbolTable<Symbol>();
     globalScope = curScope;
 
+    // Built In types
     typesTable["num"] = BuiltIns::numType;
     typesTable["char"] = BuiltIns::charType;
-
+    //
+    // Built in Functions
+    emplaceSymbol("char", Symbol::FUNCTION);
+    emplaceSymbol("num", Symbol::FUNCTION);
+    //
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
     start(0);

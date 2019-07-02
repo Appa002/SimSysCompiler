@@ -7,7 +7,7 @@
 #include <Logger/Logger.h>
 #include "Code.h"
 #include <General/utils.h>
-
+#include <BuiltInFunctions/getFunctions.h>
 
 ACC::Code::Code() {
     globalScope = std::make_shared<ScopedSymbolTable<std::shared_ptr<Structure>>>();
@@ -16,6 +16,11 @@ ACC::Code::Code() {
     emplaceFnSymbol("_start");
     for (size_t i = 0; i < 14; i++) // TODO: This is a bit disgusting.
         freeRegisterTable[(Register) i] = true;
+
+    // Builtin Functions
+    fnTable["char"] = BuiltIns::getCharFn();
+    fnTable["num"] = BuiltIns::getNumFn();
+
 };
 
 std::shared_ptr<ACC::Structure> ACC::Code::getVarSymbol(std::string sym) {
