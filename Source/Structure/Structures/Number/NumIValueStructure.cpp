@@ -54,7 +54,7 @@ int64_t ACC::NumIValueStructure::getValue() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of  type `num` to type char");
+    return std::make_shared<CharIValueStructure>((uint8_t)value);
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorNum(ACC::Code &code) {
@@ -66,6 +66,7 @@ std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorBool(ACC::Code 
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorPtr(Code &code, Type pointingTo) {
-    throw std::runtime_error("No implicit conversion of  type `num` to type ptr");
+    return std::make_shared<PtrIValueStructure>(value, pointingTo);
+
 }
 

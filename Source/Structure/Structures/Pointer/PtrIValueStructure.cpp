@@ -55,7 +55,7 @@ std::shared_ptr<ACC::Structure> ACC::PtrIValueStructure::operatorChar(ACC::Code 
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrIValueStructure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of type `ptr` to type `num`.");
+    return std::make_shared<NumIValueStructure>(value);
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrIValueStructure::operatorBool(ACC::Code &code) {
