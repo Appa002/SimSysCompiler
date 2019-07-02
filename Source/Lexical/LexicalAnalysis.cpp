@@ -78,6 +78,9 @@ void ACC::LexicalAnalysis::start(size_t pos, bool shallCheckIndent){
         }
         depth = newDepth;
     }
+    if(pos >= document.size())
+        return;
+
     buffer += document.at(pos);
     if(contains(buffer, keyOptions)){
 
@@ -706,6 +709,8 @@ int ACC::LexicalAnalysis::readUntilNextLine(size_t& pos){
     bool shallCount = false;
     int newGap = 0;
 
+
+
     while(contains(document.at(pos), {" ", "\n", "\r"})){
         if(document.at(pos) == '\n'){
             shallCount = true;
@@ -713,6 +718,8 @@ int ACC::LexicalAnalysis::readUntilNextLine(size_t& pos){
         }else if(document.at(pos) == ' ')
             newGap++;
         ++pos;
+        if(pos >= document.size())
+            return 0;
     }
     return newGap;
 }
