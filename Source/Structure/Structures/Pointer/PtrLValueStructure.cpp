@@ -46,15 +46,15 @@ std::string const &ACC::PtrLValueStructure::getAccess() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrLValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `ptr` to type `char`.");
+    throw std::runtime_error("No implicit conversion of type `ptr` to type `char`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrLValueStructure::operatorNum(ACC::Code &code) {
-    return std::make_shared<NumLValueStructure>(access);
+    throw std::runtime_error("No implicit conversion of type `ptr` to type `num`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrLValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `ptr` to type `char`.");
+    throw std::runtime_error("No implicit conversion of type `ptr` to type `bool`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrLValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {

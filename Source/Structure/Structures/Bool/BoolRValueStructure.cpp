@@ -45,11 +45,11 @@ ACC::Register ACC::BoolRValueStructure::getRegister() const {
 
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `bool` to type `char`.");
+    throw std::runtime_error("No implicit conversion of type `bool` to type `char`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `bool` to type `num`.");
+    throw std::runtime_error("No implicit conversion of type `bool` to type `num`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorBool(ACC::Code &code) {
@@ -57,6 +57,7 @@ std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorBool(ACC::Code
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
-    throw std::runtime_error("Can't convert type `bool` to type `ptr`.");
+    throw std::runtime_error("No implicit conversion of type `bool` to type `ptr`.");
+
 }
 

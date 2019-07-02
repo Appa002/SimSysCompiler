@@ -68,15 +68,15 @@ ACC::Register ACC::PtrRValueStructure::getRegister() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `ptr` to type `char`.");
+    throw std::runtime_error("No implicit conversion of type `ptr` to type `char`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorNum(ACC::Code &code) {
-    return std::make_shared<NumRValueStructure>(reg);
+    throw std::runtime_error("No implicit conversion of type `ptr` to type `num`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `ptr` to type `char`.");
+    throw std::runtime_error("No implicit conversion of type `ptr` to type `bool`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
