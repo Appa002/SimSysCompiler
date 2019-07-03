@@ -15,6 +15,8 @@ namespace ACC{
         FunctionNode(AstOperator op, std::vector<ASTNode *> children);
 
         std::string copyIntoStackFrame(size_t offset, size_t loc, size_t size, ACC::Code &code);
+
+        std::vector<Type> getArgumentTypes();
     };
 }
 

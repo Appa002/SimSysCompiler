@@ -36,6 +36,8 @@ namespace ACC{
     public:
         Code();
 
+        std::string mangleName(std::string name, std::vector<ACC::Type> argsType);
+
         void reserveRegister(Register reg);
         void freeRegister(Register reg);
         void freeRegister(std::vector<Register> regs);

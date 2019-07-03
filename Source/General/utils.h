@@ -30,7 +30,6 @@ std::string numberToLetterSequence(long number);
 
 
 
-
 /*! Splits up an object (\p itrAble) of arbitrary type `T` at every 4th element; calls function f with a vector containing
  * the 4 elements from the last split.
  * If the dataset contains elements at the end of the dataset which wouldn't naturally fall into a packet (e.g.: the

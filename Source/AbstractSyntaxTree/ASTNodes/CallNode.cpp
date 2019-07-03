@@ -12,6 +12,8 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     size_t totalRspSubtracted = 0;
 
+    std::vector<Type> argumentTypes;
+
     for(size_t i = children.size() - 1; i >= 1; i--){
         auto value = children[i]->generate(code);
         fn.writeLine("sub rsp, " + std::to_string(value->type.getSize()));
@@ -19,9 +21,14 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
 
         value->operatorCopy(std::make_shared<GenericLValueStructure>(value->type, "rsp"), code);
         value->cleanUp(code);
+
+        argumentTypes.push_back(value->type);
     }
 
     auto name = children[0]->data.asT<std::string>();
+    name = code.mangleName(name, argumentTypes);
+
+
     fn.writeLine("call " + name);
     fn.writeLine("add rsp, " + std::to_string(totalRspSubtracted));
 

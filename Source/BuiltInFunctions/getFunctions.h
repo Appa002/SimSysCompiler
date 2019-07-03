@@ -7,6 +7,6 @@
 #include <Assembly/Fn.h>
 
 namespace ACC::BuiltIns{
-    Fn getCharFn();
-    Fn getNumFn();
+    Fn getCharFn_num();
+    Fn getNumFn_char();
 }

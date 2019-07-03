@@ -8,6 +8,7 @@
 #include "Code.h"
 #include <General/utils.h>
 #include <BuiltInFunctions/getFunctions.h>
+#include <General/builtinTypes.h>
 
 ACC::Code::Code() {
     globalScope = std::make_shared<ScopedSymbolTable<std::shared_ptr<Structure>>>();
@@ -18,8 +19,8 @@ ACC::Code::Code() {
         freeRegisterTable[(Register) i] = true;
 
     // Builtin Functions
-    fnTable["char"] = BuiltIns::getCharFn();
-    fnTable["num"] = BuiltIns::getNumFn();
+    fnTable[mangleName("char", {Type(BuiltIns::numType)})] = BuiltIns::getCharFn_num();
+    fnTable[mangleName("num", {Type(BuiltIns::charType)})] = BuiltIns::getNumFn_char();
 
 };
 
@@ -121,6 +122,24 @@ void ACC::Code::popScope() {
 std::string ACC::Code::getUUID() {
     return numberToLetterSequence(uuidCounter++);
 }
+
+std::string ACC::Code::mangleName(std::string name, std::vector<ACC::Type> argsType) {
+    // Format:
+    // <name> ? <argsType> _ .... _
+    auto typeStr = [](Type t){
+        // Format:
+        // <typeID> . <pointingTO>
+        return std::to_string(t.getId()) + "." + std::to_string(t.getPointingTo().getId());
+    };
+
+    name += "?";
+
+    for (Type t : argsType)
+        name += typeStr(t);
+
+    return name;
+}
+
 
 std::string ACC::registerToString(size_t size, ACC::Register reg) {
     switch (reg) {

@@ -8,7 +8,7 @@
 #include <General/builtinTypes.h>
 
 namespace ACC::BuiltIns::Num{
-    Fn get(){
+    Fn get_char(){
         Fn fn;
         fn.returnType = Type(BuiltIns::numType);
         fn.symbol = "num";

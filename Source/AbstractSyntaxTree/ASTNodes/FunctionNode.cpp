@@ -10,8 +10,14 @@
 
 
 
+
 std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
-    auto& fn = code.emplaceFnSymbol(children[0]->data.asT<std::string>());
+    auto argumentTypes = getArgumentTypes();
+    auto name = children[0]->data.asT<std::string>();
+    name = code.mangleName(name, argumentTypes);
+
+
+    auto& fn = code.emplaceFnSymbol(name);
     fn.returnType = children[1]->data.asT<Type>();
 
     size_t offset = 16;
@@ -70,4 +76,15 @@ ACC::FunctionNode::copyIntoStackFrame(size_t offset, size_t loc, size_t size, AC
 ACC::FunctionNode::FunctionNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op,
                                                                                                      std::move(children)) {
 
+}
+
+std::vector<ACC::Type> ACC::FunctionNode::getArgumentTypes() {
+    std::vector<Type> argumentsType;
+
+    for(size_t i = 2; i < children.size() - 1; i++) {
+        auto type = children[i]->children[1]->data.asT<Type>();
+        argumentsType.push_back(type);
+    }
+
+    return argumentsType;
 }
