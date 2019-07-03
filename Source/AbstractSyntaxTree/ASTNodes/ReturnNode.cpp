@@ -12,6 +12,27 @@ std::shared_ptr<ACC::Structure> ACC::ReturnNode::generate(ACC::Code &code) {
         asElem->loadToRegister(Register::rA, code);
     else
         ; //TODO: Figure out what to do for none elementary types....
+        /*
+         * TODO:
+         * Apparently the caller puts the address of where the complex object(returning object) is going to be stored
+         * on his stack into rdi. The callee then uses this address to create the complex object at rdi.
+         * e.g.: (ASM)
+         * caller:
+         * sub rsp 24 ; 24 size of complex object
+         * lea rdi [rsp] ; address of complex object
+         * call callee
+         * ...
+         *
+         * callee:
+         * enter
+         *
+         * mov [rdi], 90 ; initialises complex object
+         * mov [rdi-8], 91 ;
+         * .....
+         * leave
+         * ret
+         *
+         * */
 
     returnValue->cleanUp(code);
 
