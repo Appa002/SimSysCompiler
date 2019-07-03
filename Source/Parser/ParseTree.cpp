@@ -440,6 +440,12 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::expr, {Symbol::MODULO, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(MODULO)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
 
     LOG() << Log::Colour::Magenta << "..done\n";
 

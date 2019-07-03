@@ -56,6 +56,8 @@ namespace ACC {
         virtual std::shared_ptr<Structure> operatorMultiplication(std::shared_ptr<Structure> amount, Code &code);
         virtual std::shared_ptr<Structure> operatorDivision(std::shared_ptr<Structure> amount, Code &code);
 
+        virtual std::shared_ptr<Structure> operatorModulo(std::shared_ptr<Structure> other, Code &code);
+
         virtual std::shared_ptr<Structure> operatorEqual(std::shared_ptr<Structure> other, Code &code);
         virtual std::shared_ptr<Structure> operatorNotEqual(std::shared_ptr<Structure> other, Code &code);
         virtual std::shared_ptr<Structure> operatorLess(std::shared_ptr<Structure> other, Code &code);

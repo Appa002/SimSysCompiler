@@ -30,6 +30,7 @@
 #include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
+#include <AbstractSyntaxTree/ASTNodes/ModuloNode.h>
 #include <Lexical/Tokens/SallocToken.h>
 #include <AbstractSyntaxTree/ASTNodes/DereferenceNode.h>
 
@@ -410,6 +411,11 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::expr, {Symbol::SLASH, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
             auto vec = {carry, process(children[1], nullptr)};
             return new DivisionNode(AstOperator::DIVISION, vec);
+        }},
+
+        {{Symbol::expr, {Symbol::MODULO, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            auto vec = {carry, process(children[1], nullptr)};
+            return new ModuloNode(AstOperator::DIVISION, vec);
         }},
 
         {{Symbol::expr, {Symbol::CMP, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{

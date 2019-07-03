@@ -12,6 +12,7 @@ namespace ACC {
         empty = -1,
         VAR = 0,
         DECL,
+        MODULO,
         ELIF,
         GOES_TO,
         FOR,

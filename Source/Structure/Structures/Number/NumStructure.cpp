@@ -294,3 +294,32 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreaterEqual(std::sha
 
     return std::make_shared<BoolRValueStructure>(lhs);
 }
+
+std::shared_ptr<ACC::Structure>
+ACC::NumStructure::operatorModulo(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
+    if(other->type != Type(BuiltIns::numType))
+        throw std::runtime_error("Arithmetic operator expects right hand side to be of type `num`");
+
+    auto &fn = code.getFnSymbol();
+    auto amountAsNum = dynamic_cast<NumStructure *>(other.get());
+
+    code.reserveRegister(Register::rD);
+    code.reserveRegister(Register::rA);
+    code.reserveRegister(Register::rC);
+
+    fn.writeLine("mov rdx, 0");
+
+    this->loadToRegister(Register::rA, code);
+    amountAsNum->loadToRegister(Register::rC, code);
+
+    fn.writeLine("div rcx");
+
+    Register reg = code.getFreeRegister();
+    fn.writeLine("mov " + registerToString(8, reg) + ", rdx"); // Div stores in rax quotient and rdx stores remainder.
+
+    code.freeRegister(Register::rA);
+    code.freeRegister(Register::rD);
+    code.freeRegister(Register::rC);
+
+    return std::make_shared<NumRValueStructure>(reg);
+}

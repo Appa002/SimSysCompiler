@@ -96,6 +96,11 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorPtr(Code &code, Type poi
     throw std::runtime_error("Operator not implemented");
 }
 
+std::shared_ptr<ACC::Structure>
+ACC::Structure::operatorModulo(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+
 
 
 

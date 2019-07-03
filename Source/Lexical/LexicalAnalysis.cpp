@@ -16,6 +16,7 @@
 #include <Lexical/Tokens/ClosedBracketToken.h>
 #include <Lexical/Tokens/OpenBracketToken.h>
 #include <Lexical/Tokens/SallocToken.h>
+#include <Lexical/Tokens/ModuloToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/AssignToken.h>
 #include <Lexical/Tokens/DeclToken.h>
@@ -382,7 +383,7 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
     while(!contains((readUntilNextLine(pos), document.at(pos)), exitTokens)){
         bool matched = matchAsLongAs(pos,
                       [&](){return !contains(document.at(pos), {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
-                                                                "<", ">", "!", ":", "\'"});},
+                                                                "<", ">", "!", ":", "\'", "%"});},
                       [&](){
                           buffer += document.at(pos);
         });
@@ -417,6 +418,9 @@ void ACC::LexicalAnalysis::expr(size_t& pos, std::vector<std::string> exitTokens
 
         else if (document.at(pos) == '!')
             tokens.push_back(new NotToken());
+
+        else if (document.at(pos) == '%')
+            tokens.push_back(new ModuloToken());
 
         else if(document.at(pos) == '<')
             tokens.push_back(new ComparisionToken(ComparisionTokenKind::Less));

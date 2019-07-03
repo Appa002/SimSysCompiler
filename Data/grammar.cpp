@@ -102,6 +102,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "PLUS";
         case Symbol::MINUS:
             return "SUBTRACT";
+        case Symbol::MODULO:
+            return "MODULO";
     }
     throw std::runtime_error("Symbol not known.");
 }
