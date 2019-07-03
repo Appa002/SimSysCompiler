@@ -24,6 +24,9 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorForNext(ACC::Code & c
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
+    if(amount->type != Type(BuiltIns::numType))
+        throw std::runtime_error("Arithmetic operator expects right hand side to be of type `num`");
+
     auto &fn = code.getFnSymbol();
     auto *amountAsElem = dynamic_cast<ElementaryStructure *>(amount.get());
 
@@ -45,21 +48,44 @@ ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorSubtract(std::shared_ptr<ACC::Structure> amount, ACC::Code & code) {
-    return Structure::operatorSubtract(amount, code);
+    if(amount->type != Type(BuiltIns::numType))
+        throw std::runtime_error("Arithmetic operator expects right hand side to be of type `num`");
+
+    auto &fn = code.getFnSymbol();
+    auto *amountAsElem = dynamic_cast<ElementaryStructure *>(amount.get());
+
+    Register lhs = code.getFreeRegister();
+    Register rhs = code.getFreeRegister();
+
+    std::string lhsAsString = registerToString(8, lhs);
+    std::string rhsAsString = registerToString(8, rhs);
+
+    this->loadToRegister(lhs, code);
+    amountAsElem->loadToRegister(rhs, code);
+
+    fn.writeLine("sub " + lhsAsString + ", " + rhsAsString);
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<NumRValueStructure>(lhs);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorMultiplication(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    return Structure::operatorMultiplication(amount, code);
+    throw std::runtime_error("Multiplication with pointers is invalid.");
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorDivision(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    return Structure::operatorDivision(amount, code);
+    throw std::runtime_error("Division with pointers is invalid.");
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
+    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
 
@@ -80,27 +106,117 @@ ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Cod
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorNotEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorNotEqual(other, code);
+    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+
+    auto &fn = code.getFnSymbol();
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
+
+    Register rhs = code.getFreeRegister();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+    otherAsElementary->loadToRegister(rhs, code);
+
+    fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+    fn.writeLine("setne " + registerToString(1, lhs));
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<BoolRValueStructure>(lhs);
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::PtrStructure::operatorLess(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorLess(other, code);
+ACC::PtrStructure::operatorLess(std::shared_ptr<ACC::Structure> other, ACC::Code &code){
+    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+
+    auto &fn = code.getFnSymbol();
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
+
+    Register rhs = code.getFreeRegister();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+    otherAsElementary->loadToRegister(rhs, code);
+
+    fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+    fn.writeLine("setl " + registerToString(1, lhs));
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<BoolRValueStructure>(lhs);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorGreater(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorGreater(other, code);
+    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+
+    auto &fn = code.getFnSymbol();
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
+
+    Register rhs = code.getFreeRegister();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+    otherAsElementary->loadToRegister(rhs, code);
+
+    fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+    fn.writeLine("setg " + registerToString(1, lhs));
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<BoolRValueStructure>(lhs);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorLessEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorLessEqual(other, code);
+    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+
+    auto &fn = code.getFnSymbol();
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
+
+    Register rhs = code.getFreeRegister();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+    otherAsElementary->loadToRegister(rhs, code);
+
+    fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+    fn.writeLine("setle " + registerToString(1, lhs));
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<BoolRValueStructure>(lhs);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    return Structure::operatorGreaterEqual(other, code);
+    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+
+    auto &fn = code.getFnSymbol();
+    auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
+
+    Register rhs = code.getFreeRegister();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+    otherAsElementary->loadToRegister(rhs, code);
+
+    fn.writeLine("cmp " + registerToString(8, lhs) + ", " + registerToString(8, rhs));
+    fn.writeLine("setge " + registerToString(1, lhs));
+
+    code.freeRegister(rhs);
+
+
+    return std::make_shared<BoolRValueStructure>(lhs);
 }
 
 ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType, t.getTypeId())){
