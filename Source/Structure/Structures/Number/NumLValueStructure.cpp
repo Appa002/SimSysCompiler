@@ -61,17 +61,17 @@ std::string const &ACC::NumLValueStructure::getAccess() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorChar(ACC::Code &code) {
-    return std::make_shared<CharLValueStructure>(access);
+    throw std::runtime_error("No implicit conversion between `num` to `char`");
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorNum(ACC::Code &code) {
-    return Structure::operatorNum(code);
+    return shared_from_this();
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorBool(ACC::Code &code) {
-    return Structure::operatorBool(code);
+    throw std::runtime_error("No implicit conversion between `num` to `bool`");
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorPtr(Code &code, Type pointingTo) {
-    return Structure::operatorPtr(code, pointingTo);
+    throw std::runtime_error("No implicit conversion between `num` to `ptr`");
 }

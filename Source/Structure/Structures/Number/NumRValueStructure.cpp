@@ -60,7 +60,7 @@ ACC::Register ACC::NumRValueStructure::getRegister() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorChar(ACC::Code &code) {
-    return std::make_shared<CharRValueStructure>(reg);
+    throw std::runtime_error("No viable conversion of type `num` to type `char`.");
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorNum(ACC::Code &code) {
@@ -72,5 +72,5 @@ std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorBool(ACC::Code 
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorPtr(Code &code, Type pointingTo) {
-    return std::make_shared<PtrRValueStructure>(reg, pointingTo);
+    throw std::runtime_error("No viable conversion of type `num` to type `char`.");
 }
