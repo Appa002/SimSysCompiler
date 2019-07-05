@@ -13,6 +13,7 @@ namespace ACC::BuiltIns::Char{
         fn.returnType = Type(BuiltIns::charType);
         fn.symbol = "char";
         fn.curBpOffset = 0;
+        fn.argsType = {Type(BuiltIns::numType)};
         fn.code =
 R"(
 mov al, [rbp + 16]

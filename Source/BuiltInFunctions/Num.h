@@ -13,6 +13,7 @@ namespace ACC::BuiltIns::Num{
         fn.returnType = Type(BuiltIns::numType);
         fn.symbol = "num";
         fn.curBpOffset = 0;
+        fn.argsType = {Type(BuiltIns::charType)};
         fn.code =
                 R"(
 movzx rax, byte [rbp + 16]

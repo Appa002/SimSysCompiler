@@ -13,6 +13,10 @@ namespace ACC{
     struct CallNode : public ASTNode{
         std::shared_ptr<Structure> generate(ACC::Code &code) override;
         CallNode(AstOperator op, std::vector<ASTNode *> children);
+        std::vector<Type> getArgumentTypes();
+
+        bool isPerfectMatch(Fn& fn);
+        bool isConvertable(Fn& overload);
 
     };
 }

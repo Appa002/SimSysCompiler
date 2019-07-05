@@ -12,13 +12,11 @@
 
 
 std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
-    auto argumentTypes = getArgumentTypes();
     auto name = children[0]->data.asT<std::string>();
-    name = code.mangleName(name, argumentTypes);
-
 
     auto& fn = code.emplaceFnSymbol(name);
     fn.returnType = children[1]->data.asT<Type>();
+    fn.argsType = getArgumentTypes();
 
     size_t offset = 16;
 

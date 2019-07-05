@@ -10,6 +10,9 @@ namespace ACC {
     struct TypeId{
         TypeId() = default;
         TypeId(size_t id, size_t size) : id(id), size(size) {}
+        TypeId(size_t id, size_t size, std::vector<TypeId> convertableTo);
+        std::vector<TypeId> convertableTo;
+
 
         size_t getId() const { return id; };
         size_t getSize() const { return size; };
@@ -39,6 +42,7 @@ namespace ACC {
         size_t getSize() const;
         TypeId getTypeId() const;
         TypeId getPointingTo() const;
+
 
         Type& operator=(TypeId const & other){
             pointingTo = TypeId(0, 0);

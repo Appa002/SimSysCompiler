@@ -19,8 +19,8 @@ ACC::Code::Code() {
         freeRegisterTable[(Register) i] = true;
 
     // Builtin Functions
-    fnTable[mangleName("char", {Type(BuiltIns::numType)})] = BuiltIns::getCharFn_num();
-    fnTable[mangleName("num", {Type(BuiltIns::charType)})] = BuiltIns::getNumFn_char();
+    emplaceFnSymbol("char") = BuiltIns::getCharFn_num();
+    emplaceFnSymbol("num") = BuiltIns::getNumFn_char();
 
 };
 
@@ -37,21 +37,32 @@ std::shared_ptr<ACC::Structure> ACC::Code::emplaceVarSymbol(std::string sym, std
 }
 
 
-ACC::Fn &ACC::Code::getFnSymbol(std::string sym) {
+std::vector<ACC::Fn> &ACC::Code::getFnOverloads(std::string sym) {
     if (fnTable.find(sym) == fnTable.end())
         throw std::runtime_error("Unknown fn: " + sym);
     else
         return fnTable.at(sym);
 }
 
-ACC::Fn &ACC::Code::emplaceFnSymbol(std::string sym) {
-    fnStack.push(sym);
-    fnTable[sym] = Fn();
-    return fnTable.at(sym);
+ACC::Fn& ACC::Code::emplaceFnSymbol(const std::string &sym) {
+    if(fnTable.find(sym) == fnTable.cend()){
+        // There are no overloads with symbol `sym`
+        fnTable[sym] = std::vector<Fn> {Fn(sym)};
+
+        fnStack.push({sym, 0});
+        return fnTable.at(sym)[0];
+    }
+
+    // There are overloads with symbol `sym`
+    fnTable[sym].push_back(Fn(sym));
+    fnStack.push({sym, fnTable.at(sym).size() - 1});
+    return fnTable.at(sym)[fnTable.at(sym).size() - 1];
+
+
 }
 
-ACC::Fn &ACC::Code::getFnSymbol() {
-    return getFnSymbol(fnStack.peek());
+ACC::Fn& ACC::Code::getFnSymbol() {
+    return fnTable.at(fnStack.peek().first).at(fnStack.peek().second);
 }
 
 
@@ -59,11 +70,17 @@ std::string ACC::Code::combineOutput() {
     std::string out = "section .data\n" + dataSection;
     out += "\nsection .text\n";
 
-    for (auto &function : fnTable)
-        out += "global " + function.first + "\n";
+    for (auto const &overloads : fnTable){
+        for(auto const & function : overloads.second){
+            out += "global " + function.mangledName() + "\n";
+        }
+    }
 
-    for (auto &function : fnTable)
-        out += function.first + ":\n" + function.second.generate();
+    for (auto const &overloads : fnTable){
+        for(auto const & function : overloads.second){
+            out += function.mangledName(); + ":\n" + function.generate();
+        }
+    }
 
     return out;
 }
@@ -122,24 +139,6 @@ void ACC::Code::popScope() {
 std::string ACC::Code::getUUID() {
     return numberToLetterSequence(uuidCounter++);
 }
-
-std::string ACC::Code::mangleName(std::string name, std::vector<ACC::Type> argsType) {
-    // Format:
-    // <name> ? <argsType> _ .... _
-    auto typeStr = [](Type t){
-        // Format:
-        // <typeID> . <pointingTO>
-        return std::to_string(t.getId()) + "." + std::to_string(t.getPointingTo().getId());
-    };
-
-    name += "?";
-
-    for (Type t : argsType)
-        name += typeStr(t);
-
-    return name;
-}
-
 
 std::string ACC::registerToString(size_t size, ACC::Register reg) {
     switch (reg) {

@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "Type.h"
 
 ACC::Type::Type(size_t id, size_t size)  : id(TypeId(id, size)) {
@@ -26,4 +28,10 @@ ACC::Type::Type(const ACC::TypeId & first, ACC::TypeId other) : id(first), point
 
 ACC::TypeId ACC::Type::getTypeId() const {
     return id;
+}
+
+
+ACC::TypeId::TypeId(size_t id, size_t size, std::vector<ACC::TypeId> convertableTo)
+        : id(id), size(size),  convertableTo(std::move(convertableTo)){
+
 }

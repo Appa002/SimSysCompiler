@@ -24,19 +24,18 @@ namespace ACC{
     private:
         size_t uuidCounter = 0;
 
-        std::unordered_map<std::string, Fn> fnTable;
+        std::unordered_map<std::string, std::vector<Fn>> fnTable;
         std::unordered_map<Register, bool> freeRegisterTable;
 
         ScopedSymbolTable<std::shared_ptr<Structure>>* curScope = nullptr;
         std::shared_ptr<ScopedSymbolTable<std::shared_ptr<Structure>>> globalScope = nullptr;
 
-        Stack<std::string> fnStack;
+        Stack<std::pair<std::string, size_t>> fnStack;
         std::string dataSection;
 
     public:
         Code();
 
-        std::string mangleName(std::string name, std::vector<ACC::Type> argsType);
 
         void reserveRegister(Register reg);
         void freeRegister(Register reg);
@@ -48,9 +47,9 @@ namespace ACC{
         std::shared_ptr<Structure> getVarSymbol(std::string sym);
         std::shared_ptr<Structure> emplaceVarSymbol(std::string sym, std::shared_ptr<Structure> struc);
 
-        Fn& getFnSymbol(std::string sym);
+        std::vector<Fn>& getFnOverloads(std::string sym);
         Fn& getFnSymbol();
-        Fn& emplaceFnSymbol(std::string sym);
+        Fn& emplaceFnSymbol(std::string const & sym);
 
         void writeLineToData(std::string const & str);
         std::string combineOutput();
