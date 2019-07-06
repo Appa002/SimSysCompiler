@@ -23,6 +23,8 @@ bool ACC::Fn::matches(std::string name, ACC::Type returnType, std::vector<ACC::T
 
 
 std::string ACC::Fn::mangledName() const {
+    if(symbol == "_start")
+        return "_start";
     // Format:
     // <name> ? <argsType> _ .... _
     auto typeStr = [](Type t){

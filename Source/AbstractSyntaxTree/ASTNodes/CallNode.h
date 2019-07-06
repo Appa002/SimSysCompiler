@@ -15,8 +15,8 @@ namespace ACC{
         CallNode(AstOperator op, std::vector<ASTNode *> children);
         std::vector<Type> getArgumentTypes();
 
-        bool isPerfectMatch(Fn& fn);
-        bool isConvertable(Fn& overload);
+        bool isPerfectMatch(std::vector<std::shared_ptr<Structure>> values, Fn &overload);
+        bool isConvertable(std::vector<std::shared_ptr<Structure>> values, Fn &overload);
 
     };
 }

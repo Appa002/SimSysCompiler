@@ -11,21 +11,31 @@
 std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
     auto& overloads = code.getFnOverloads(children[0]->data.asT<std::string>());
     auto& fn = code.getFnSymbol();
+
+    size_t totalRspSubtracted = 0;
+
+    std::vector<std::shared_ptr<Structure>> arguments;
+
+    for(size_t i = 1; i < children.size(); i++){
+        auto value = children[i]->generate(code);
+        arguments.push_back(value);
+
+    }
+
+
     Fn callee;
-
     bool foundMatch = false;
-
     for (Fn& overload : overloads) {
         if (overload.argsType.size() != children.size() - 1)
             continue; // The possible overload takes a different number of arguments than provided.
 
-        if (isPerfectMatch(overload)){
+        if (isPerfectMatch(arguments, overload)){
             callee = overload;
             foundMatch = true;
             break; // A perfect match is always preferred,therefore we break.
         }
 
-        if(isConvertable(overload)){
+        if(isConvertable(arguments, overload)){
             callee = overload;
             foundMatch = true;
             break;
@@ -37,22 +47,18 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
     // `callee` will now contain a COPY of the ACC::Fn object being called.
 
 
-    auto argumentTypes = getArgumentTypes();
-    size_t totalRspSubtracted = 0;
-
-    for(size_t i = children.size() - 1; i >= 1; i--){
-        auto value = children[i]->generate(code);
-
-        if(callee.argsType[i-1] != value->type){
+    for(long i = arguments.size() - 1; i >= 0; i--){
+        auto& value  = arguments[i];
+        if(callee.argsType[i] != value->type){
             // We need to do argument conversion
-            if(callee.argsType[i-1] == BuiltIns::charType)
+            if(callee.argsType[i] == BuiltIns::charType)
                 value = value->operatorChar(code);
-            else if(callee.argsType[i-1] == BuiltIns::numType)
+            else if(callee.argsType[i] == BuiltIns::numType)
                 value = value->operatorNum(code);
-            else if(callee.argsType[i-1] == BuiltIns::boolType)
+            else if(callee.argsType[i] == BuiltIns::boolType)
                 value = value->operatorBool(code);
-            else if(callee.argsType[i-1] == BuiltIns::ptrType)
-                value = value->operatorPtr(code, Type(callee.argsType[i-1].getPointingTo()));
+            else if(callee.argsType[i] == BuiltIns::ptrType)
+                value = value->operatorPtr(code, Type(callee.argsType[i].getPointingTo()));
             else
                 throw std::runtime_error("Unknown Type");
         }
@@ -62,8 +68,6 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
 
         value->operatorCopy(std::make_shared<GenericLValueStructure>(value->type, "rsp"), code);
         value->cleanUp(code);
-
-        argumentTypes.push_back(value->type);
     }
 
     std::string name = callee.mangledName();
@@ -97,12 +101,11 @@ std::vector<ACC::Type> ACC::CallNode::getArgumentTypes() {
     return out;
 }
 
-bool ACC::CallNode::isPerfectMatch(Fn& fn) {
+bool ACC::CallNode::isPerfectMatch(std::vector<std::shared_ptr<Structure>> values, Fn &overload) {
     // A possible overload is a perfect match, if all argument types fit without conversion operations.
     bool ok = true;
-    for(size_t i = 0; i < fn.argsType.size(); i++){
-        auto providedType = children[i+1]->type;
-        if(providedType != fn.argsType[i]){
+    for(size_t i = 0; i < overload.argsType.size(); i++){
+        if(values[i]->type != overload.argsType[i]){
             ok = false;
             break;
         }
@@ -111,14 +114,11 @@ bool ACC::CallNode::isPerfectMatch(Fn& fn) {
     return ok;
 }
 
-bool ACC::CallNode::isConvertable(ACC::Fn &overload) {
-    // As the ability to convert a function is dependent on the value category of the structure and that cannot be
-    // determent at this time, this function may say a overload is convertable even though it is not.
+bool ACC::CallNode::isConvertable(std::vector<std::shared_ptr<Structure>> values, Fn &overload) {
     bool ok = true;
-    for (size_t i = 0; i < overload.argsType.size(); i++){
-        auto providedType = children[i+1]->type;
+    for (size_t i = 0; i < values.size(); i++){
         bool canBeConverted = false;
-        for (TypeId conversion : providedType.getTypeId().convertableTo){
+        for (const TypeId &conversion : values[i]->type.getTypeId().convertableTo){
             if(conversion == overload.argsType[i].getTypeId())
                 canBeConverted = true;
         }
@@ -126,7 +126,6 @@ bool ACC::CallNode::isConvertable(ACC::Fn &overload) {
             ok = false;
             break;
         }
-        canBeConverted = false;
     }
     return ok;
 }

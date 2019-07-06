@@ -14,13 +14,14 @@ ACC::Code::Code() {
     globalScope = std::make_shared<ScopedSymbolTable<std::shared_ptr<Structure>>>();
     curScope = globalScope.get();
 
-    emplaceFnSymbol("_start");
     for (size_t i = 0; i < 14; i++) // TODO: This is a bit disgusting.
         freeRegisterTable[(Register) i] = true;
 
     // Builtin Functions
     emplaceFnSymbol("char") = BuiltIns::getCharFn_num();
     emplaceFnSymbol("num") = BuiltIns::getNumFn_char();
+
+    emplaceFnSymbol("_start");
 
 };
 
@@ -78,7 +79,7 @@ std::string ACC::Code::combineOutput() {
 
     for (auto const &overloads : fnTable){
         for(auto const & function : overloads.second){
-            out += function.mangledName(); + ":\n" + function.generate();
+            out += function.mangledName() + ":\n" + function.generate();
         }
     }
 
