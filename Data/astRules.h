@@ -12,6 +12,8 @@
 #include <AbstractSyntaxTree/Rule.h>
 
 namespace ACC::data{
+
+    /*! Returns a vector with all Rules for turning a Parse Tree to a Abstract Syntax Tree.*/
     std::vector<Rule> getRules();
 }
 
