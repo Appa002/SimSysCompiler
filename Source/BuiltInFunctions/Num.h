@@ -7,6 +7,7 @@
 #include <Assembly/Fn.h>
 #include <General/builtinTypes.h>
 
+/* Contains all overloads for the builtin function `num`.*/
 namespace ACC::BuiltIns::Num{
     Fn get_char(){
         Fn fn;

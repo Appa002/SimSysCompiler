@@ -9,6 +9,8 @@
 #include <stdexcept>
 
 namespace ACC {
+
+    /*! Class for storing arbitrary data, used by various literals. */
     class GeneralDataStore {
     private:
         std::vector<uint8_t> internalStore;

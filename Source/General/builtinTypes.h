@@ -5,6 +5,7 @@
 
 #include <General/Type.h>
 
+/*! Contains global variables refering to the `TypeId`s of builtin types (`num char ptr bool`)*/
 namespace ACC::BuiltIns{
     const auto __none = TypeId(0, 0, {TypeId(0, 0)});
     const auto numType = TypeId(1, 8, {TypeId(2, 1), TypeId(3,8), TypeId(1,8)});
