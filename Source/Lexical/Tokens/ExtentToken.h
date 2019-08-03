@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct ExtentToken : public IToken{
-        ExtentToken() : IToken() {id = Symbol::EXTENT;};
+        explicit ExtentToken(size_t lineNum) : IToken(Symbol::EXTENT, lineNum) {};
 
         std::string getIdentifier() override{
             return "extent";

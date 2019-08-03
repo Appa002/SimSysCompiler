@@ -637,12 +637,12 @@ ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::GOES_TO, Symbol::expr, Symbol::COLON,
+    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::ARROW, Symbol::expr, Symbol::COLON,
                                                    Symbol::INDENT, Symbol::start, Symbol::EXTENT});
     START_PRODUCTION()
             TERMINAL(FOR)
             TERMINAL(ID)
-            TERMINAL(GOES_TO)
+            TERMINAL(ARROW)
             NONE_TERMINAL(expr)
             TERMINAL(COLON)
             TERMINAL(INDENT)

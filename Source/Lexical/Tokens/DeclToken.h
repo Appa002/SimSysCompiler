@@ -10,8 +10,8 @@
 
 namespace ACC{
     struct DeclToken : public IToken{
-        DeclToken() : IToken() {id = Symbol::DECL;};
-        DeclToken(std::string sym) : IToken(), sym(std::move(sym)) {id = Symbol::DECL;};
+        explicit DeclToken(size_t lineNum) : IToken(Symbol::DECL, lineNum) {};
+        DeclToken(std::string sym, size_t lineNum) : IToken(Symbol::DECL, lineNum), sym(std::move(sym)) {};
         std::string sym;
 
         std::string getIdentifier() override{

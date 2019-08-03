@@ -10,7 +10,8 @@
 
 namespace ACC{
     struct MinusToken : public IToken{
-        MinusToken() : IToken() {this->id = Symbol::MINUS;}
+        MinusToken(size_t lineNum) : IToken(Symbol::MINUS, lineNum) {}
+
         std::string getIdentifier() override{
             return "Minus";
         }

@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct EOSToken : public IToken{
-        EOSToken() : IToken() {id = Symbol::EOS;};
+        explicit EOSToken(size_t lineNum) : IToken(Symbol::EOS, lineNum) {};
 
         std::string getIdentifier() override{
             return "EndOfStatement";

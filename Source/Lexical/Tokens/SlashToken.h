@@ -10,7 +10,8 @@
 
 namespace ACC{
     struct SlashToken : public IToken{
-        SlashToken() : IToken() {this->id = Symbol::SLASH;}
+        explicit SlashToken(size_t lineNum) : IToken(Symbol::SLASH, lineNum) {}
+
         std::string getIdentifier() override{
             return "Slash(/)";
         }

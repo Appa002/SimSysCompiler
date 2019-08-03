@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct FunctionToken : public IToken{
-        FunctionToken() : IToken() {id = Symbol::FUNCTION;};
+        explicit FunctionToken(size_t lineNum) : IToken(Symbol::FUNCTION, lineNum) {};
 
         std::string getIdentifier() override{
             return "fn";

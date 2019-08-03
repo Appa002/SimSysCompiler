@@ -13,8 +13,9 @@
 
 namespace ACC{
     struct TypeToken : public IToken{
-        TypeToken() : IToken() {this->id = Symbol::TYPE;}
-        TypeToken(std::string str, Type typeId) : type(std::move(str)), typeId(typeId) {this->id = Symbol::TYPE;}
+
+        TypeToken() : IToken(Symbol::TYPE, 0) {}
+        TypeToken(std::string str, Type typeId) : type(std::move(str)), typeId(typeId), IToken(Symbol::TYPE, 0) {}
 
         std::string type;
         Type typeId = Type(0, 0);

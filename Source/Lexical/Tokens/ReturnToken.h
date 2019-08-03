@@ -10,7 +10,8 @@
 
 namespace ACC{
     struct ReturnToken : public IToken{
-        ReturnToken() : IToken() {this->id = Symbol::RETURN;}
+        explicit ReturnToken(size_t lineNum) : IToken(Symbol::RETURN, lineNum) {}
+
         std::string getIdentifier() override{
             return "return";
         }

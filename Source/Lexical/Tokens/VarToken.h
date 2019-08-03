@@ -9,7 +9,7 @@
 
 namespace ACC{
     struct VarToken : public IToken{
-        VarToken() : IToken() {id = Symbol::VAR;};
+        explicit VarToken(size_t lineNum) : IToken(Symbol::VAR, lineNum) {};
 
         std::string getIdentifier() override{
             return "var";

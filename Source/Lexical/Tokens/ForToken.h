@@ -13,7 +13,7 @@
 
 namespace ACC{
     struct ForToken : public IToken{
-        ForToken() : IToken() {this->id = Symbol::FOR;}
+        explicit ForToken(size_t lineNum) : IToken(Symbol::FOR, lineNum) {}
 
         std::string getIdentifier() override{
             return "for";

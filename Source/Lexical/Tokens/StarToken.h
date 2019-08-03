@@ -10,7 +10,9 @@
 
 namespace ACC{
     struct StarToken : public IToken{
-        StarToken() : IToken() {this->id = Symbol::STAR;}
+
+        explicit StarToken(size_t lineNum) : IToken(Symbol::STAR, lineNum) {}
+
         std::string getIdentifier() override{
             return "Star(*)";
         }

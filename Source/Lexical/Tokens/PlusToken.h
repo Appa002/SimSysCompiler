@@ -10,7 +10,8 @@
 
 namespace ACC{
     struct PlusToken : public IToken{
-        PlusToken() : IToken() {this->id = Symbol::PLUS;}
+        explicit PlusToken(size_t lineNum) : IToken(Symbol::PLUS, lineNum) {}
+
         std::string getIdentifier() override{
             return "Plus";
         }

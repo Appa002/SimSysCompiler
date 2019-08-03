@@ -22,9 +22,9 @@ namespace ACC{
     struct ComparisionToken : public IToken{
         ComparisionTokenKind kind;
 
-        explicit ComparisionToken(ComparisionTokenKind kind) : kind(kind), IToken() {this->id = Symbol::CMP;}
+        explicit ComparisionToken(ComparisionTokenKind kind, size_t lineNum) : kind(kind), IToken(Symbol::CMP, lineNum) {}
         std::string getIdentifier() override{
-            return "Equal";
+            return "CMP";
         }
 
         friend inline bool operator==(ComparisionToken const & lhs, ComparisionToken const & rhs){

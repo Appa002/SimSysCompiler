@@ -10,7 +10,8 @@
 
 namespace ACC{
     struct AssignToken : public IToken{
-        AssignToken() : IToken() {this->id = Symbol::ASSIGN;}
+        explicit AssignToken(size_t lineNum) : IToken(Symbol::ASSIGN, lineNum) {}
+
         std::string getIdentifier() override{
             return "Assign";
         }

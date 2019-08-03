@@ -7,7 +7,7 @@
 
 namespace ACC{
     struct ModuloToken : public IToken{
-        ModuloToken() : IToken() {id = Symbol::MODULO;};
+        explicit ModuloToken(size_t lineNum) : IToken(Symbol::MODULO, lineNum) {};
 
         std::string getIdentifier() override{
             return "Modulo";

@@ -11,8 +11,8 @@
 
 namespace ACC{
     struct IdToken : public IToken{
-        IdToken() : IToken() {id = Symbol::ID;};
-        IdToken(std::string sym) : IToken(), sym(std::move(sym)) {id = Symbol::ID;};
+        explicit IdToken(size_t lineNum) : IToken(Symbol::ID, lineNum) {};
+        IdToken(std::string sym, size_t lineNum) : IToken(Symbol::ID, lineNum), sym(std::move(sym)) {};
         std::string sym;
 
         std::string getIdentifier() override{

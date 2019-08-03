@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct IfToken : public IToken{
-        IfToken() : IToken() {id = Symbol::IF;};
+        explicit IfToken(size_t lineNum) : IToken(Symbol::IF, lineNum) {};
 
         std::string getIdentifier() override{
             return "if";

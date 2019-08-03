@@ -6,7 +6,7 @@
 
 namespace ACC{
     struct ClosedBracketToken : public IToken{
-        explicit ClosedBracketToken() : IToken() {id = Symbol::CLOSED_BRACKET;};
+        explicit ClosedBracketToken(size_t lineNum) : IToken(Symbol::CLOSED_BRACKET, lineNum) {};
 
         std::string getIdentifier() override{
             return "Closed Bracket";

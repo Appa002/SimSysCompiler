@@ -7,7 +7,7 @@
 namespace ACC{
 
     struct OpenBracketToken : public IToken{
-        explicit OpenBracketToken() : IToken() {id = Symbol::OPEN_BRACKET;};
+        explicit OpenBracketToken(size_t lineNum) : IToken(Symbol::OPEN_BRACKET, lineNum) {};
 
         std::string getIdentifier() override{
                 return "Open Bracket";

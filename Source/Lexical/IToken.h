@@ -14,6 +14,10 @@ namespace ACC {
     class IToken {
     public:
         Symbol id;
+        const size_t lineNum;
+
+        explicit IToken(Symbol id, size_t lineNum) : lineNum(lineNum), id(id) {};
+        
         virtual std::string getIdentifier() = 0;
         virtual ~IToken() = default;
     };

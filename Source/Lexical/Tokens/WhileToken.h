@@ -10,7 +10,9 @@
 
 namespace ACC{
     struct WhileToken : public IToken{
-        WhileToken() : IToken() {this->id = Symbol::WHILE;}
+
+        explicit WhileToken(size_t lineNum) : IToken(Symbol::WHILE, lineNum) {}
+
         std::string getIdentifier() override{
             return "While";
         }

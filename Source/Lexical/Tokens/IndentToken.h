@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct IndentToken : public IToken{
-        IndentToken() : IToken() {id = Symbol::INDENT;};
+        explicit IndentToken(size_t lineNum) : IToken(Symbol::INDENT, lineNum) {};
 
         std::string getIdentifier() override{
             return "indent";

@@ -10,7 +10,8 @@
 
 namespace ACC{
     struct ExitToken : public IToken{
-        ExitToken() : IToken() {this->id = Symbol::EXIT;}
+        explicit ExitToken(size_t lineNum) : IToken(Symbol::EXIT, lineNum) {}
+
         std::string getIdentifier() override{
             return "Exit";
         }

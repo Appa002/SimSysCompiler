@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct ElifToken : public IToken{
-        ElifToken() : IToken() {id = Symbol::ELIF;};
+        explicit ElifToken(size_t lineNum) : IToken(Symbol::ELIF, lineNum) {};
 
         std::string getIdentifier() override{
             return "elif";

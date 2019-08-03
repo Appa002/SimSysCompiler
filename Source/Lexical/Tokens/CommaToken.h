@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct CommaToken : public IToken{
-        CommaToken() : IToken() {id = Symbol::COMMA;};
+        explicit CommaToken(size_t lineNum) : IToken(Symbol::COMMA, lineNum) {};
 
         std::string getIdentifier() override{
             return "comma";

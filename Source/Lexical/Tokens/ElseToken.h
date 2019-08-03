@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct ElseToken : public IToken{
-        ElseToken() : IToken() {id = Symbol::ELSE;};
+        explicit ElseToken(size_t lineNum) : IToken(Symbol::ELSE, lineNum) {};
 
         std::string getIdentifier() override{
             return "else";

@@ -8,13 +8,15 @@
 #include <Lexical/IToken.h>
 
 namespace ACC{
-    struct Salloc : public IToken{
-        Salloc() : IToken() {this->id = Symbol::SALLOC;}
+    struct SallocToken : public IToken{
+
+        explicit SallocToken(size_t lineNum) : IToken(Symbol::SALLOC, lineNum) {}
+
         std::string getIdentifier() override{
             return "salloc";
         }
 
-        friend inline bool operator==(Salloc const & lhs, Salloc const & rhs){
+        friend inline bool operator==(SallocToken const & lhs, SallocToken const & rhs){
             return true;
         }
     };

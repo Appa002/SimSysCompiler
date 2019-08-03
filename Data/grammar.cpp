@@ -86,8 +86,8 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "WHILE";
         case Symbol::while_construct:
             return "while_construct";
-        case Symbol::GOES_TO:
-            return "GOES_TO";
+        case Symbol::ARROW:
+            return "ARROW";
         case Symbol::FOR:
             return "FOR";
         case Symbol::ptr_assign:

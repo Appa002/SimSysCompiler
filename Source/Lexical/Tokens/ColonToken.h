@@ -8,7 +8,7 @@
 
 namespace ACC{
     struct ColonToken : public IToken{
-        ColonToken() : IToken() {id = Symbol::COLON;};
+        explicit ColonToken(size_t lineNum) : IToken(Symbol::COLON, lineNum) {};
 
         std::string getIdentifier() override{
             return "colon";

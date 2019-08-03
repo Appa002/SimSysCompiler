@@ -10,7 +10,7 @@
 
 namespace ACC{
     struct NotToken : public IToken{
-        NotToken() : IToken() {this->id = Symbol::NOT;}
+        explicit NotToken(size_t lineNum) : IToken(Symbol::NOT, lineNum) {}
         std::string getIdentifier() override{
             return "Not";
         }

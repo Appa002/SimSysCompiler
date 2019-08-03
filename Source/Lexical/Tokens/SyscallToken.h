@@ -11,7 +11,9 @@
 
 namespace ACC{
     struct SyscallToken : public IToken{
-        SyscallToken() : IToken() {this->id = Symbol::SYSCALL;}
+
+        explicit SyscallToken(size_t lineNum) : IToken(Symbol::SYSCALL, lineNum) {}
+
         std::string getIdentifier() override{
             return "syscall";
         }

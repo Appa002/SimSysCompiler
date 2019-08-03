@@ -18,18 +18,18 @@
 namespace ACC{
 
     struct LiteralToken : public IToken{
-        LiteralToken(std::string l, Type k) : IToken(), type(k) {
+        LiteralToken(std::string l, Type k) : IToken(Symbol::LITERAL, 0), type(k) {
             id = Symbol::LITERAL;
             literal.storeT(std::move(l));
         };
 
-        LiteralToken(char c, Type k) : IToken(), type(k) {
+        LiteralToken(char c, Type k) : IToken(Symbol::LITERAL, 0), type(k) {
             id = Symbol::LITERAL;
             literal.storeT(c);
         };
 
 
-        LiteralToken(uint64_t l, Type k) : IToken(), type(k) {
+        LiteralToken(uint64_t l, Type k) : IToken(Symbol::LITERAL, 0), type(k) {
             id = Symbol::LITERAL;
             if(l <= 0xFF)
                 literal.storeT((uint8_t)l);
