@@ -45,6 +45,7 @@ namespace ACC {
         ParseNode* whileConstruct(size_t &pos);
         ParseNode* forConstruct(size_t &pos);
         ParseNode* ptrAssign(size_t &pos);
+        ParseNode* type(size_t &pos);
 
     };
 }

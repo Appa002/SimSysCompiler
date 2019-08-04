@@ -24,7 +24,12 @@ ACC::ParseNode::~ParseNode() {
 }
 
 void ACC::ParseNode::_print(std::string indent, bool isLast) const {
-    std::string representation = token == nullptr ? (data::symbolToString(symbol)) : (token->getIdentifier());
+    std::string representation;
+    if(!token)
+        representation = data::symbolToString(symbol);
+    else
+         representation = token->getIdentifier();
+
     auto colour = token == nullptr ? (Log::Colour::Magenta) : (Log::Colour::Blue);
 
     LOG() << indent;

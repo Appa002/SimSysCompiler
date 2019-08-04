@@ -13,6 +13,7 @@ namespace ACC {
         VAR = 0,
         DECL,
         TEXT,
+        IMPORT,
         DOUBLE_QUOTE,
         QUOTE,
         MODULO,
@@ -63,7 +64,8 @@ namespace ACC {
         call,
         ifStmt,
         else_construct,
-        elseIf_construct
+        elseIf_construct,
+        type
     };
 
     using productionBody_t = std::vector<Symbol>;

@@ -45,6 +45,7 @@
 #include <Lexical/Tokens/DoubleQuoteToken.h>
 #include <Lexical/Tokens/TextToken.h>
 #include <Lexical/Tokens/QuoteToken.h>
+#include <Lexical/Tokens/ImportToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options){
     for(auto const & option : options){
@@ -69,8 +70,6 @@ ACC::LexicalAnalysis::LexicalAnalysis(std::string path){
     std::ifstream fs;
     fs.open(path);
     this->document = std::string((std::istreambuf_iterator<char>(fs)), std::istreambuf_iterator<char>());
-
-
 
     LOG.createHeading("Original Input being Lexically Analysed:");
     LOG() << this->document << std::endl;
@@ -296,7 +295,7 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, size_t lineNu
         tokens.push_back(new IfToken(lineNum));
 
     else if (buffer == "import")
-        ;//tokens.push_back(new ImportToken(lineNum));
+        tokens.push_back(new ImportToken(lineNum));
 
     else if (buffer == "return")
         tokens.push_back(new ReturnToken(lineNum));
@@ -365,5 +364,7 @@ std::string ACC::LexicalAnalysis::loadBuffer(size_t &idx) {
     return buffer;
 }
 
-
-
+ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other) : tokens(other.tokens), document(other.document),
+refCount(other.refCount), indentList(other.indentList), depth(other.depth){
+    refCount++;
+}

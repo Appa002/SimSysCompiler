@@ -11,9 +11,9 @@
 namespace ACC{
     struct TextToken : public IToken{
 
-        explicit TextToken(size_t lineNum) : IToken(Symbol::ARROW, lineNum) {};
+        explicit TextToken(size_t lineNum) : IToken(Symbol::TEXT, lineNum) {};
 
-        TextToken(std::string str, size_t lineNum) : data(std::move(str)), IToken(Symbol::ARROW, lineNum) {};
+        TextToken(std::string str, size_t lineNum) : data(std::move(str)), IToken(Symbol::TEXT, lineNum) {};
 
         std::string data;
 

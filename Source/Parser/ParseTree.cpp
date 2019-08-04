@@ -215,18 +215,19 @@ ACC::ParseNode *ACC::ParseTree::assignment(size_t &pos) {
 
     size_t oldPos = pos;
 
-    logable.loadProduction(Symbol::assignment, {Symbol::VAR, Symbol::DECL, Symbol::TYPE, Symbol::ASSIGN, Symbol::expr});
+    logable.loadProduction(Symbol::assignment, {Symbol::VAR, Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::ASSIGN, Symbol::expr});
     START_PRODUCTION()
             TERMINAL(VAR)
-            TERMINAL(DECL)
-            TERMINAL(TYPE)
+            TERMINAL(TEXT)
+            TERMINAL(COLON)
+            NONE_TERMINAL(type)
             TERMINAL(ASSIGN)
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::assignment, {Symbol::ID, Symbol::ASSIGN, Symbol::expr});
+    logable.loadProduction(Symbol::assignment, {Symbol::TEXT, Symbol::ASSIGN, Symbol::expr});
     START_PRODUCTION()
-            TERMINAL(ID)
+            TERMINAL(TEXT)
             TERMINAL(ASSIGN)
             NONE_TERMINAL(expr)
     END_PRODUCTION()
@@ -251,15 +252,16 @@ ACC::ParseNode *ACC::ParseTree::function(size_t &pos) {
 
     ParseNode *other;
 
-    logable.loadProduction(Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::OPEN_BRACKET, Symbol::paramsDecl,
-                                              Symbol::CLOSED_BRACKET, Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start});
+    logable.loadProduction(Symbol::function, {Symbol::FUNCTION, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsDecl,
+                                              Symbol::CLOSED_BRACKET, Symbol::ARROW,  Symbol::type, Symbol::COLON, Symbol::INDENT, Symbol::start});
     START_PRODUCTION()
             TERMINAL(FUNCTION)
-            TERMINAL(DECL)
+            TERMINAL(TEXT)
             TERMINAL(OPEN_BRACKET)
             OPTIONAL_NONE_TERMINAL(paramDecl)
             TERMINAL(CLOSED_BRACKET)
-            TERMINAL(TYPE)
+            TERMINAL(ARROW)
+            NONE_TERMINAL(type)
             TERMINAL(COLON)
             TERMINAL(INDENT)
             NONE_TERMINAL(start)
@@ -296,12 +298,12 @@ ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::keyword, {Symbol::SALLOC, Symbol::expr, Symbol::COMMA, Symbol::ID});
+    logable.loadProduction(Symbol::keyword, {Symbol::SALLOC, Symbol::expr, Symbol::COMMA, Symbol::TEXT});
     START_PRODUCTION()
             TERMINAL(SALLOC)
             NONE_TERMINAL(expr)
             TERMINAL(COMMA)
-            TERMINAL(ID)
+            TERMINAL(TEXT)
     END_PRODUCTION()
 
     logable.loadProduction(Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA});
@@ -339,9 +341,9 @@ ACC::ParseNode *ACC::ParseTree::call(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::call, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList,Symbol::CLOSED_BRACKET});
+    logable.loadProduction(Symbol::call, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET});
     START_PRODUCTION()
-            TERMINAL(ID)
+            TERMINAL(TEXT)
             TERMINAL(OPEN_BRACKET)
             OPTIONAL_NONE_TERMINAL(paramList)
             TERMINAL(CLOSED_BRACKET)
@@ -365,17 +367,32 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::QUOTE, Symbol::TEXT, Symbol::QUOTE});
     START_PRODUCTION()
-        TERMINAL(ID)
+            TERMINAL(QUOTE)
+            TERMINAL(TEXT)
+            TERMINAL(QUOTE)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::DOUBLE_QUOTE, Symbol::TEXT, Symbol::DOUBLE_QUOTE});
+    START_PRODUCTION()
+            TERMINAL(DOUBLE_QUOTE)
+            TERMINAL(TEXT)
+            TERMINAL(DOUBLE_QUOTE)
+    END_PRODUCTION()
+
+
+    logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::expr});
+    START_PRODUCTION()
+        TERMINAL(TEXT)
         TERMINAL(OPEN_BRACKET)
         TERMINAL(CLOSED_BRACKET)
         OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr});
     START_PRODUCTION()
-            TERMINAL(ID)
+            TERMINAL(TEXT)
             TERMINAL(OPEN_BRACKET)
             NONE_TERMINAL(paramList)
             TERMINAL(CLOSED_BRACKET)
@@ -390,19 +407,11 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::expr, {Symbol::LITERAL, Symbol::expr});
+    logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::expr});
     START_PRODUCTION()
-            TERMINAL(LITERAL)
+            TERMINAL(TEXT)
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
-
-
-    logable.loadProduction(Symbol::expr, {Symbol::ID, Symbol::expr});
-    START_PRODUCTION()
-            TERMINAL(ID)
-            OPTIONAL_NONE_TERMINAL(expr)
-    END_PRODUCTION()
-
 
     logable.loadProduction(Symbol::expr, {Symbol::PLUS, Symbol::expr});
     START_PRODUCTION()
@@ -465,10 +474,11 @@ ACC::ParseNode *ACC::ParseTree::paramDecl(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::paramsDecl, {Symbol::DECL, Symbol::TYPE, Symbol::COMMA, Symbol::paramsDecl});
+    logable.loadProduction(Symbol::paramsDecl, {Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::COMMA, Symbol::paramsDecl});
     START_PRODUCTION()
-            TERMINAL(DECL)
-            TERMINAL(TYPE)
+            TERMINAL(TEXT)
+            TERMINAL(COLON)
+            NONE_TERMINAL(type)
             OPTIONAL_TERMINAL(COMMA)
             OPTIONAL_NONE_TERMINAL(paramDecl)
     END_PRODUCTION()
@@ -637,11 +647,11 @@ ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::ARROW, Symbol::expr, Symbol::COLON,
+    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::TEXT, Symbol::ARROW, Symbol::expr, Symbol::COLON,
                                                    Symbol::INDENT, Symbol::start, Symbol::EXTENT});
     START_PRODUCTION()
             TERMINAL(FOR)
-            TERMINAL(ID)
+            TERMINAL(TEXT)
             TERMINAL(ARROW)
             NONE_TERMINAL(expr)
             TERMINAL(COLON)
@@ -682,6 +692,32 @@ ACC::ParseNode *ACC::ParseTree::ptrAssign(size_t &pos) {
     delete node;
     return nullptr;
 
+}
+
+ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [type]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::ptr_assign;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::type, {Symbol::TEXT, Symbol::CMP, Symbol::TEXT, Symbol::CMP});
+    START_PRODUCTION()
+            TERMINAL(TEXT)
+            OPTIONAL_TERMINAL(CMP)
+            OPTIONAL_TERMINAL(TEXT)
+            OPTIONAL_TERMINAL(CMP)
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
 }
 
 

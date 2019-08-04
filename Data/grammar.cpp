@@ -104,6 +104,22 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "SUBTRACT";
         case Symbol::MODULO:
             return "MODULO";
+        case Symbol::TEXT:
+            return "TEXT";
+        case Symbol::IMPORT:
+            return "IMPORT";
+        case Symbol::DOUBLE_QUOTE:
+            return "DOUBLE_QUOTE";
+        case Symbol::QUOTE:
+            return "QUOTE";
+        case Symbol::DOT:
+            return "DOT";
+        case Symbol::OPEN_CURLY:
+            return "OPEN_CURLY";
+        case Symbol::CLOSED_CURLY:
+            return "CLOSED_CURLY";
+        case Symbol::type:
+            return "type";
     }
     throw std::runtime_error("Symbol not known.");
 }
