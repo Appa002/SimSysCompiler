@@ -12,9 +12,9 @@
 #include <memory>
 #include <General/ScopedSymbolTable.h>
 #include <list>
+#include <General/LineCountingPosition.h>
 
 namespace ACC {
-
     class LexicalAnalysis{
     private:
 
@@ -26,14 +26,18 @@ namespace ACC {
 
         void postProcessDocument();
 
-        int readDepth(size_t& pos);
+        int readDepth(LineCountingPosition& pos);
         void analyse();
-        void checkIndent(size_t &idx, size_t lineNum);
+        void checkIndent(LineCountingPosition &idx);
 
-        bool checkSpecial(const std::string &buffer, size_t lineNum);
-        bool checkKeyword(std::string const &buffer, size_t lineNum);
+        void findLines(std::vector<std::string> & lines);
 
-        std::string loadBuffer(size_t &idx);
+        bool checkSpecial(const std::string &buffer, LineCountingPosition idx,
+                                  const std::vector<std::string> &lines);
+        bool checkKeyword(std::string const &buffer, LineCountingPosition idx,
+                                  const std::vector<std::string> &lines);
+
+        std::string loadBuffer(LineCountingPosition &idx);
 
     public:
         LexicalAnalysis() = default;
@@ -47,6 +51,8 @@ namespace ACC {
 
         const std::vector<IToken*>::iterator begin();
         const std::vector<IToken*>::iterator end();
+        IToken* at(size_t idx);
+        size_t size();
         std::vector<IToken*> const & data();
 
         void addZeroExit();

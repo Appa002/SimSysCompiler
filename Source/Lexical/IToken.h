@@ -9,24 +9,17 @@
 #include <grammar.h>
 
 namespace ACC {
-    class IContext;
 
     class IToken {
     public:
         Symbol id;
         const size_t lineNum;
+        std::string lineContent;
 
         explicit IToken(Symbol id, size_t lineNum) : lineNum(lineNum), id(id) {};
         
         virtual std::string getIdentifier() = 0;
         virtual ~IToken() = default;
-    };
-
-    struct token_string : public std::vector<IToken*>{
-        token_string();
-        token_string(std::vector<IToken*> other);
-        std::string createStdString();
-        std::vector<IToken*> operator() (const token_string& other);
     };
 
 }

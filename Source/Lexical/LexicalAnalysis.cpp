@@ -132,7 +132,7 @@ void ACC::LexicalAnalysis::addZeroExit() {
     tokens.push_back(new EOSToken(0));
 }
 
-int ACC::LexicalAnalysis::readDepth(size_t& pos){
+int ACC::LexicalAnalysis::readDepth(LineCountingPosition& pos){
     int newGap = 0;
     while(contains(document.at(pos), {" ", "\n", "\r"})){
         if(document.at(pos) == '\n'){
@@ -147,17 +147,17 @@ int ACC::LexicalAnalysis::readDepth(size_t& pos){
 }
 
 void ACC::LexicalAnalysis::analyse() {
-    size_t idx = 0;
-    size_t lineNum = 1;
+    std::vector<std::string> lines;
+    findLines(lines);
+
+    LineCountingPosition idx(document);
     std::string buffer;
-    bool shallCheckIndent = false;
 
     while(idx < document.size()){
 
         if(contains(document[idx], {"\n","\r"})){
             idx++;
-            lineNum++;
-            checkIndent(idx, lineNum);
+            checkIndent(idx);
             continue;
         }
 
@@ -168,27 +168,28 @@ void ACC::LexicalAnalysis::analyse() {
             buffer = buffer.substr(1, buffer.size());
 
 
-        if(checkSpecial(buffer, 0))
+        if(checkSpecial(buffer, idx, lines))
             continue;
 
-        if(checkKeyword(buffer, 0))
+        if(checkKeyword(buffer, idx, lines))
             continue;
 
-        if(!buffer.empty())
-            tokens.push_back(new TextToken(buffer, lineNum));
-
+        if(!buffer.empty()) {
+            tokens.push_back(new TextToken(buffer, idx.lineNum));
+            tokens.at(tokens.size() - 1)->lineContent = lines.at(idx.lineNum - 1);
+        }
     }
 }
 
-void ACC::LexicalAnalysis::checkIndent(size_t &idx, size_t lineNum) {
+void ACC::LexicalAnalysis::checkIndent(LineCountingPosition &idx) {
     int newDepth = readDepth(idx);
     if (newDepth > depth){
-        tokens.push_back(new IndentToken(lineNum));
+        tokens.push_back(new IndentToken(idx.lineNum));
         indentList.push_back(newDepth);
     }
     else if (newDepth < depth){
         while( indentList.at(indentList.size() - 1) > newDepth  ){
-            tokens.push_back(new ExtentToken(lineNum));
+            tokens.push_back(new ExtentToken(idx.lineNum));
             indentList.pop_back();
         }
         //popScope();
@@ -196,129 +197,135 @@ void ACC::LexicalAnalysis::checkIndent(size_t &idx, size_t lineNum) {
     depth = newDepth;
 }
 
-bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, size_t lineNum) {
+bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, LineCountingPosition idx,
+                                        const std::vector<std::string> &lines) {
     if (buffer == "!=")
-        tokens.push_back(new ComparisionToken(ComparisionTokenKind::NotEqual, lineNum));
+        tokens.push_back(new ComparisionToken(ComparisionTokenKind::NotEqual, idx.lineNum));
 
     else if (buffer == "<=")
-        tokens.push_back(new ComparisionToken(ComparisionTokenKind::LessEqual, lineNum));
+        tokens.push_back(new ComparisionToken(ComparisionTokenKind::LessEqual, idx.lineNum));
 
     else if (buffer == ">=")
-        tokens.push_back(new ComparisionToken(ComparisionTokenKind::GreaterEqual, lineNum));
+        tokens.push_back(new ComparisionToken(ComparisionTokenKind::GreaterEqual, idx.lineNum));
 
     else if (buffer == "==")
-        tokens.push_back(new ComparisionToken(ComparisionTokenKind::Equal, lineNum));
+        tokens.push_back(new ComparisionToken(ComparisionTokenKind::Equal, idx.lineNum));
 
     else if (buffer == "->")
-        tokens.push_back(new ArrowToken(lineNum));
+        tokens.push_back(new ArrowToken(idx.lineNum));
 
     else if (buffer == ":")
-        tokens.push_back(new ColonToken(lineNum));
+        tokens.push_back(new ColonToken(idx.lineNum));
 
     else if (buffer == ";")
-        tokens.push_back(new EOSToken(lineNum));
+        tokens.push_back(new EOSToken(idx.lineNum));
 
     else if (buffer == "{")
-        tokens.push_back(new OpenCurlyToken(lineNum));
+        tokens.push_back(new OpenCurlyToken(idx.lineNum));
 
     else if (buffer == "}")
-        tokens.push_back(new ClosedCurlyToken(lineNum));
+        tokens.push_back(new ClosedCurlyToken(idx.lineNum));
 
     else if (buffer  == "!")
-        tokens.push_back(new NotToken(lineNum));
+        tokens.push_back(new NotToken(idx.lineNum));
 
     else if (buffer  == ".")
-        tokens.push_back(new DotToken(lineNum));
+        tokens.push_back(new DotToken(idx.lineNum));
 
     else if (buffer  == "%")
-        tokens.push_back(new ModuloToken(lineNum));
+        tokens.push_back(new ModuloToken(idx.lineNum));
 
     else if(buffer  == "<")
-        tokens.push_back(new ComparisionToken(ComparisionTokenKind::Less, lineNum));
+        tokens.push_back(new ComparisionToken(ComparisionTokenKind::Less, idx.lineNum));
 
     else if(buffer  == ">")
-        tokens.push_back(new ComparisionToken(ComparisionTokenKind::Greater, lineNum));
+        tokens.push_back(new ComparisionToken(ComparisionTokenKind::Greater, idx.lineNum));
 
     else if(buffer  == "\"")
-        tokens.push_back(new DoubleQuoteToken(lineNum));
+        tokens.push_back(new DoubleQuoteToken(idx.lineNum));
 
     else if(buffer  == "'")
-        tokens.push_back(new QuoteToken(lineNum));
+        tokens.push_back(new QuoteToken(idx.lineNum));
 
     else if (buffer  == ",")
-        tokens.push_back(new CommaToken(lineNum));
+        tokens.push_back(new CommaToken(idx.lineNum));
 
     else if (buffer  == "(")
-        tokens.push_back(new OpenBracketToken(lineNum));
+        tokens.push_back(new OpenBracketToken(idx.lineNum));
 
     else if (buffer  == ")")
-        tokens.push_back(new ClosedBracketToken(lineNum));
+        tokens.push_back(new ClosedBracketToken(idx.lineNum));
 
     else if (buffer  == "+")
-        tokens.push_back(new PlusToken(lineNum));
+        tokens.push_back(new PlusToken(idx.lineNum));
 
     else if (buffer  == "-")
-        tokens.push_back(new MinusToken(lineNum));
+        tokens.push_back(new MinusToken(idx.lineNum));
 
     else if (buffer  == "*")
-        tokens.push_back(new StarToken(lineNum));
+        tokens.push_back(new StarToken(idx.lineNum));
 
     else if (buffer  == "/")
-        tokens.push_back(new SlashToken(lineNum));
+        tokens.push_back(new SlashToken(idx.lineNum));
 
     else if (buffer  == ",")
-        tokens.push_back(new CommaToken(lineNum));
+        tokens.push_back(new CommaToken(idx.lineNum));
 
     else if (buffer  == "=")
-        tokens.push_back(new AssignToken(lineNum));
+        tokens.push_back(new AssignToken(idx.lineNum));
 
     else
         return false;
 
+    tokens.at(tokens.size() - 1)->lineContent = lines.at(idx.lineNum - 1);
+
     return true;
 }
 
-bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, size_t lineNum) {
+bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingPosition idx,
+                                        const std::vector<std::string> &lines) {
     if(buffer == "fn")
-        tokens.push_back(new FunctionToken(lineNum));
+        tokens.push_back(new FunctionToken(idx.lineNum));
 
     else if (buffer == "else")
-        tokens.push_back(new ElseToken(lineNum));
+        tokens.push_back(new ElseToken(idx.lineNum));
 
     else if (buffer == "exit")
-        tokens.push_back(new ExitToken(lineNum));
+        tokens.push_back(new ExitToken(idx.lineNum));
 
     else if (buffer == "for")
-        tokens.push_back(new ForToken(lineNum));
+        tokens.push_back(new ForToken(idx.lineNum));
 
     else if (buffer == "if")
-        tokens.push_back(new IfToken(lineNum));
+        tokens.push_back(new IfToken(idx.lineNum));
 
     else if (buffer == "import")
-        tokens.push_back(new ImportToken(lineNum));
+        tokens.push_back(new ImportToken(idx.lineNum));
 
     else if (buffer == "return")
-        tokens.push_back(new ReturnToken(lineNum));
+        tokens.push_back(new ReturnToken(idx.lineNum));
 
     else if (buffer == "salloc")
-        tokens.push_back(new SallocToken(lineNum));
+        tokens.push_back(new SallocToken(idx.lineNum));
 
     else if (buffer == "syscall")
-        tokens.push_back(new SyscallToken(lineNum));
+        tokens.push_back(new SyscallToken(idx.lineNum));
 
     else if (buffer == "var")
-        tokens.push_back(new VarToken(lineNum));
+        tokens.push_back(new VarToken(idx.lineNum));
 
     else if (buffer == "while")
-        tokens.push_back(new WhileToken(lineNum));
+        tokens.push_back(new WhileToken(idx.lineNum));
 
     else
         return false;
 
+    tokens.at(tokens.size() - 1)->lineContent = lines.at(idx.lineNum - 1);
+
     return true;
 }
 
-std::string ACC::LexicalAnalysis::loadBuffer(size_t &idx) {
+std::string ACC::LexicalAnalysis::loadBuffer(LineCountingPosition &idx) {
     const std::vector<std::string> specialTokens = {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
                                                     "<", ">", "!", ":", "\'", "\"", "%", ",", "{", "}", "."};
 
@@ -367,4 +374,23 @@ std::string ACC::LexicalAnalysis::loadBuffer(size_t &idx) {
 ACC::LexicalAnalysis::LexicalAnalysis(const ACC::LexicalAnalysis &other) : tokens(other.tokens), document(other.document),
 refCount(other.refCount), indentList(other.indentList), depth(other.depth){
     refCount++;
+}
+
+ACC::IToken *ACC::LexicalAnalysis::at(size_t idx) {
+    return tokens.at(idx);
+}
+
+size_t ACC::LexicalAnalysis::size() {
+    return tokens.size();
+}
+
+void ACC::LexicalAnalysis::findLines(std::vector<std::string>& lines) {
+    long prevIdx = -1;
+    for(size_t i = 0; i < document.size(); i++){
+        if(contains(document[i], {"\n","\r"})){
+            lines.push_back(document.substr(prevIdx + 1, i - prevIdx - 1));
+            prevIdx = i;
+        }
+    }
+    lines.push_back(document.substr(prevIdx + 1, document.size()));
 }

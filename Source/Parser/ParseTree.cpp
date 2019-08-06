@@ -99,6 +99,16 @@ void ACC::ParseTree::generate(ACC::LexicalAnalysis in) {
     document = in.data();
     size_t pos = 0;
     root = start(pos);
+
+    LOG.createHeading("Syntax Errors...");
+
+    if(pos + 1 != in.size()) {
+        LOG() << Log::Colour::Red << "Syntax Error in Line: " << in.at(pos)->lineNum << std::endl;
+        LOG() << Log::Colour::Cleared << in.at(pos)->lineContent << std::endl;
+        throw std::runtime_error("Syntax Error");
+    }else{
+        LOG() << Log::Colour::Green << "None :)" << std::endl;
+    }
 }
 
 ACC::ParseTree::~ParseTree() {
@@ -700,7 +710,7 @@ ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {
     LOG() << Log::Colour::Magenta << "Entering [type]...\n";
 
     ParseNode *node = new ParseNode;
-    node->symbol = Symbol::ptr_assign;
+    node->symbol = Symbol::type;
 
     size_t oldPos = pos;
     ParseNode *other;

@@ -3,6 +3,7 @@
 #include <Lexical/Tokens/LiteralToken.h>
 #include <AbstractSyntaxTree/process.h>
 #include <AbstractSyntaxTree/ASTNode.h>
+#include <General/builtinTypes.h>
 #include <Parser/Production.h>
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
@@ -33,6 +34,7 @@
 #include <AbstractSyntaxTree/ASTNodes/ModuloNode.h>
 #include <Lexical/Tokens/SallocToken.h>
 #include <AbstractSyntaxTree/ASTNodes/DereferenceNode.h>
+#include <Lexical/Tokens/TextToken.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -157,9 +159,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
         }},
 
-        {{Symbol::for_construct, {Symbol::FOR, Symbol::ID, Symbol::ARROW, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
+        {{Symbol::for_construct, {Symbol::FOR, Symbol::TEXT, Symbol::ARROW, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             std::vector<ASTNode*> vec = {
-                    new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[1]->token)->sym),
+                    new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data),
                     process(children[3], nullptr),
                     process(children[6], nullptr)};
             return new ForNode(AstOperator::FOR, vec);
@@ -167,23 +169,19 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::OPEN_BRACKET, Symbol::paramsDecl, Symbol::CLOSED_BRACKET,
-                             Symbol::TYPE, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+        {{Symbol::function, {Symbol::FUNCTION, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsDecl, Symbol::CLOSED_BRACKET,
+                             Symbol::ARROW, Symbol::type, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
-            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data));
 
-            vec.push_back(new ASTNode(AstOperator::TYPE_DEF,
-                                      GeneralDataStore::create(dynamic_cast<TypeToken*>(children[5]->token)->typeId)));
-
+            vec.push_back(process(children[6]));
 
             auto params = children[3];
             while(params != nullptr){
                 std::vector<ASTNode*> paramsVec = {
-                        new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(params->children[0]->token)->sym),
-                        new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(
-                                dynamic_cast<TypeToken*>(params->children[1]->token)->typeId))
-
+                        new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(params->children[0]->token)->data),
+                        process(params->children[2])
                 };
                 vec.push_back(new ASTNode(AstOperator::__CONTAINER, paramsVec));
 
@@ -193,28 +191,27 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                     params = nullptr;
             }
 
+            vec.push_back(process(children[9], nullptr));
+
+            return new FunctionNode(AstOperator::FUNCTION, vec);
+        }},
+
+        {{Symbol::function, {Symbol::FUNCTION, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::ARROW, Symbol::type,
+                                    Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+
+            std::vector<ASTNode*> vec;
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data));
+            vec.push_back(process(children[5]));
+
             vec.push_back(process(children[8], nullptr));
 
             return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
 
-        {{Symbol::function, {Symbol::FUNCTION, Symbol::DECL, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::TYPE,
-                                    Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+        {{Symbol::call, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
-            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym));
-            vec.push_back(new ASTNode(AstOperator::TYPE_DEF,
-                    GeneralDataStore::create(dynamic_cast<TypeToken*>(children[4]->token)->typeId)));
-
-            vec.push_back(process(children[7], nullptr));
-
-            return new FunctionNode(AstOperator::FUNCTION, vec);
-        }},
-
-        {{Symbol::call, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
-
-            std::vector<ASTNode*> vec;
-            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data));
 
             ParseNode* params = children[2];
             while(params != nullptr){
@@ -235,17 +232,41 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
+        {{Symbol::type, {Symbol::TEXT, Symbol::CMP, Symbol::TEXT, Symbol::CMP}}, [](auto children, auto carry){
+            std::string str = dynamic_cast<TextToken*>(children[2]->token)->data;
+            Type t;
+            if(str == "num"){
+                t = Type(BuiltIns::ptrType, BuiltIns::numType);
+            } else if(str == "char"){
+                t = Type(BuiltIns::ptrType, BuiltIns::charType);
+            }
 
-        {{Symbol::assignment, {Symbol::VAR, Symbol::DECL, Symbol::TYPE, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
-            GeneralDataStore store = GeneralDataStore::create(dynamic_cast<TypeToken*>(children[2]->token)->typeId);
-            std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<DeclToken*>(children[1]->token)->sym),
-                        new ASTNode(AstOperator::TYPE_DEF, store),
-                        process(children[4], nullptr)};
+            return new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(t));
+        }},
+
+        {{Symbol::type, {Symbol::TEXT}}, [](auto children, auto carry){
+            std::string str = dynamic_cast<TextToken*>(children[0]->token)->data;
+            Type t;
+            if(str == "num"){
+                t = Type(BuiltIns::numType);
+            } else if(str == "char"){
+                t = Type(BuiltIns::charType);
+            }
+
+            return new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(t));
+        }},
+
+
+        {{Symbol::assignment, {Symbol::VAR, Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {
+                        new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data),
+                        process(children[3]),
+                        process(children[5], nullptr)};
             return new AssignNode(AstOperator::ASSIGN, vec);
         }},
 
-        {{Symbol::assignment, {Symbol::ID, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
-            std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym),
+        {{Symbol::assignment, {Symbol::TEXT, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data),
                         process(children[2], nullptr)};
             return new ReassignNode(AstOperator::REASSIGN, vec);
         }},
@@ -312,26 +333,26 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                                {process(children[1], nullptr)});
         }},
 
-        {{Symbol::keyword, {Symbol::SALLOC, Symbol::expr, Symbol::COMMA, Symbol::ID}}, [](auto children, auto carry){
+        {{Symbol::keyword, {Symbol::SALLOC, Symbol::expr, Symbol::COMMA, Symbol::TEXT}}, [](auto children, auto carry){
             std::vector<ASTNode*> vec = {process(children[1], nullptr),
-                        new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[3]->token)->sym)};
+                        new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[3]->token)->data)};
             return new SallocNode(AstOperator::SALLOC, vec);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
                 return new CallNode(AstOperator::CALL,
-                                   {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
+                                   {new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data)});
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             auto call = new CallNode(AstOperator::CALL,
-                               {new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)});
+                               {new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data)});
             return process(children[3], call);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             std::vector<ASTNode*> vec;
-            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data));
 
             ParseNode* params = children[2];
             while(params != nullptr){
@@ -345,9 +366,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new CallNode(AstOperator::CALL, vec);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+        {{Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             std::vector<ASTNode*> vec;
-            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym));
+            vec.push_back(new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data));
 
             ParseNode* params = children[2];
             while(params != nullptr){
@@ -362,24 +383,69 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return process(children[4], call);
         }},
 
-        {{Symbol::expr, {Symbol::LITERAL}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
-            return new LiteralNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
+        {{Symbol::expr, {Symbol::TEXT}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            std::string str = dynamic_cast<TextToken*>(children[0]->token)->data;
+
+            bool isNumber = true;
+            for(auto const & c : str){
+                if(c < 48 || c > 57)
+                    isNumber = false;
+            }
+
+            if(isNumber){
+                GeneralDataStore value;
+                value.storeT(std::stoul(str));
+                Type t = Type(BuiltIns::numType);
+                return new LiteralNode(AstOperator::LITERAL, value, t);
+
+            } else {
+                return new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data);
+            }
+
         }},
 
-        {{Symbol::expr, {Symbol::LITERAL, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            auto asLiteralToken = dynamic_cast<LiteralToken*>(children[0]->token);
-            auto literal = new LiteralNode(AstOperator::LITERAL, asLiteralToken->literal, asLiteralToken->type);
-            return process(children[1], literal);
+        {{Symbol::expr, {Symbol::TEXT, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+            std::string str = dynamic_cast<TextToken*>(children[0]->token)->data;
+
+            bool isNumber = true;
+            for(auto const & c : str){
+                if(c < 48 || c > 57)
+                    isNumber = false;
+            }
+
+            if(isNumber){
+                GeneralDataStore value;
+                value.storeT(std::stoul(str));
+                Type t = Type(BuiltIns::numType);
+                auto literal = new LiteralNode(AstOperator::LITERAL, value, t);
+                return process(children[1], literal);
+            } else {
+                return process(children[1], new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data));
+            }
+
         }},
 
-        {{Symbol::expr, {Symbol::ID}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            return new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
+        {{Symbol::expr, {Symbol::DOUBLE_QUOTE, Symbol::TEXT, Symbol::DOUBLE_QUOTE}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+            std::string str = dynamic_cast<TextToken*>(children[1]->token)->data;
+
+            GeneralDataStore value;
+            Type t = Type(BuiltIns::ptrType, BuiltIns::charType);
+
+            value.storeT(str);
+
+            return new LiteralNode(AstOperator::LITERAL, value, t);
         }},
 
-        {{Symbol::expr, {Symbol::ID, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
-            auto id = new IdNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym);
-            return process(children[1], id);
+
+        {{Symbol::expr, {Symbol::QUOTE, Symbol::TEXT, Symbol::QUOTE}}, [](std::vector < ACC::ParseNode * > children, auto carry){
+            std::string str = dynamic_cast<TextToken*>(children[1]->token)->data;
+
+            GeneralDataStore value;
+            Type t = Type(BuiltIns::charType);
+
+            value.storeT(str[0]);
+
+            return new LiteralNode(AstOperator::LITERAL, value, t);
         }},
 
          {{Symbol::expr, {Symbol::OPEN_BRACKET, Symbol::expr, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry){
@@ -391,7 +457,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
          {{Symbol::expr, {Symbol::STAR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-             if(carry != nullptr) // Its binary therefor addition
+             if(carry != nullptr) // Its binary therefor multiplications
                  return new MultiplicationNode(AstOperator::MULTIPLICATION, {carry, process(children[1], nullptr)});
 
              // Its unary therefor dereference
