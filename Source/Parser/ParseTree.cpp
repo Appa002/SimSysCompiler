@@ -329,7 +329,7 @@ ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
             NONE_TERMINAL(expr)
             OPTIONAL_TERMINAL(COMMA)
 
-            for(size_t i = 0; i < 6; i++){
+            for(size_t i = 0; i < 6; i++){ // TODO: Fix for error reporting
                 vec.push_back(Symbol::expr);
                 vec.push_back(Symbol::COMMA);
                 logable.changeProduction(Symbol::keyword, vec);
@@ -496,7 +496,7 @@ ACC::ParseNode *ACC::ParseTree::paramDecl(size_t &pos) {
             TERMINAL(COLON)
             NONE_TERMINAL(type)
             OPTIONAL_TERMINAL(COMMA)
-            OPTIONAL_NONE_TERMINAL(paramDecl)
+            NONE_TERMINAL(paramDecl)
     END_PRODUCTION()
 
 
@@ -522,7 +522,7 @@ ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
     START_PRODUCTION()
             NONE_TERMINAL(expr)
             OPTIONAL_TERMINAL(COMMA)
-            OPTIONAL_NONE_TERMINAL(paramList)
+            NONE_TERMINAL(paramList)
     END_PRODUCTION()
 
 
@@ -725,8 +725,8 @@ ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {
     START_PRODUCTION()
             TERMINAL(TEXT)
             OPTIONAL_TERMINAL(CMP)
-            OPTIONAL_TERMINAL(TEXT)
-            OPTIONAL_TERMINAL(CMP)
+            TERMINAL(TEXT)
+            TERMINAL(CMP)
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
