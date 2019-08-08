@@ -124,4 +124,122 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
     throw std::runtime_error("Symbol not known.");
 }
 
+std::string ACC::data::symbolToStringForErrReporting(ACC::Symbol s) {
+    switch (s) {
+        case Symbol::empty:
+            return "-1";
+        case Symbol::VAR:
+            return "var";
+        case Symbol::ID:
+            return "id";
+        case Symbol::OPEN_BRACKET:
+            return "(";
+        case Symbol::CLOSED_BRACKET:
+            return ")";
+        case Symbol::SYSCALL:
+            return "syscall";
+        case Symbol::LITERAL:
+            return "data";
+        case Symbol::EOS:
+            return ";";
+        case Symbol::expr:
+            return "an expr";
+        case Symbol::stmt:
+            return "an stmt";
+        case Symbol::start:
+            return "a block";
+        case Symbol::for_construct:
+            return "parts of for loop";
+        case Symbol::assignment:
+            return "=";
+        case Symbol::keyword:
+            return "keyword";
+        case Symbol::DECL:
+            return "decl";
+        case Symbol::ASSIGN:
+            return "=";
+        case Symbol::EXIT:
+            return "exit";
+        case Symbol::INDENT:
+            return "a block start";
+        case Symbol::EXTENT:
+            return "a block end";
+        case Symbol::FUNCTION:
+            return "fn";
+        case Symbol::COLON:
+            return ":";
+        case Symbol::COMMA:
+            return ",";
+        case Symbol::function:
+            return "a function";
+        case Symbol::paramsDecl:
+            return "a declaration list";
+        case Symbol::paramsList:
+            return "a parameter list";
+        case Symbol::call:
+            return "a function call";
+        case Symbol::RETURN:
+            return "return";
+        case Symbol::TYPE:
+            return "type";
+        case Symbol::IF:
+            return "if";
+        case Symbol::ifStmt:
+            return "parts of if";
+        case Symbol::CMP:
+            return "a comparison expression";
+        case Symbol::NOT:
+            return "!";
+        case Symbol::ELIF:
+            return "elif";
+        case Symbol::if_construct:
+            return "parts of if";
+        case Symbol::ELSE:
+            return "else";
+        case Symbol::else_construct:
+            return "parts of else";
+        case Symbol::elseIf_construct:
+            return "parts of elif";
+        case Symbol::WHILE:
+            return "while";
+        case Symbol::while_construct:
+            return "parts of while loop";
+        case Symbol::ARROW:
+            return "->";
+        case Symbol::FOR:
+            return "for";
+        case Symbol::ptr_assign:
+            return "an assignment to pointer";
+        case Symbol::SALLOC:
+            return "salloc";
+        case Symbol::SLASH:
+            return "/";
+        case Symbol::STAR:
+            return "*";
+        case Symbol::PLUS:
+            return "+";
+        case Symbol::MINUS:
+            return "-";
+        case Symbol::MODULO:
+            return "%";
+        case Symbol::TEXT:
+            return "a identifier or string";
+        case Symbol::IMPORT:
+            return "import";
+        case Symbol::DOUBLE_QUOTE:
+            return "\"";
+        case Symbol::QUOTE:
+            return "'";
+        case Symbol::DOT:
+            return ".";
+        case Symbol::OPEN_CURLY:
+            return "{";
+        case Symbol::CLOSED_CURLY:
+            return "}";
+        case Symbol::type:
+            return "a type definition";
+    }
+    throw std::runtime_error("Symbol not known.");
+}
+
 

@@ -27,6 +27,23 @@ namespace ACC{
             return "CMP";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            switch (kind){
+                case ComparisionTokenKind::Equal:
+                    return "==";
+                case ComparisionTokenKind::NotEqual:
+                    return "!=";
+                case ComparisionTokenKind::Less:
+                    return "<";
+                case ComparisionTokenKind::Greater:
+                    return ">";
+                case ComparisionTokenKind::LessEqual:
+                    return "<=";
+                case ComparisionTokenKind::GreaterEqual:
+                    return ">=";
+            }
+        };
+
         friend inline bool operator==(ComparisionToken const & lhs, ComparisionToken const & rhs){
             return true;
         }

@@ -16,6 +16,10 @@ namespace ACC{
             return "Minus";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "-";
+        };
+
         friend inline bool operator==(MinusToken const & lhs, MinusToken const & rhs){
             return true;
         }

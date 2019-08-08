@@ -11,8 +11,12 @@ namespace ACC{
         explicit OpenCurlyToken(size_t lineNum) : IToken(Symbol::OPEN_CURLY, lineNum) {};
 
         std::string getIdentifier() override{
-            return "{";
+            return "Open Curly";
         }
+
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "{";
+        };
 
         friend inline bool operator==(const OpenCurlyToken&, const OpenCurlyToken&){
             return true;

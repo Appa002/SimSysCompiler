@@ -16,6 +16,10 @@ namespace ACC{
             return "Exit";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "exit";
+        };
+
         friend inline bool operator==(ExitToken const & lhs, ExitToken const & rhs){
             return true;
         }

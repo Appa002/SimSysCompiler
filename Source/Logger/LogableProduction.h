@@ -19,6 +19,7 @@ namespace ACC {
         void green();
         void red();
         void blue();
+        Symbol at(size_t idx);
 
     private:
         ACC::Symbol head = Symbol::VAR;

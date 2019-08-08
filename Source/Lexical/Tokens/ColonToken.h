@@ -14,6 +14,10 @@ namespace ACC{
             return "colon";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return ":";
+        };
+
         friend inline bool operator==(const ColonToken&, const ColonToken&){
             return true;
         }

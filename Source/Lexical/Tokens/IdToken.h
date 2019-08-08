@@ -18,6 +18,9 @@ namespace ACC{
         std::string getIdentifier() override{
             return "Id ("+sym+")";
         }
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return sym;
+        };
 
         friend inline bool operator==(IdToken const & lhs, IdToken const & rhs){
             return lhs.sym == rhs.sym;

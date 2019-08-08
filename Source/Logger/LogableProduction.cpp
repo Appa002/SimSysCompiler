@@ -70,3 +70,7 @@ void ACC::LogableProduction::changeProduction(ACC::Symbol h, std::vector<ACC::Sy
     head = h;
     productionToLog = prod;
 }
+
+ACC::Symbol ACC::LogableProduction::at(size_t idx) {
+    return productionToLog.at(idx);
+}

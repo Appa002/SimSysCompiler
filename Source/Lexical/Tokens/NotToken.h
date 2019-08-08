@@ -15,6 +15,10 @@ namespace ACC{
             return "Not";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "!";
+        };
+
         friend inline bool operator==(NotToken const & lhs, NotToken const & rhs){
             return true;
         }

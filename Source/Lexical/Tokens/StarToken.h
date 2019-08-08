@@ -17,6 +17,10 @@ namespace ACC{
             return "Star(*)";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "*";
+        };
+
         friend inline bool operator==(StarToken const & lhs, StarToken const & rhs){
             return true;
         }

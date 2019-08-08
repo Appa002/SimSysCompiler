@@ -13,6 +13,10 @@ namespace ACC{
             return "Modulo";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "%";
+        };
+
         friend inline bool operator==(ModuloToken const&, ModuloToken const&){
             return true;
         }

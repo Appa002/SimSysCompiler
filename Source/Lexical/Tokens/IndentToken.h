@@ -14,6 +14,11 @@ namespace ACC{
             return "indent";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "starting block";
+        };
+
+
         friend inline bool operator==(const IndentToken&, const IndentToken&){
             return true;
         }

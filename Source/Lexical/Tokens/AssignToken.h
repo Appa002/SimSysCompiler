@@ -16,6 +16,10 @@ namespace ACC{
             return "Assign";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "=";
+        };
+
         friend inline bool operator==(AssignToken const & lhs, AssignToken const & rhs){
             return true;
         }

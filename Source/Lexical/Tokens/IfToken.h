@@ -14,6 +14,10 @@ namespace ACC{
             return "if";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "if";
+        };
+
         friend inline bool operator==(const IfToken&, const IfToken&){
             return true;
         }

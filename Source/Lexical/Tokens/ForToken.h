@@ -19,6 +19,10 @@ namespace ACC{
             return "for";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "for";
+        };
+
         friend inline bool operator==(ForToken const & lhs, ForToken const & rhs){
             return true;
         }

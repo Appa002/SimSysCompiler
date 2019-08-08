@@ -16,6 +16,10 @@ namespace ACC{
             return "Slash(/)";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "/";
+        };
+
         friend inline bool operator==(SlashToken const & lhs, SlashToken const & rhs){
             return true;
         }

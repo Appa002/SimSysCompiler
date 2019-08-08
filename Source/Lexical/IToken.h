@@ -17,8 +17,9 @@ namespace ACC {
         std::string lineContent;
 
         explicit IToken(Symbol id, size_t lineNum) : lineNum(lineNum), id(id) {};
-        
+
         virtual std::string getIdentifier() = 0;
+        [[nodiscard]] virtual std::string getIdForErrReporting() const = 0;
         virtual ~IToken() = default;
     };
 

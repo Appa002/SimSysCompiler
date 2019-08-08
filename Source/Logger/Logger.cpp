@@ -64,6 +64,8 @@ namespace ANSI_CODES{
     const std::string heading = "\033[32;1m";
     const std::string green = "\033[32;1m";
     const std::string red = "\033[31;1m";
+    const std::string bold = "\033[1m";
+    const std::string gray = "\033[90m";
 };
 
 ACC::Log::LogStream::LogStream(ACC::Log::Logger &logger, ACC::Log::LogLevel level) :
@@ -112,8 +114,9 @@ void ACC::Log::Logger::loadColour(ACC::Log::Colour colour) {
 }
 
 void ACC::Log::Logger::logToConsole(ACC::Log::LogLevel level, std::string str) {
-    if(isSilent)
+    if(isSilent && level != LogLevel::Error)
         return;
+
     switch (colour){
         case Colour::Blue:
             std::cout << ANSI_CODES::blue;
@@ -129,6 +132,12 @@ void ACC::Log::Logger::logToConsole(ACC::Log::LogLevel level, std::string str) {
             break;
         case Colour::Green:
             std::cout << ANSI_CODES::green;
+            break;
+        case Colour::Bold:
+            std::cout << ANSI_CODES::bold;
+            break;
+        case Colour::Gray:
+            std::cout << ANSI_CODES::gray;
             break;
     }
     std::cout << str;
@@ -164,7 +173,18 @@ void ACC::Log::Logger::logToFile(ACC::Log::LogLevel level, std::string str) {
             str = R"(<b style="color: red;">)" + str;
             str += R"(</b>)";
             break;
-        case Colour::Green:  str = R"(<b style="color: green;">)" + str;
+        case Colour::Green:
+            str = R"(<b style="color: green;">)" + str;
+            str += R"(</b>)";
+            break;
+
+        case Colour::Bold:
+            str = R"(<b style="color: white;">)" + str;
+            str += R"(</b>)";
+            break;
+
+        case Colour::Gray:
+            str = R"(<b style="color: gray;">)" + str;
             str += R"(</b>)";
             break;
     }

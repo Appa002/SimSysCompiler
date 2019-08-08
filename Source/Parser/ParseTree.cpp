@@ -13,10 +13,12 @@
 #include <Logger/Logger.h>
 #include <Lexical/Tokens/IndentToken.h>
 #include <Logger/LogableProduction.h>
+#include <Error/SyntaxError.h>
 
 #define START_PRODUCTION() \
     logable.echoProduction(); \
     { \
+    int atleast = 0; \
     bool b = [&]() {
 
 #define END_PRODUCTION() \
@@ -27,6 +29,11 @@
         return node; \
     }\
     else { \
+        if(atleast > 0){ \
+            lastProduction = logable; \
+            lastLogablePos = atleast; \
+            unexpected = document.at(pos); \
+        } \
         killChildren(node); \
         pos = oldPos;\
     }\
@@ -37,6 +44,7 @@
         logable.red(); \
         return false; \
     } \
+    atleast++; \
     pos++; \
     node->children.push_back(other); \
     logable.green();
@@ -46,12 +54,14 @@
         logable.red(); \
         return false; \
     } \
+    atleast++; \
     pos++; \
     node->children.push_back(other); \
     logable.green();
 
 #define OPTIONAL_NONE_TERMINAL(name) \
     if (other = name(pos), other != nullptr){\
+        atleast++; \
         node->children.push_back(other);\
         logable.green(); \
         pos++;\
@@ -62,6 +72,7 @@
 
 #define OPTIONAL_TERMINAL(name) \
     if (other = match(pos, Symbol::name), other != nullptr){\
+        atleast++; \
         node->children.push_back(other);\
         logable.green(); \
         pos++;\
@@ -100,14 +111,9 @@ void ACC::ParseTree::generate(ACC::LexicalAnalysis in) {
     size_t pos = 0;
     root = start(pos);
 
-    LOG.createHeading("Syntax Errors...");
 
     if(pos + 1 != in.size()) {
-        LOG() << Log::Colour::Red << "Syntax Error in Line: " << in.at(pos)->lineNum << std::endl;
-        LOG() << Log::Colour::Cleared << in.at(pos)->lineContent << std::endl;
-        throw std::runtime_error("Syntax Error");
-    }else{
-        LOG() << Log::Colour::Green << "None :)" << std::endl;
+        throw errors::SyntaxError(in.at(pos + 1)->lineNum, in.at(pos + 1)->lineContent, unexpected, lastProduction.at(lastLogablePos));
     }
 }
 

@@ -24,6 +24,10 @@ namespace ACC{
             return "Type \'" + type + "\' Id: " + std::to_string(typeId.getId());
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "type";
+        };
+
         friend inline bool operator==(TypeToken const & lhs, TypeToken const & rhs){
             return lhs.type == rhs.type && lhs.typeId == rhs.typeId;
         }

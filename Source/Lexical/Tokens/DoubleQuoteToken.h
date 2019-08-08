@@ -14,6 +14,10 @@ namespace ACC{
             return "Double Quote";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "\"";
+        };
+
         friend inline bool operator==(const DoubleQuoteToken&, const DoubleQuoteToken&){
             return true;
         }

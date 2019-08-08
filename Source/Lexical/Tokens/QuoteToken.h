@@ -14,6 +14,10 @@ namespace ACC{
             return "Quote";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "'";
+        };
+
         friend inline bool operator==(const QuoteToken&, const QuoteToken&){
             return true;
         }

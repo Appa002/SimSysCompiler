@@ -16,6 +16,10 @@ namespace ACC{
             return "salloc";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "salloc";
+        };
+
         friend inline bool operator==(SallocToken const & lhs, SallocToken const & rhs){
             return true;
         }

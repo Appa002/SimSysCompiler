@@ -14,6 +14,10 @@ namespace ACC{
             return "elif";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "elif";
+        };
+
         friend inline bool operator==(const ElifToken&, const ElifToken&){
             return true;
         }

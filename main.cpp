@@ -5,6 +5,8 @@
 #include <Logger/Logger.h>
 #include <AbstractSyntaxTree/AbstractSyntaxTree.h>
 #include <Assembly/Assembly.h>
+#include <Error/SyntaxError.h>
+#include <Lexical/IToken.h>
 
 using namespace ACC;
 
@@ -29,7 +31,7 @@ void runToolchainLinux(std::string filePath){
     LOG() << "" << std::endl;
     LOG() << Log::Colour::Cleared << "... exited with: " + std::to_string(exitNasm) << std::endl;
     if(exitNasm != 0){
-        LOG() << Log::Colour::Red << "nasm failed; giving up on the toolchain" << std::endl;
+        LOG(Log::LogLevel::Error) << Log::Colour::Red << "nasm failed; giving up on the toolchain" << std::endl;
         return;
     }
 
@@ -43,7 +45,7 @@ void runToolchainLinux(std::string filePath){
     LOG() << "" << std::endl;
     LOG() << Log::Colour::Cleared << "... exited with: " + std::to_string(exitLd) << std::endl;
     if(exitLd){
-        LOG() << Log::Colour::Red << "ld failed; giving up on the toolchain" << std::endl;
+        LOG(Log::LogLevel::Error) << Log::Colour::Red << "ld failed; giving up on the toolchain" << std::endl;
         return;
     }
 
@@ -93,7 +95,32 @@ int main(int argc, char** argv) {
     auto l = LexicalAnalysis(options.inputFile);
     l.addZeroExit();
     l.printToken();
-    auto p = ParseTree(l);
+
+    ParseTree p;
+
+    try{
+        p.generate(l);
+    }
+    catch (errors::SyntaxError& err){
+        LOG.createHeading("Syntax Errors...");
+
+        LOG(Log::LogLevel::Error) << Log::Colour::Red << "There are syntax errors." << std::endl;
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "Presumably in line: ";
+
+        LOG(Log::LogLevel::Error) << Log::Colour::Blue << "" << err.lineNum << std::endl;
+        LOG(Log::LogLevel::Error) << Log::Colour::Gray << err.lineContent << std::endl;
+
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "Unexpected ";
+        LOG(Log::LogLevel::Error) << Log::Colour::Blue << err.unexpected->getIdForErrReporting();
+
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << ", are you missing ";
+        LOG(Log::LogLevel::Error) << Log::Colour::Blue <<  data::symbolToStringForErrReporting(err.expected);
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << " ?" << std::endl;
+
+        LOG.del();
+        return 2;
+    }
+
     p.getRoot()->print();
     auto a = AbstractSyntaxTree(p);
     a.print();

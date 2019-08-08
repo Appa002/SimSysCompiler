@@ -14,6 +14,10 @@ namespace ACC{
             return "extent";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "closing block";
+        };
+
         friend inline bool operator==(const ExtentToken&, const ExtentToken&){
             return true;
         }

@@ -15,6 +15,10 @@ namespace ACC{
             return "EndOfStatement";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return ";";
+        };
+
         friend inline bool operator==(EOSToken const&, EOSToken const&){
             return true;
         }

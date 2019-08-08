@@ -24,26 +24,26 @@ namespace ACC{
 
         const LineCountingPosition operator++ (int){
             LineCountingPosition const copy = *this;
-            internal++;
             doLineCheck();
+            internal++;
             return copy;
         }
         const LineCountingPosition operator-- (int){
             LineCountingPosition const copy = *this;
-            internal--;
             doLineCheck();
+            internal--;
             return copy;
         }
 
         LineCountingPosition &operator++(){
-            ++internal;
             doLineCheck();
+            ++internal;
             return *this;
         }
 
         LineCountingPosition &operator--(){
-            ++internal;
             doLineCheck();
+            ++internal;
             return *this;
         }
 

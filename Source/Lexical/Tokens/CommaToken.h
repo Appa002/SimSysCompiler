@@ -14,6 +14,10 @@ namespace ACC{
             return "comma";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return ",";
+        };
+
         friend inline bool operator==(const CommaToken&, const CommaToken&){
             return true;
         }

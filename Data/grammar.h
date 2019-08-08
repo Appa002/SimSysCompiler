@@ -13,6 +13,7 @@ namespace ACC {
 
     namespace data {
         std::string symbolToString(Symbol s);
+        std::string symbolToStringForErrReporting(Symbol s);
     }
 }
 #endif //SIMSYSCOMPILER_GRAMMAR_H

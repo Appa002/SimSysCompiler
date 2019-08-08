@@ -14,6 +14,10 @@ namespace ACC{
             return "}";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "}";
+        };
+
         friend inline bool operator==(const ClosedCurlyToken&, const ClosedCurlyToken&){
             return true;
         }

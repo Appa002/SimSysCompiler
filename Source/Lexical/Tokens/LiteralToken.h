@@ -75,6 +75,10 @@ namespace ACC{
             }
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "literal";
+        };
+
         friend inline bool operator==(LiteralToken const & lhs, LiteralToken const & rhs){
             bool out = lhs.type == rhs.type;
             return out && lhs.literal == rhs.literal;

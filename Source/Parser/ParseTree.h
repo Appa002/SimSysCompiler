@@ -5,6 +5,7 @@
 #pragma once
 
 #include <Lexical/LexicalAnalysis.h>
+#include <Logger/LogableProduction.h>
 #include "ParseNode.h"
 #include "Production.h"
 
@@ -17,6 +18,10 @@ namespace ACC {
         ParseNode * root = nullptr;
         int refCount = 1;
         bool generated = false;
+        LogableProduction lastProduction;
+        int lastLogablePos = 0;
+        IToken* unexpected;
+
     public:
         ParseTree() = default;
         explicit ParseTree(const LexicalAnalysis& in);

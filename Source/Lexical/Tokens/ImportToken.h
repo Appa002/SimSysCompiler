@@ -14,6 +14,10 @@ namespace ACC{
             return "import";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "import";
+        };
+
         friend inline bool operator==(const ImportToken&, const ImportToken&){
             return true;
         }

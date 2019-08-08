@@ -11,8 +11,12 @@ namespace ACC{
         explicit DotToken(size_t lineNum) : IToken(Symbol::DOT, lineNum) {};
 
         std::string getIdentifier() override{
-            return ".";
+            return "dot";
         }
+
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return ".";
+        };
 
         friend inline bool operator==(const DotToken&, const DotToken&){
             return true;

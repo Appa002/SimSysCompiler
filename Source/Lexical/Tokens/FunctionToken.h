@@ -14,6 +14,10 @@ namespace ACC{
             return "fn";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "fn";
+        };
+
         friend inline bool operator==(const FunctionToken&, const FunctionToken&){
             return true;
         }

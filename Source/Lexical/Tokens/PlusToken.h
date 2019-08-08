@@ -16,6 +16,10 @@ namespace ACC{
             return "Plus";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "+";
+        };
+
         friend inline bool operator==(PlusToken const & lhs, PlusToken const & rhs){
             return true;
         }

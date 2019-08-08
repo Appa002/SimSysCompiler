@@ -18,6 +18,10 @@ namespace ACC{
             return "Decl ("+sym+")";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return sym;
+        };
+
         friend inline bool operator==(DeclToken const & lhs, DeclToken const & rhs){
             return lhs.sym == rhs.sym;
         }

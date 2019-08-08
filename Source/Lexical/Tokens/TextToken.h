@@ -21,6 +21,10 @@ namespace ACC{
             return "TEXT( "+data+" )";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return data;
+        };
+
         friend inline bool operator==(const TextToken&, const TextToken&){
             return true;
         }

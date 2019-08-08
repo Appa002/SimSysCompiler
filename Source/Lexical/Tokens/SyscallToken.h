@@ -18,6 +18,10 @@ namespace ACC{
             return "syscall";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "syscall";
+        };
+
         friend inline bool operator==(SyscallToken const & lhs, SyscallToken const & rhs){
             return true;
         }

@@ -12,6 +12,10 @@ namespace ACC{
             return "Closed Bracket";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return ")";
+        };
+
         friend inline bool operator==(ClosedBracketToken const & lhs, ClosedBracketToken const & rhs){
             return true;
         }

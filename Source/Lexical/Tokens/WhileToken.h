@@ -17,6 +17,10 @@ namespace ACC{
             return "While";
         }
 
+        [[nodiscard]] std::string getIdForErrReporting() const override{
+            return "while";
+        };
+
         friend inline bool operator==(WhileToken const & lhs, WhileToken const & rhs){
             return true;
         }
