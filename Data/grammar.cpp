@@ -120,6 +120,9 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "CLOSED_CURLY";
         case Symbol::type:
             return "type";
+        case Symbol::__debug_escape_sequence:
+            return "__debug_escape_sequence";
+
     }
     throw std::runtime_error("Symbol not known.");
 }
@@ -238,6 +241,8 @@ std::string ACC::data::symbolToStringForErrReporting(ACC::Symbol s) {
             return "}";
         case Symbol::type:
             return "a type definition";
+        case Symbol::__debug_escape_sequence:
+            return "a escape sequence";
     }
     throw std::runtime_error("Symbol not known.");
 }
