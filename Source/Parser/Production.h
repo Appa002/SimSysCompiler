@@ -65,7 +65,9 @@ namespace ACC {
         ifStmt,
         else_construct,
         elseIf_construct,
-        type
+        type,
+
+        __debug_escape_sequence
     };
 
     using productionBody_t = std::vector<Symbol>;
