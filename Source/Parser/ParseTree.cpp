@@ -59,6 +59,31 @@
     node->children.push_back(other); \
     logable.green();
 
+#define EXITING_OPTIONAL_NONE_TERMINAL(name) \
+    if(other = name(pos), other == nullptr) { \
+        logable.blue(); \
+        return true; \
+    } \
+    else{ \
+        logable.green(); \
+        atleast++; \
+        pos++; \
+        node->children.push_back(other); \
+    }
+
+#define EXITING_OPTIONAL_TERMINAL(name) \
+    if(other = match(pos, Symbol::name), other == nullptr) {\
+        logable.blue(); \
+        return true; \
+    }\
+    else { \
+        logable.green();\
+        atleast++;\
+        pos++; \
+        node->children.push_back(other); \
+    }
+
+
 #define OPTIONAL_NONE_TERMINAL(name) \
     if (other = name(pos), other != nullptr){\
         atleast++; \
@@ -113,7 +138,7 @@ void ACC::ParseTree::generate(ACC::LexicalAnalysis in) {
 
 
     if(pos + 1 != in.size()) {
-        throw errors::SyntaxError(in.at(pos + 1)->lineNum, in.at(pos + 1)->lineContent, unexpected, lastProduction.at(lastLogablePos));
+        throw errors::SyntaxError(unexpected->lineNum, unexpected->lineContent, unexpected, lastProduction.at(lastLogablePos));
     }
 }
 
@@ -495,8 +520,8 @@ ACC::ParseNode *ACC::ParseTree::paramDecl(size_t &pos) {
             TERMINAL(TEXT)
             TERMINAL(COLON)
             NONE_TERMINAL(type)
-            OPTIONAL_TERMINAL(COMMA)
-            OPTIONAL_NONE_TERMINAL(paramDecl)
+            EXITING_OPTIONAL_TERMINAL(COMMA)
+            NONE_TERMINAL(paramDecl)
     END_PRODUCTION()
 
 
@@ -521,8 +546,8 @@ ACC::ParseNode *ACC::ParseTree::paramList(size_t &pos) {
     logable.loadProduction(Symbol::paramsList, {Symbol::expr, Symbol::COMMA, Symbol::paramsList});
     START_PRODUCTION()
             NONE_TERMINAL(expr)
-            OPTIONAL_TERMINAL(COMMA)
-            OPTIONAL_NONE_TERMINAL(paramList)
+            EXITING_OPTIONAL_TERMINAL(COMMA)
+            NONE_TERMINAL(paramList)
     END_PRODUCTION()
 
 
@@ -724,9 +749,9 @@ ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {
     logable.loadProduction(Symbol::type, {Symbol::TEXT, Symbol::CMP, Symbol::TEXT, Symbol::CMP});
     START_PRODUCTION()
             TERMINAL(TEXT)
-            OPTIONAL_TERMINAL(CMP)
-            OPTIONAL_TERMINAL(TEXT)
-            OPTIONAL_TERMINAL(CMP)
+            EXITING_OPTIONAL_TERMINAL(CMP)
+            TERMINAL(TEXT)
+            TERMINAL(CMP)
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
