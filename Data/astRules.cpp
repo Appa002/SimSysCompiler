@@ -185,8 +185,8 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                 };
                 vec.push_back(new ASTNode(AstOperator::__CONTAINER, paramsVec));
 
-                if(params->children.size() == 4)
-                    params = params->children[3];
+                if(params->children.size() == 5)
+                    params = params->children[4];
                 else
                     params = nullptr;
             }
