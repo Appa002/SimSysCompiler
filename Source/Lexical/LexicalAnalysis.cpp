@@ -165,7 +165,7 @@ void ACC::LexicalAnalysis::analyse() {
         buffer = loadBuffer(idx);
         idx++;
 
-        if (buffer[0] == ' ')
+        if (!stringMode && buffer[0] == ' ')
             buffer = buffer.substr(1, buffer.size());
 
 
@@ -176,35 +176,6 @@ void ACC::LexicalAnalysis::analyse() {
             continue;
 
         if (!buffer.empty()) {
-            for (size_t i = 0; i < buffer.size(); i++) {
-                if (buffer[i] == '\\') {
-
-                    if (buffer[i + 1] == 'n')
-                        buffer.insert(i, "\n");
-
-                    else if (buffer[i + 1] == '"')
-                        buffer.insert(i, "\"");
-
-                    else if (buffer[i + 1] == '\'')
-                        buffer.insert(i, "'");
-
-                    else if (buffer[i + 1] == 'r')
-                        buffer.insert(i, "\r");
-
-                    else if (buffer[i + 1] == '\\')
-                        buffer.insert(i, "\\");
-
-                    else
-                        throw errors::SyntaxError(idx.lineNum - 1, lines.at(idx.lineNum - 1),
-                                                  tokens.at(tokens.size() - 1), Symbol::__debug_escape_sequence);
-
-                    buffer.erase(i + 1, 2);
-
-
-                }
-            }
-
-
             tokens.push_back(new TextToken(buffer, idx.lineNum));
             tokens.at(tokens.size() - 1)->lineContent = lines.at(idx.lineNum - 1);
         }
@@ -228,6 +199,7 @@ void ACC::LexicalAnalysis::checkIndent(LineCountingPosition &idx) {
 
 bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, LineCountingPosition idx,
                                         const std::vector<std::string> &lines) {
+
     if (buffer == "!=")
         tokens.push_back(new ComparisionToken(ComparisionTokenKind::NotEqual, idx.lineNum));
 
@@ -270,11 +242,14 @@ bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, LineCountingP
     else if (buffer == ">")
         tokens.push_back(new ComparisionToken(ComparisionTokenKind::Greater, idx.lineNum));
 
-    else if (buffer == "\"")
+    else if (buffer == "\"") {
         tokens.push_back(new DoubleQuoteToken(idx.lineNum));
-
-    else if (buffer == "'")
+        stringMode = !stringMode;
+    }
+    else if (buffer == "'") {
         tokens.push_back(new QuoteToken(idx.lineNum));
+        stringMode = !stringMode;
+    }
 
     else if (buffer == ",")
         tokens.push_back(new CommaToken(idx.lineNum));
@@ -319,6 +294,9 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingP
     else if (buffer == "else")
         tokens.push_back(new ElseToken(idx.lineNum));
 
+    else if (buffer == "elif")
+        tokens.push_back(new ElifToken(idx.lineNum));
+
     else if (buffer == "exit")
         tokens.push_back(new ExitToken(idx.lineNum));
 
@@ -355,12 +333,44 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingP
 }
 
 std::string ACC::LexicalAnalysis::loadBuffer(LineCountingPosition &idx) {
-    const std::vector<std::string> specialTokens = {"\"", ";", " ", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
-                                                    "<", ">", "!", ":", "\'", "\"", "%", ",", "{", "}", "."};
+    const std::vector<std::string> specialTokens = {"\"", ";", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
+                                                    "<", ">", "!", ":", "\'", "\"", "%", ",", "{", "}", ".", " "};
 
 
     std::string buffer;
-    if (contains(document[idx], specialTokens)) {
+    if(stringMode && !contains(document[idx], {"'", "\""})){
+        while (idx < document.size() && !contains(document[idx], {"'", "\""})) {
+            if (document[idx] == '\\') {
+
+                if (document[idx + 1] == 'n')
+                    buffer += "\n";
+
+                else if (document[idx + 1] == '"')
+                    buffer += "\"";
+
+                else if (document[idx + 1] == '\'')
+                    buffer += "'";
+
+                else if (document[idx + 1] == 'r')
+                    buffer += "\r";
+
+                else if (document[idx + 1] == '\\')
+                    buffer += "\\";
+
+                else
+                    buffer += "\u26A0"; // TODO: ERROR REPORTING
+
+                idx++;
+                idx++;
+            }
+            else{
+                buffer += document[idx];
+                idx++;
+            }
+        }
+        idx--;
+    }
+    else if (contains(document[idx], specialTokens)) {
 
         buffer += document[idx];
 

@@ -23,6 +23,7 @@ namespace ACC {
         int refCount = 0;
         std::vector<size_t> indentList;
         int depth = 0;
+        bool stringMode = false;
 
         void postProcessDocument();
 
