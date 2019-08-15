@@ -1,4 +1,4 @@
-fn get_line (buffer : ptr<char>, max : num): num :
+fn get_line (buffer : ptr<char>, max : num)-> num :
     var i : num = 0;
     for i -> max:
         *(buffer + i) = 0;
@@ -12,27 +12,27 @@ fn get_line (buffer : ptr<char>, max : num): num :
     return i;
 
 
-fn get_instruction (buffer : ptr<char>, i : num) : ptr<char>:
+fn get_instruction (buffer : ptr<char>, i : num) -> ptr<char>:
     return buffer + (i * 5);
 
-fn get_mconfig (instruction : ptr<char>): char:
+fn get_mconfig (instruction : ptr<char>)-> char:
     return *(instruction + 0);
 
-fn get_tape_sym (instruction : ptr<char>): char:
+fn get_tape_sym (instruction : ptr<char>)-> char:
     return *(instruction + 1);
 
-fn get_print_op (instruction : ptr<char>): char:
+fn get_print_op (instruction : ptr<char>)-> char:
     return *(instruction + 2);
 
-fn get_tape_op (instruction : ptr<char>): char:
+fn get_tape_op (instruction : ptr<char>)-> char:
     return *(instruction + 3);
 
-fn get_new_config (instruction : ptr<char>): char:
+fn get_new_config (instruction : ptr<char>)-> char:
     return *(instruction + 4);
 
 
 
-fn print_program_tape (tape : ptr<char>, instruction_num : num) : num:
+fn print_program_tape (tape : ptr<char>, instruction_num : num) -> num:
     var i : num = 0;
     for i -> instruction_num:
         syscall 1, 1, tape + (i * 5), 5;
@@ -40,7 +40,7 @@ fn print_program_tape (tape : ptr<char>, instruction_num : num) : num:
     return 0;
 
 
-fn program_instruction (dest : ptr<char>): num :
+fn program_instruction (dest : ptr<char>)-> num :
     var input : ptr<char> = 0;
     salloc 64, input;
     var count : num = get_line(input, 64);
@@ -53,7 +53,7 @@ fn program_instruction (dest : ptr<char>): num :
     *(dest + 4) = *(input+8);
     return 0;
 
-fn program_machine (tape : ptr<char>):num:
+fn program_machine (tape : ptr<char>)->num:
     var i : num = 0;
     var out : num = 0;
     while out != 1:
@@ -61,7 +61,7 @@ fn program_machine (tape : ptr<char>):num:
         i = i + 1;
     return i;
 
-fn enter_input_tape (tape : ptr<char>):num:
+fn enter_input_tape (tape : ptr<char>)->num:
     var input : ptr<char> = 0;
     salloc 64, input;
     var count : num = get_line(input, 64);
@@ -74,7 +74,7 @@ fn enter_input_tape (tape : ptr<char>):num:
 
     return index;
 
-fn print_input_tape (tapeRhs : ptr<char>, tapeLhs : ptr<char>, count : num):num:
+fn print_input_tape (tapeRhs : ptr<char>, tapeLhs : ptr<char>, count : num)->num:
     var i : num = 0;
     var buffer : ptr<char> = 0;
     salloc 1, buffer;
@@ -95,12 +95,12 @@ fn print_input_tape (tapeRhs : ptr<char>, tapeLhs : ptr<char>, count : num):num:
         syscall 1, 1, " ", 1;
     return 0;
 
-fn print_instruction (instruction : ptr<char>): num :
+fn print_instruction (instruction : ptr<char>)-> num :
     syscall 1, 1, instruction, 5;
     return 0;
 
 
-fn find_instruction(state : char, tape_sym : char, inst_count: num, program_tape: ptr<char>): ptr<char>:
+fn find_instruction(state : char, tape_sym : char, inst_count: num, program_tape: ptr<char>)-> ptr<char>:
     var i : num = 0;
     for i -> inst_count:
         var instruction : ptr<char> = get_instruction(program_tape, i);
@@ -112,7 +112,7 @@ fn find_instruction(state : char, tape_sym : char, inst_count: num, program_tape
     return 0;
 
 
-fn setup_input_tape(address : ptr<char>, count : num):num:
+fn setup_input_tape(address : ptr<char>, count : num)->num:
     var i : num = 0;
     for i -> count:
         *(address+i) = 0;
@@ -168,7 +168,7 @@ while cur_state != 'A':
 
     if instruction == 0:
         syscall 1, 1, "\n...[MACHINE IN INVALID STATE]...\n", 34;
-        exit 1; 
+        exit 1;
 
     cur_state = get_new_config(instruction);
     *cur_sym = get_print_op(instruction);
