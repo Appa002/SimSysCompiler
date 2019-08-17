@@ -17,6 +17,7 @@
 #include <General/utils.h>
 #include <General/builtinTypes.h>
 #include <Error/Errors.h>
+#include <Structure/Structures/Number/NumIValueStructure.h>
 
 ACC::CharIValueStructure::CharIValueStructure(uint8_t value) : value(value), CharStructure(ValueCategory::ivalue) {
 
@@ -58,7 +59,7 @@ std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorChar(ACC::Code
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorNum(ACC::Code &code) {
-    return std::make_shared<CharIValueStructure>(value);
+    return std::make_shared<NumIValueStructure>((uint8_t)value);
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorBool(ACC::Code &code) {
