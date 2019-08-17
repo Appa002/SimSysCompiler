@@ -7,6 +7,7 @@
 #include "Structure/Structures/GenericLValueStructure.h"
 #include "BoolLValueStructure.h"
 #include <Assembly/Code.h>
+#include <Error/Errors.h>
 
 ACC::BoolRValueStructure::BoolRValueStructure(ACC::Register reg) : BoolStructure(ValueCategory::rvalue), reg(reg){
     registerInUse.push_back(reg);
@@ -15,7 +16,7 @@ ACC::BoolRValueStructure::BoolRValueStructure(ACC::Register reg) : BoolStructure
 std::shared_ptr<ACC::Structure>
 ACC::BoolRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->type != Type(BuiltIns::boolType))
-        throw std::runtime_error("Can't convert type `bool` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
     if(address->vCategory == ValueCategory::rvalue){
         auto addressAsBool = dynamic_cast<BoolRValueStructure*>(address.get());
@@ -45,11 +46,11 @@ ACC::Register ACC::BoolRValueStructure::getRegister() const {
 
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of type `bool` to type `char`.");
+    throw errors::TypeConversion(nullptr, "bool", "char");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of type `bool` to type `num`.");
+    throw errors::TypeConversion(nullptr, "bool", "num");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorBool(ACC::Code &code) {
@@ -57,7 +58,8 @@ std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorBool(ACC::Code
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
-    throw std::runtime_error("No implicit conversion of type `bool` to type `ptr`.");
+    throw errors::TypeConversion(nullptr, "bool", "ptr");
+
 
 }
 

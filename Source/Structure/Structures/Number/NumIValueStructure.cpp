@@ -13,6 +13,7 @@
 #include <Structure/Structures/Char/CharLValueStructure.h>
 #include <Structure/Structures/Char/CharIValueStructure.h>
 #include <Structure/Structures/Pointer/PtrIValueStructure.h>
+#include <Error/Errors.h>
 
 ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), NumStructure(ValueCategory::ivalue) {
 
@@ -29,7 +30,7 @@ ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
     }
 
     if(address->type != Type(BuiltIns::numType))
-        throw std::runtime_error("Can't convert type `num` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
 
     if(address->vCategory == ValueCategory::lvalue) {
@@ -62,7 +63,8 @@ std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorNum(ACC::Code &
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of  type `num` to type bool");
+    throw errors::TypeConversion(nullptr, "num", "bool");
+
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorPtr(Code &code, Type pointingTo) {

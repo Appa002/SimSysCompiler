@@ -5,9 +5,8 @@
 #include <Logger/Logger.h>
 #include "Assembly.h"
 
-ACC::Assembly::Assembly(const AbstractSyntaxTree& tree) {
+ACC::Assembly::Assembly() {
     code = Code();
-    tree.getRoot()->generate(code);
 }
 
 void ACC::Assembly::print() {
@@ -27,7 +26,7 @@ void ACC::Assembly::optimize() {
     code.print();*/
 }
 
-const ACC::Code &ACC::Assembly::getCode() const{
+ACC::Code &ACC::Assembly::getCode(){
     return code;
 }
 

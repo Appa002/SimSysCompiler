@@ -6,6 +6,7 @@
 #include <Assembly/Code.h>
 #include <General/utils.h>
 #include <General/builtinTypes.h>
+#include <Error/Errors.h>
 
 ACC::BoolLValueStructure::BoolLValueStructure(std::string access)
         : BoolStructure(ValueCategory::lvalue), access(std::move(access))
@@ -22,7 +23,8 @@ void ACC::BoolLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 std::shared_ptr<ACC::Structure>
 ACC::BoolLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->type != Type(BuiltIns::boolType))
-        throw std::runtime_error("Can't convert type `bool` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+
 
     if(address->vCategory == ValueCategory::lvalue) {
         auto &fn = code.getFnSymbol();
@@ -46,11 +48,11 @@ std::string const &ACC::BoolLValueStructure::getAccess() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `bool` to type `char`.");
+    throw errors::TypeConversion(nullptr, "bool", "char");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `bool` to type `num`.");
+    throw errors::TypeConversion(nullptr, "bool", "num");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorBool(ACC::Code &code) {
@@ -58,5 +60,5 @@ std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorBool(ACC::Code
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
-    throw std::runtime_error("Can't convert type `bool` to type `ptr`.");
+    throw errors::TypeConversion(nullptr, "bool", "ptr");
 }

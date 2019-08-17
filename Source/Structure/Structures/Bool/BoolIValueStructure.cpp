@@ -11,6 +11,7 @@
 #include <Structure/Structures/Char/CharLValueStructure.h>
 #include <Structure/Structures/Char/CharIValueStructure.h>
 #include <Structure/Structures/Number/NumIValueStructure.h>
+#include <Error/Errors.h>
 
 ACC::BoolIValueStructure::BoolIValueStructure(bool value) : value(value),
 BoolStructure(ValueCategory::ivalue) {
@@ -20,7 +21,7 @@ BoolStructure(ValueCategory::ivalue) {
 std::shared_ptr<ACC::Structure>
 ACC::BoolIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
     if(address->type != Type(BuiltIns::boolType))
-        throw std::runtime_error("Can't convert type `bool` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
     if(address->vCategory == ValueCategory::lvalue) {
         auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
@@ -45,11 +46,11 @@ bool ACC::BoolIValueStructure::getValue() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `bool` to type `char`.");
+    throw errors::TypeConversion(nullptr, "bool", "char");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("Can't convert type `bool` to type `num`.");
+    throw errors::TypeConversion(nullptr, "bool", "num");
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorBool(ACC::Code &code) {
@@ -57,6 +58,6 @@ std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorBool(ACC::Code
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorPtr(Code &code, Type) {
-    throw std::runtime_error("Can't convert type `bool` to type `ptr`.");
+    throw errors::TypeConversion(nullptr, "bool", "ptr");
 }
 

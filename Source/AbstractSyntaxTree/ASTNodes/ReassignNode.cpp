@@ -1,4 +1,5 @@
 #include <utility>
+#include <Error/ASTError.h>
 
 #include "ReassignNode.h"
 
@@ -8,8 +9,13 @@ std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
     auto expr = children[1]->generate(code);
     auto var = code.getVarSymbol(id);
 
-    auto out = expr->operatorCopy(var, code);
-
+    try {
+        auto out = expr->operatorCopy(var, code);
+    } catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
     expr->cleanUp(code);
 
     return nullptr;

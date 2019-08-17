@@ -12,6 +12,7 @@
 #include <Structure/Structures/Number/NumRValueStructure.h>
 #include <Structure/Structures/Char/CharRValueStructure.h>
 #include <Structure/Structures/Bool/BoolRValueStructure.h>
+#include <Error/Errors.h>
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorForDone(std::shared_ptr<ACC::Structure> limit, ACC::Code &code) {
@@ -25,7 +26,7 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorForNext(ACC::Code & c
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
     if(amount->type != Type(BuiltIns::numType))
-        throw std::runtime_error("Arithmetic operator expects right hand side to be of type `num`");
+        throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
     auto *amountAsElem = dynamic_cast<ElementaryStructure *>(amount.get());
@@ -49,7 +50,7 @@ ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorSubtract(std::shared_ptr<ACC::Structure> amount, ACC::Code & code) {
     if(amount->type != Type(BuiltIns::numType))
-        throw std::runtime_error("Arithmetic operator expects right hand side to be of type `num`");
+        throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
     auto *amountAsElem = dynamic_cast<ElementaryStructure *>(amount.get());
@@ -73,18 +74,19 @@ ACC::PtrStructure::operatorSubtract(std::shared_ptr<ACC::Structure> amount, ACC:
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorMultiplication(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    throw std::runtime_error("Multiplication with pointers is invalid.");
+    throw errors::Unique(nullptr, "Multiplication with pointers is invalid.");
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorDivision(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    throw std::runtime_error("Division with pointers is invalid.");
+    throw errors::Unique(nullptr, "Division with pointers is invalid.");
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
     if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
-        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+        throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
+
 
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
@@ -107,7 +109,7 @@ ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Cod
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorNotEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
     if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
-        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+        throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
@@ -130,7 +132,7 @@ ACC::PtrStructure::operatorNotEqual(std::shared_ptr<ACC::Structure> other, ACC::
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorLess(std::shared_ptr<ACC::Structure> other, ACC::Code &code){
     if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
-        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+        throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
@@ -153,7 +155,7 @@ ACC::PtrStructure::operatorLess(std::shared_ptr<ACC::Structure> other, ACC::Code
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorGreater(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
     if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
-        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+        throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
@@ -176,7 +178,7 @@ ACC::PtrStructure::operatorGreater(std::shared_ptr<ACC::Structure> other, ACC::C
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorLessEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
     if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
-        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+        throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());
@@ -199,7 +201,7 @@ ACC::PtrStructure::operatorLessEqual(std::shared_ptr<ACC::Structure> other, ACC:
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
     if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
-        throw std::runtime_error("Comparision operator expects right hand side to be of type `num` or `ptr`");
+        throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
     auto otherAsElementary = dynamic_cast<ElementaryStructure *>(other.get());

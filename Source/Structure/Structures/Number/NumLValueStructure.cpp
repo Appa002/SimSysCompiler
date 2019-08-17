@@ -13,6 +13,7 @@
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Char/CharLValueStructure.h>
+#include <Error/Errors.h>
 
 ACC::NumLValueStructure::NumLValueStructure(std::string const &access)
         : NumStructure(ValueCategory::lvalue), access(access) {
@@ -35,7 +36,7 @@ ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, A
     }
 
     if(address->type != Type(BuiltIns::numType))
-        throw std::runtime_error("Can't convert type `num` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
 
 
@@ -61,7 +62,7 @@ std::string const &ACC::NumLValueStructure::getAccess() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion between `num` to `char`");
+    throw errors::TypeConversion(nullptr, "num", "char");
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorNum(ACC::Code &code) {
@@ -69,9 +70,9 @@ std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorNum(ACC::Code &
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion between `num` to `bool`");
+    throw errors::TypeConversion(nullptr, "num", "bool");
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumLValueStructure::operatorPtr(Code &code, Type pointingTo) {
-    throw std::runtime_error("No implicit conversion between `num` to `ptr`");
+    throw errors::TypeConversion(nullptr, "num", "ptr");
 }

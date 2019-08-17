@@ -2,6 +2,7 @@
 #include <Structure/Structures/Pointer/PtrStructure.h>
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
 #include <Structure/Structures/Char/CharRValueStructure.h>
+#include <Error/ASTError.h>
 
 #include "PtrAssignmentNode.h"
 
@@ -26,8 +27,13 @@ std::shared_ptr<ACC::Structure> ACC::PtrAssignmentNode::generate(ACC::Code &code
 
     auto address = std::make_shared<GenericLValueStructure>(Type(ptr->type.getPointingTo()), registerToString(8, reg));
 
-    expr->operatorCopy(address, code);
-
+    try {
+        expr->operatorCopy(address, code);
+    }catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
     subject->cleanUp(code);
     expr->cleanUp(code);
     code.freeRegister(reg);

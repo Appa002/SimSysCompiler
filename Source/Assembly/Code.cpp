@@ -9,6 +9,7 @@
 #include <General/utils.h>
 #include <BuiltInFunctions/getFunctions.h>
 #include <General/builtinTypes.h>
+#include <Error/Errors.h>
 
 ACC::Code::Code() {
     globalScope = std::make_shared<ScopedSymbolTable<std::shared_ptr<Structure>>>();
@@ -40,7 +41,7 @@ std::shared_ptr<ACC::Structure> ACC::Code::emplaceVarSymbol(std::string sym, std
 
 std::vector<ACC::Fn> &ACC::Code::getFnOverloads(std::string sym) {
     if (fnTable.find(sym) == fnTable.end())
-        throw std::runtime_error("Unknown fn: " + sym);
+        throw errors::MissingOverload(nullptr, sym);
     else
         return fnTable.at(sym);
 }

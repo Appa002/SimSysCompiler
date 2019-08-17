@@ -14,10 +14,10 @@ namespace ACC {
         Code code;
 
     public:
-        explicit Assembly(const AbstractSyntaxTree& tree);
+        Assembly();
         void print();
         void optimize();
-        const Code& getCode() const;
+        Code& getCode();
         void writeToFile(std::string path);
 
     };

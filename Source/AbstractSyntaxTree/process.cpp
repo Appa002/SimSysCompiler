@@ -6,7 +6,13 @@
 
 ACC::ASTNode *ACC::process(const ACC::ParseNode *node, ACC::ASTNode *carry) {
     Rule r = getRule(node);
-    return r.apply(node->children, carry);
+    auto n = r.apply(node->children, carry);
+
+    if(node->children[0]->token) {
+        n->lineContent = node->children[0]->token->lineContent;
+        n->lineNum = node->children[0]->token->lineNum;
+    }
+    return n;
 }
 
  ACC::Rule ACC::getRule(const ACC::ParseNode* node) {

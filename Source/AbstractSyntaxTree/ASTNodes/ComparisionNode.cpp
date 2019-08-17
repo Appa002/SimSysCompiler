@@ -3,34 +3,71 @@
 #include <utility>
 
 #include <General/builtinTypes.h>
+#include <Error/ASTError.h>
 #include "ComparisionNode.h"
 
 
 std::shared_ptr<ACC::Structure> ACC::ComparisionNode::generate(ACC::Code &code) {
     auto lhs = children[0]->generate(code);
     auto rhs = children[1]->generate(code);
-    auto& fn = code.getFnSymbol();
+    auto &fn = code.getFnSymbol();
 
     std::shared_ptr<Structure> out;
 
-    switch (cmpType){
+    switch (cmpType) {
         case ComparisionType::EQ:
-             out = lhs->operatorEqual(rhs, code);
+            try {
+                out = lhs->operatorEqual(rhs, code);
+            } catch (errors::ASTError &err) {
+                err.lineNum = this->lineNum;
+                err.lineContent = this->lineContent;
+                throw;
+            }
             break;
         case ComparisionType::LT:
-             out = lhs->operatorLess(rhs, code);
+            try {
+                out = lhs->operatorLess(rhs, code);
+            } catch (errors::ASTError &err) {
+                err.lineNum = this->lineNum;
+                err.lineContent = this->lineContent;
+                throw;
+            }
             break;
         case ComparisionType::GT:
-             out = lhs->operatorGreater(rhs, code);
+            try {
+                out = lhs->operatorGreater(rhs, code);
+            } catch (errors::ASTError &err) {
+                err.lineNum = this->lineNum;
+                err.lineContent = this->lineContent;
+                throw;
+            }
             break;
         case ComparisionType::NEQ:
-             out = lhs->operatorNotEqual(rhs, code);
+            try {
+                out = lhs->operatorNotEqual(rhs, code);
+            } catch (errors::ASTError &err) {
+                err.lineNum = this->lineNum;
+                err.lineContent = this->lineContent;
+                throw;
+            }
             break;
         case ComparisionType::LET:
-             out = lhs->operatorLessEqual(rhs, code);
+            try {
+                out = lhs->operatorLessEqual(rhs, code);
+            } catch (errors::ASTError &err) {
+                err.lineNum = this->lineNum;
+                err.lineContent = this->lineContent;
+                throw;
+            }
             break;
         case ComparisionType::GET:
-             out = lhs->operatorGreaterEqual(rhs, code);
+            try {
+                out = lhs->operatorGreaterEqual(rhs, code);
+            } catch (errors::ASTError &err) {
+                err.lineNum = this->lineNum;
+                err.lineContent = this->lineContent;
+                throw;
+            }
             break;
     }
     lhs->cleanUp(code);
@@ -39,6 +76,6 @@ std::shared_ptr<ACC::Structure> ACC::ComparisionNode::generate(ACC::Code &code) 
 }
 
 ACC::ComparisionNode::ComparisionNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children,
-        ACC::ComparisionType type) : ASTNode(op, std::move(children)), cmpType(type) {
+                                      ACC::ComparisionType type) : ASTNode(op, std::move(children)), cmpType(type) {
 }
 

@@ -9,6 +9,7 @@
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Char/CharRValueStructure.h>
 #include <Structure/Structures/Pointer/PtrRValueStructure.h>
+#include <Error/Errors.h>
 
 ACC::NumRValueStructure::NumRValueStructure(ACC::Register reg)
         : reg(reg), NumStructure(ValueCategory::rvalue) {
@@ -26,7 +27,8 @@ std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorCopy(std::share
     }
 
     if(address->type != Type(BuiltIns::numType))
-        throw std::runtime_error("Can't convert type `num` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+
 
     if (address->vCategory == ValueCategory::rvalue) {
         auto *addressAsNum = dynamic_cast<ElementaryStructure *>(address.get());
@@ -60,17 +62,18 @@ ACC::Register ACC::NumRValueStructure::getRegister() const {
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("No viable conversion of type `num` to type `char`.");
-}
+    throw errors::TypeConversion(nullptr, "num", "char");}
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorNum(ACC::Code &code) {
     return shared_from_this();
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("No viable conversion of type `num` to type `bool`.");
+    throw errors::TypeConversion(nullptr, "num", "bool");
+
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumRValueStructure::operatorPtr(Code &code, Type pointingTo) {
-    throw std::runtime_error("No viable conversion of type `num` to type `char`.");
+    throw errors::TypeConversion(nullptr, "num", "ptr");
+
 }

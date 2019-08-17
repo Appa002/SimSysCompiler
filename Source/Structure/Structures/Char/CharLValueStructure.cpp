@@ -16,6 +16,7 @@
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
+#include <Error/Errors.h>
 
 ACC::CharLValueStructure::CharLValueStructure(std::string const &access)
         : CharStructure(ValueCategory::lvalue), access(access) {
@@ -35,7 +36,7 @@ ACC::CharLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, 
     }
 
     if(address->type  != Type(BuiltIns::charType))
-        throw std::runtime_error("Can't convert type `char` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
 
     if (address->vCategory == ValueCategory::lvalue) {
@@ -65,15 +66,17 @@ std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorChar(ACC::Code
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of  type `char` to type num");
+    throw errors::TypeConversion(nullptr, "char", "num");
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of  type `char` to type bool");
+    throw errors::TypeConversion(nullptr, "char", "bool");
+
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharLValueStructure::operatorPtr(ACC::Code &code, ACC::Type) {
-    throw std::runtime_error("No implicit conversion of  type `char` to type ptr");
+    throw errors::TypeConversion(nullptr, "char", "ptr");
+
 }
 
 

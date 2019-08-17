@@ -2,6 +2,7 @@
 #include <Structure/Structures/ElementaryStructure.h>
 #include <Structure/Structures/Pointer/PtrStructure.h>
 #include <Structure/Structures/Pointer/PtrRValueStructure.h>
+#include <Error/ASTError.h>
 
 #include "SallocNode.h"
 
@@ -21,8 +22,13 @@ std::shared_ptr<ACC::Structure> ACC::SallocNode::generate(ACC::Code &code) {
     auto var = code.getVarSymbol(children[1]->data.asT<std::string>());
     auto ptr = std::make_shared<PtrRValueStructure>(reg, Type(var->type.getPointingTo()));
 
-    ptr->operatorCopy(var, code);
-
+    try {
+        ptr->operatorCopy(var, code);
+    } catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
     size->cleanUp(code);
     code.freeRegister(reg);
     ptr->cleanUp(code);

@@ -16,6 +16,7 @@
 #include <Assembly/Code.h>
 #include <General/utils.h>
 #include <General/builtinTypes.h>
+#include <Error/Errors.h>
 
 ACC::CharIValueStructure::CharIValueStructure(uint8_t value) : value(value), CharStructure(ValueCategory::ivalue) {
 
@@ -29,7 +30,7 @@ ACC::CharIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, 
     }
 
     if(address->type  != Type(BuiltIns::charType))
-        throw std::runtime_error("Can't convert type `char` to receiving type.");
+        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
 
     if(address->vCategory == ValueCategory::lvalue) {
@@ -61,9 +62,9 @@ std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorNum(ACC::Code 
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("No implicit conversion of type `char` to type `bool`.");
+    throw errors::TypeConversion(nullptr, "char", "bool");
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorPtr(ACC::Code &code, ACC::Type) {
-    throw std::runtime_error("No implicit conversion of type `char` to type `ptr`.");
+    throw errors::TypeConversion(nullptr, "char", "ptr");
 }

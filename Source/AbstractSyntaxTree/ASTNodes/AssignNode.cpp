@@ -7,6 +7,7 @@
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
 #include <Structure/Structures/Char/CharLValueStructure.h>
+#include <Error/ASTError.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
@@ -28,7 +29,14 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
         address = std::make_shared<CharLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     }
 
-    expr->operatorCopy(address, code);
+    try {
+        expr->operatorCopy(address, code);
+    }catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
+
     expr->cleanUp(code);
 
     code.emplaceVarSymbol(id, address);

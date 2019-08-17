@@ -106,6 +106,10 @@ namespace ACC {
         AstOperator op;
         GeneralDataStore data;
         Type type;
+
+        size_t lineNum;
+        std::string lineContent;
+
     };
 
 }

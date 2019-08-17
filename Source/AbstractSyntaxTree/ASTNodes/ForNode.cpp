@@ -1,4 +1,5 @@
 #include <utility>
+#include <Error/ASTError.h>
 
 #include "ForNode.h"
 
@@ -12,7 +13,15 @@ std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
 
     auto index = children[0]->generate(code);
     auto limit = children[1]->generate(code);
-    index->operatorForDone(limit, code);
+
+    try {
+        index->operatorForDone(limit, code);
+    } catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
+
 
     // At this point rflags has been set according to the comparison of index and limit
 
@@ -22,8 +31,13 @@ std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
     code.popScope();
 
     // Iterating
-    index->operatorForNext(code);
-
+    try {
+        index->operatorForNext(code);
+    } catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
     // Looping back up / seting up rest..
     fn.writeLine("jmp ." + top);
     fn.writeLine("."+rest+":");

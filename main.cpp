@@ -7,6 +7,7 @@
 #include <Assembly/Assembly.h>
 #include <Error/SyntaxError.h>
 #include <Lexical/IToken.h>
+#include <Error/Errors.h>
 
 using namespace ACC;
 
@@ -124,7 +125,23 @@ int main(int argc, char** argv) {
     p.getRoot()->print();
     auto a = AbstractSyntaxTree(p);
     a.print();
-    auto i = Assembly(a);
+    auto i = Assembly();
+
+    try{
+        a.getRoot()->generate(i.getCode());
+    }catch (errors::ASTError& err) {
+        LOG.createHeading("Compile Errors...");
+        LOG(Log::LogLevel::Error) << Log::Colour::Red << err.msg << std::endl;
+
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "Presumably in line: ";
+        LOG(Log::LogLevel::Error) << Log::Colour::Blue << "" << err.lineNum << std::endl;
+        LOG(Log::LogLevel::Error) << Log::Colour::Gray << err.lineContent << std::endl;
+
+        LOG.del();
+        return 3;
+
+    }
+
     i.print();
     i.writeToFile(options.outputFile + ".asm");
 
