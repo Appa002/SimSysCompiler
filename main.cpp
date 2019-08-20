@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
         LOG.createHeading("Syntax Errors...");
 
         LOG(Log::LogLevel::Error) << Log::Colour::Red << "There are syntax errors." << std::endl;
-        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "Presumably in line: ";
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "In line: ";
 
         LOG(Log::LogLevel::Error) << Log::Colour::Blue << "" << err.lineNum << std::endl;
         LOG(Log::LogLevel::Error) << Log::Colour::Gray << err.lineContent << std::endl;
@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
         LOG.createHeading("Compile Errors...");
         LOG(Log::LogLevel::Error) << Log::Colour::Red << err.msg << std::endl;
 
-        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "Presumably in line: ";
+        LOG(Log::LogLevel::Error) << Log::Colour::Cleared << "In line: ";
         LOG(Log::LogLevel::Error) << Log::Colour::Blue << "" << err.lineNum << std::endl;
         LOG(Log::LogLevel::Error) << Log::Colour::Gray << err.lineContent << std::endl;
 
