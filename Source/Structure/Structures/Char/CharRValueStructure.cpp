@@ -23,13 +23,13 @@ ACC::CharRValueStructure::CharRValueStructure(ACC::Register reg)
 
 std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorCopy(std::shared_ptr<Structure> address,
                                                                        ACC::Code &code) {
-    if(address->type == Type(BuiltIns::numType)){
+    if(address->type == Type("num", 8)){
         auto asNum = this->operatorNum(code);
         asNum->operatorCopy(address, code);
     }
 
-    if(address->type  != Type(BuiltIns::charType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+    if(address->type  != Type("char", 1))
+        throw errors::InvalidType(nullptr, address->type.id, "copy");
 
 
 
@@ -82,4 +82,8 @@ std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorBool(ACC::Code
 std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
     throw errors::TypeConversion(nullptr, "char", "ptr");
 
+}
+
+bool ACC::CharRValueStructure::hasConversionTo(const Type &id) {
+    return id == Type("char", 1);
 }

@@ -3,7 +3,6 @@
 #include <Lexical/LexicalAnalysis.h>
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/IdToken.h>
-#include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/MathOperatorToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/EOSToken.h>

@@ -20,17 +20,14 @@ ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
-    if(address->type == Type(BuiltIns::numType)){
+    if(address->type == Type("num", 8)){
         auto thisAsNum = operatorNum(code);
         return thisAsNum->operatorCopy(address, code);
     }
 
-    if(address->type != Type(BuiltIns::ptrType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+    if(!address->type.isPtr)
+        throw errors::InvalidType(nullptr, address->type.id, "copy");
 
-
-    if(address->type != Type(BuiltIns::ptrType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
 
 
     if (address->vCategory == ValueCategory::lvalue) {
@@ -82,6 +79,10 @@ std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorBool(ACC::Code 
 
 std::shared_ptr<ACC::Structure> ACC::PtrRValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
     return std::make_shared<PtrRValueStructure>(reg, pointingTo);
+}
+
+bool ACC::PtrRValueStructure::hasConversionTo(const ACC::Type &id) {
+    return id.isPtr;
 }
 
 

@@ -21,16 +21,16 @@ ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), NumSt
 
 std::shared_ptr<ACC::Structure>
 ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->type == Type(BuiltIns::charType)){
+    if(address->type == Type("char", 1)){
         auto thisAsChar = operatorChar(code);
         return thisAsChar->operatorCopy(address, code);
-    } else if (address->type == Type(BuiltIns::ptrType)){
-        auto thisAsPtr = operatorPtr(code, Type(address->type.getPointingTo()));
+    } else if (address->type.isPtr){
+        auto thisAsPtr = operatorPtr(code, Type(address->type));
         return thisAsPtr->operatorCopy(address, code);
     }
 
-    if(address->type != Type(BuiltIns::numType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+    if(address->type != Type("num", 8))
+        throw errors::InvalidType(nullptr, address->type.id, "copy");
 
 
     if(address->vCategory == ValueCategory::lvalue) {
@@ -70,5 +70,16 @@ std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorBool(ACC::Code 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorPtr(Code &code, Type pointingTo) {
     return std::make_shared<PtrIValueStructure>(value, pointingTo);
 
+}
+
+bool ACC::NumIValueStructure::hasConversionTo(const Type &id) {
+    if (id == Type("num", 8))
+        return true;
+    else if (id == Type("char", 1))
+        return true;
+    else if (id.isPtr)
+        return true;
+
+    return false;
 }
 

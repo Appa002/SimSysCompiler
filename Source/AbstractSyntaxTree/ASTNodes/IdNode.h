@@ -14,6 +14,9 @@ namespace ACC{
     struct IdNode : public ASTNode{
         std::shared_ptr<Structure> generate(ACC::Code &code) override;
         IdNode(AstOperator op, std::string str);
+        std::string sym;
+
+        std::string createRepresentation() const override;
 
     };
 }

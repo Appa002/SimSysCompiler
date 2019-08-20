@@ -20,8 +20,8 @@ BoolStructure(ValueCategory::ivalue) {
 
 std::shared_ptr<ACC::Structure>
 ACC::BoolIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->type != Type(BuiltIns::boolType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+    if(address->type != Type("bool", 1))
+        throw errors::InvalidType(nullptr, address->type.id, "copy");
 
     if(address->vCategory == ValueCategory::lvalue) {
         auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
@@ -59,5 +59,9 @@ std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorBool(ACC::Code
 
 std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorPtr(Code &code, Type) {
     throw errors::TypeConversion(nullptr, "bool", "ptr");
+}
+
+bool ACC::BoolIValueStructure::hasConversionTo(const Type &id) {
+    return id == Type("bool", 1);
 }
 

@@ -2,10 +2,11 @@
 #include <Error/ASTError.h>
 
 #include "ReassignNode.h"
+#include "IdNode.h"
 
 
 std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
-    auto id = children[0]->data.asT<std::string>();
+    auto id = dynamic_cast<IdNode*>( children[0])->sym;
     auto expr = children[1]->generate(code);
     auto var = code.getVarSymbol(id);
 

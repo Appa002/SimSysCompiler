@@ -14,7 +14,7 @@
 #include <General/builtinTypes.h>
 #include <Error/Errors.h>
 
-ACC::NumStructure::NumStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type(BuiltIns::numType)) {
+ACC::NumStructure::NumStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type("num", 8)) {
 
 }
 
@@ -28,7 +28,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorForNext(ACC::Code &co
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorForDone(std::shared_ptr<Structure> limit,
                                                                          ACC::Code &code) {
-    if(limit->type != Type(BuiltIns::numType))
+    if(limit->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Limit of for loop needs to be of type `num`");
 
     // setting rflags such that an equals comparision is false if the loop is done
@@ -55,7 +55,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorForDone(std::shared_p
 
 std::shared_ptr<ACC::Structure>
 ACC::NumStructure::operatorAdd(std::shared_ptr<Structure> amount, ACC::Code &code) {
-    if(amount->type != Type(BuiltIns::numType))
+    if(amount->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -81,7 +81,7 @@ ACC::NumStructure::operatorAdd(std::shared_ptr<Structure> amount, ACC::Code &cod
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorSubtract(std::shared_ptr<Structure> amount,
                                                                           ACC::Code &code) {
-    if(amount->type != Type(BuiltIns::numType))
+    if(amount->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -106,7 +106,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorSubtract(std::shared_
 
 std::shared_ptr<ACC::Structure>
 ACC::NumStructure::operatorMultiplication(std::shared_ptr<Structure> amount, ACC::Code &code) {
-    if(amount->type != Type(BuiltIns::numType))
+    if(amount->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -131,7 +131,7 @@ ACC::NumStructure::operatorMultiplication(std::shared_ptr<Structure> amount, ACC
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorDivision(std::shared_ptr<Structure> amount,
                                                                           ACC::Code &code) {
-    if(amount->type != Type(BuiltIns::numType))
+    if(amount->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -160,7 +160,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorDivision(std::shared_
 
 std::shared_ptr<ACC::Structure>
 ACC::NumStructure::operatorEqual(std::shared_ptr<Structure> other, ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -183,7 +183,7 @@ ACC::NumStructure::operatorEqual(std::shared_ptr<Structure> other, ACC::Code &co
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorNotEqual(std::shared_ptr<Structure> other,
                                                                           ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -206,7 +206,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorNotEqual(std::shared_
 
 std::shared_ptr<ACC::Structure>
 ACC::NumStructure::operatorLess(std::shared_ptr<Structure> other, ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -229,7 +229,7 @@ ACC::NumStructure::operatorLess(std::shared_ptr<Structure> other, ACC::Code &cod
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreater(std::shared_ptr<Structure> other,
                                                                          ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -252,7 +252,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreater(std::shared_p
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorLessEqual(std::shared_ptr<Structure> other,
                                                                            ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -275,7 +275,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorLessEqual(std::shared
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreaterEqual(std::shared_ptr<Structure> other,
                                                                               ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -298,7 +298,7 @@ std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorGreaterEqual(std::sha
 
 std::shared_ptr<ACC::Structure>
 ACC::NumStructure::operatorModulo(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    if(other->type != Type(BuiltIns::numType))
+    if(other->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();

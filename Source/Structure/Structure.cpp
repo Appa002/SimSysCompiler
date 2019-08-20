@@ -65,8 +65,8 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorGreaterEqual(std::shared
 
 ACC::Structure::Structure(ACC::ValueCategory valueCategory, Type type)
 : vCategory(valueCategory), type(type){
-
 }
+
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorNot(ACC::Code &code) {
     throw std::runtime_error("Operator not implemented");
@@ -100,6 +100,11 @@ std::shared_ptr<ACC::Structure>
 ACC::Structure::operatorModulo(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
     throw std::runtime_error("Operator not implemented");
 }
+
+bool ACC::Structure::hasConversionTo(const Type &id) {
+    return true;
+}
+
 
 
 

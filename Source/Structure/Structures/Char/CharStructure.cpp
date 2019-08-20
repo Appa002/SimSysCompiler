@@ -20,7 +20,7 @@
 #include <Structure/Structures/Number/NumStructure.h>
 #include <Structure/Structures/Number/NumIValueStructure.h>
 
-ACC::CharStructure::CharStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type(BuiltIns::charType)) {
+ACC::CharStructure::CharStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type("char", 1)) {
 
 }
 

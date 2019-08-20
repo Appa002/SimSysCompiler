@@ -28,20 +28,23 @@
 #include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/IfConstructNode.h>
-#include <Lexical/Tokens/LiteralToken.h>
 #include <General/GeneralDataStore.h>
 #include <General/builtinTypes.h>
 
 ACC::ASTNode::ASTNode(AstOperator op, std::vector<ACC::ASTNode*> children) {
     this->op = op;
     this->children = std::move(children);
-    this->type = BuiltIns::__none;
 }
 
+
+ACC::ASTNode::ASTNode() {
+    this->op = AstOperator::__NONE;
+}
+/*
 ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore literal, Type type) {
     this->op = op;
     this->data = std::move(literal);
-    this->type = type;
+    this->type = std::move(type);
 }
 
 
@@ -53,10 +56,10 @@ ACC::ASTNode::ASTNode(AstOperator op, std::string str) {
     this->data.storeT(std::move(str));
 }
 
-ACC::ASTNode::ASTNode(AstOperator op, ACC::GeneralDataStore store) {
-    this->op = op;
-    this->type = BuiltIns::__none;
-    this->data = std::move(store);
+
+ACC::ASTNode::ASTNode(ACC::AstOperator op, ACC::Type store) {
+    if(op == AstOperator::LITERAL)
+        throw std::runtime_error("Initialise literals with a general store");
 }
 
 ACC::ASTNode::ASTNode(AstOperator op) {
@@ -64,9 +67,10 @@ ACC::ASTNode::ASTNode(AstOperator op) {
         throw std::runtime_error("Single argument constructor for `ASTNode` can only be used for `AstOperator::__NONE`");
     this->op = op;
 }
+ */
 
 void ACC::ASTNode::_print(std::string indent, bool isLast) const {
-    std::string representation = astOperator2String(op);
+    std::string representation = createRepresentation();
     auto colour = op == AstOperator::LITERAL ? (Log::Colour::Magenta) : (Log::Colour::Blue);
 
     LOG() << indent;
@@ -84,35 +88,31 @@ void ACC::ASTNode::_print(std::string indent, bool isLast) const {
     }
 }
 
-std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
+ACC::ASTNode::~ASTNode() {
+    for(const auto& child : children){
+        delete child;
+    }
+}
+
+std::shared_ptr<ACC::Structure> ACC::ASTNode::generate(ACC::Code &) {
+    throw std::runtime_error("Can't generate on operator `"+ createRepresentation() +"`");
+}
+
+std::string ACC::ASTNode::createRepresentation() const {
     switch (op){
         case AstOperator::ADD:
             return "+";
         case AstOperator::SUBTRACT:
             return "-";
         case AstOperator::LITERAL:{
-            if(type == BuiltIns::numType || type == BuiltIns::charType)
-                return "Lit: " + std::to_string(data.createNumber());
-            else if(type == BuiltIns::ptrType)
-                return std::string("Lit: ") + "\"" + data.asT<std::string>() +"\"";
-            else{
-                std::string data = "[ ";
-                for(size_t i = 0; i < this->data.size(); i++){
-                    data += " `" + toHex(data.at(i)) + "`";
-                    if(i + 1 < data.size())
-                        data += ",";
-                }
-                data += " ]";
-
-                return "Lit (Complex) " + data;
-            }
+            return "Literal";
         }
         case AstOperator::SEQ:
             return "SEQ";
         case AstOperator::ASSIGN:
             return "assign";
         case AstOperator::ID:
-            return std::string("ID: ") + data.asT<std::string>(0);
+            return "id";
         case AstOperator::SYSCALL:
             return "syscall";
         case AstOperator::EXIT:
@@ -130,8 +130,7 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
         case AstOperator::__NONE:
             return "__none";
         case AstOperator::TYPE_DEF:
-            return "type def; id: " + std::to_string(data.asT<Type>().getId()) +
-            " size: " +  std::to_string(data.asT<Type>().getSize());
+            return "type def";
         case AstOperator::__CONTAINER:
             return "__container";
         case AstOperator::REASSIGN:
@@ -170,16 +169,6 @@ std::string ACC::ASTNode::astOperator2String(AstOperator op) const{
             return "dereference";
     }
     throw std::runtime_error("Unknown Symbol!");
+
 }
 
-
-
-ACC::ASTNode::~ASTNode() {
-    for(const auto& child : children){
-        delete child;
-    }
-}
-
-std::shared_ptr<ACC::Structure> ACC::ASTNode::generate(ACC::Code &) {
-    throw std::runtime_error("Can't generate on operator `"+ astOperator2String(op) +"`");
-}

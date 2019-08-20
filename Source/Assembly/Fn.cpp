@@ -26,17 +26,17 @@ std::string ACC::Fn::mangledName() const {
     if(symbol == "_start")
         return "_start";
     // Format:
-    // <name> ? <argsType> _ .... _
-    auto typeStr = [](Type t){
+    // <name> ? <argsType> . .... .
+    auto typeStr = [](const Type& t){
         // Format:
-        // <typeID> . <pointingTO>
-        return std::to_string(t.getId()) + "." + std::to_string(t.getPointingTo().getId());
+        // <typeID> `_P` (if ptr)
+        return t.id + (t.isPtr ? ("_P") : (""));
     };
     std::string name = symbol;
     name += "?";
 
-    for (Type t : argsType)
-        name += typeStr(t);
+    for (const Type& t : argsType)
+        name += typeStr(t) + ".";
 
     return name;
 }

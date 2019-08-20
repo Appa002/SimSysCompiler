@@ -15,8 +15,13 @@ namespace ACC{
         std::shared_ptr<Structure> generate(ACC::Code &code) override;
         LiteralNode(AstOperator op, GeneralDataStore literal, Type type);
 
+        GeneralDataStore literal;
+        Type type;
+
 
         std::string handleStringLiteral(ACC::Code &code, ACC::Fn &fn);
+
+        std::string createRepresentation() const override ;
 
     };
 }

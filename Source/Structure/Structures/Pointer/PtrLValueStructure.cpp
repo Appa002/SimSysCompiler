@@ -19,13 +19,13 @@ void ACC::PtrLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code)
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
-    if(address->type == Type(BuiltIns::numType)){
+    if(address->type == Type("num", 8)){
         auto thisAsNum = operatorNum(code);
         return thisAsNum->operatorCopy(address, code);
     }
 
-    if(address->type != Type(BuiltIns::ptrType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+    if(!address->type.isPtr)
+        throw errors::InvalidType(nullptr, address->type.id, "copy");
 
     if (address->vCategory == ValueCategory::lvalue) {
         auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
@@ -60,4 +60,8 @@ std::shared_ptr<ACC::Structure> ACC::PtrLValueStructure::operatorBool(ACC::Code 
 
 std::shared_ptr<ACC::Structure> ACC::PtrLValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
     return std::make_shared<PtrLValueStructure>(access, pointingTo);
+}
+
+bool ACC::PtrLValueStructure::hasConversionTo(const ACC::Type &id) {
+    return id.isPtr;
 }

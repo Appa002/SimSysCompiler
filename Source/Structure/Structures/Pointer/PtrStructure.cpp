@@ -13,6 +13,7 @@
 #include <Structure/Structures/Char/CharRValueStructure.h>
 #include <Structure/Structures/Bool/BoolRValueStructure.h>
 #include <Error/Errors.h>
+#include <Types/TypeTable.h>
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorForDone(std::shared_ptr<ACC::Structure> limit, ACC::Code &code) {
@@ -25,7 +26,7 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorForNext(ACC::Code & c
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    if(amount->type != Type(BuiltIns::numType))
+    if(amount->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -44,12 +45,12 @@ ACC::PtrStructure::operatorAdd(std::shared_ptr<ACC::Structure> amount, ACC::Code
 
     code.freeRegister(rhs);
 
-    return std::make_shared<PtrRValueStructure>(lhs, Type(type.getPointingTo()));
+    return std::make_shared<PtrRValueStructure>(lhs, type);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorSubtract(std::shared_ptr<ACC::Structure> amount, ACC::Code & code) {
-    if(amount->type != Type(BuiltIns::numType))
+    if(amount->type != Type("num", 8))
         throw errors::InvalidType(nullptr, "Arithmetic operator expects right hand side to be of type `num`");
 
     auto &fn = code.getFnSymbol();
@@ -84,7 +85,7 @@ ACC::PtrStructure::operatorDivision(std::shared_ptr<ACC::Structure> amount, ACC:
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+    if(!(other->type == Type("num", 8) || other->type ==this->type))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
 
@@ -108,7 +109,7 @@ ACC::PtrStructure::operatorEqual(std::shared_ptr<ACC::Structure> other, ACC::Cod
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorNotEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+    if(!(other->type == Type("num", 8) || other->type ==this->type))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
@@ -131,7 +132,7 @@ ACC::PtrStructure::operatorNotEqual(std::shared_ptr<ACC::Structure> other, ACC::
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorLess(std::shared_ptr<ACC::Structure> other, ACC::Code &code){
-    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+    if(!(other->type == Type("num", 8) || other->type ==this->type))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
@@ -154,7 +155,7 @@ ACC::PtrStructure::operatorLess(std::shared_ptr<ACC::Structure> other, ACC::Code
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorGreater(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+    if(!(other->type == Type("num", 8) || other->type ==this->type))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
@@ -177,7 +178,7 @@ ACC::PtrStructure::operatorGreater(std::shared_ptr<ACC::Structure> other, ACC::C
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorLessEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+    if(!(other->type == Type("num", 8) || other->type ==this->type))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
@@ -200,7 +201,7 @@ ACC::PtrStructure::operatorLessEqual(std::shared_ptr<ACC::Structure> other, ACC:
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, ACC::Code &code) {
-    if(!(other->type == Type(BuiltIns::numType) || other->type == Type(BuiltIns::ptrType, type.getPointingTo())))
+    if(!(other->type == Type("num", 8) || other->type ==this->type))
         throw errors::InvalidType(nullptr, "Comparision operator expects right hand side to be of type `num` or `ptr`");
 
     auto &fn = code.getFnSymbol();
@@ -221,23 +222,27 @@ ACC::PtrStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, A
     return std::make_shared<BoolRValueStructure>(lhs);
 }
 
-ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, Type(BuiltIns::ptrType, t.getTypeId())){
+ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v, t){
 
 }
 
 std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDereference(ACC::Code &code) {
+    Type underlying = Type(type.id, TypeTable::get()->getSize(type.id));
+
+
     auto& fn = code.getFnSymbol();
     Register reg = code.getFreeRegister();
 
     this->loadToRegister(reg, code);
-    fn.writeLine("mov "+registerToString(type.getPointingTo().getSize(), reg)+", ["+registerToString(8, reg)+"]");
-    if (this->type.getPointingTo() == BuiltIns::numType)
+    fn.writeLine("mov "+registerToString(underlying.size, reg)+", ["+registerToString(8, reg)+"]");
+
+    if (underlying == Type("num", 8))
         return std::make_shared<NumRValueStructure>(reg);
 
-    else if (this->type.getPointingTo() == BuiltIns::charType)
+    else if (underlying == Type("char", 1))
         return std::make_shared<CharRValueStructure>(reg);
 
-    else if (this->type.getPointingTo() == BuiltIns::boolType)
+    else if (underlying == Type("bool", 1))
         return std::make_shared<BoolRValueStructure>(reg);
     code.freeRegister(reg);
     return nullptr;

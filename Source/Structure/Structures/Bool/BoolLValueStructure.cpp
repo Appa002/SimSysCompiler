@@ -22,8 +22,8 @@ void ACC::BoolLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 
 std::shared_ptr<ACC::Structure>
 ACC::BoolLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->type != Type(BuiltIns::boolType))
-        throw errors::InvalidType(nullptr, "ImplementMe", "copy"); //TODO: Type system.
+    if(address->type != Type("bool", 1))
+        throw errors::InvalidType(nullptr, address->type.id, "copy");
 
 
     if(address->vCategory == ValueCategory::lvalue) {
@@ -61,4 +61,8 @@ std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorBool(ACC::Code
 
 std::shared_ptr<ACC::Structure> ACC::BoolLValueStructure::operatorPtr(ACC::Code &code, ACC::Type pointingTo) {
     throw errors::TypeConversion(nullptr, "bool", "ptr");
+}
+
+bool ACC::BoolLValueStructure::hasConversionTo(const Type &id) {
+    return id == Type("bool", 1);
 }

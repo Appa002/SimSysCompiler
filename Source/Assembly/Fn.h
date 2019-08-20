@@ -6,7 +6,8 @@
 #define SIMSYSCOMPILER_FN_H
 
 #include <string>
-#include <General/Type.h>
+#include <Types/Type.h>
+#include <vector>
 
 namespace ACC {
 
@@ -34,11 +35,11 @@ namespace ACC {
          * @return A bool  whether or not the signature is the same. */
         bool matches(std::string name, Type returnType, std::vector<Type> argsType);
 
-        /*! Returns a mangled name based on the Signiture.*/
+        /*! Returns a mangled name based on the Signature.*/
         std::string mangledName() const;
 
         /*! The return type of this function.*/
-        Type returnType = Type(0, 0);
+        Type returnType = Type("", 0);
 
         /*! The types of this functions arguments.*/
         std::vector<Type> argsType;

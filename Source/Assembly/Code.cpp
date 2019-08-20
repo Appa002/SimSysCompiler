@@ -18,6 +18,9 @@ ACC::Code::Code() {
     for (size_t i = 0; i < 14; i++) // TODO: This is a bit disgusting.
         freeRegisterTable[(Register) i] = true;
 
+    // Builtin Types
+    
+    
     // Builtin Functions
     emplaceFnSymbol("char") = BuiltIns::getCharFn_num();
     emplaceFnSymbol("num") = BuiltIns::getNumFn_char();

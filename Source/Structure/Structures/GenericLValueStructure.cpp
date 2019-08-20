@@ -23,7 +23,7 @@ ACC::GenericLValueStructure::GenericLValueStructure(ACC::Type type, std::string 
 
 void ACC::GenericLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
-    fn.writeLine("mov " + registerToString(type.getSize(), reg) + ", [" + access + "]");
+    fn.writeLine("mov " + registerToString(type.size, reg) + ", [" + access + "]");
 }
 
 std::shared_ptr<ACC::Structure>
@@ -33,7 +33,7 @@ ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> addres
         auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
 
         Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(type.getSize(), reg);
+        std::string regStr = registerToString(type.size, reg);
 
         fn.writeLine("mov " + regStr + ", [" + access + "]");
         fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);

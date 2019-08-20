@@ -3,14 +3,12 @@
 //
 
 #include <Lexical/Tokens/WhileToken.h>
-#include <Lexical/Tokens/TypeToken.h>
 #include "LexicalAnalysis.h"
 #include <fstream>
 #include <iostream>
 #include <Lexical/Tokens/EOSToken.h>
 #include <Logger/Logger.h>
 
-#include <Lexical/Tokens/LiteralToken.h>
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/VarToken.h>
 #include <Lexical/Tokens/ClosedBracketToken.h>

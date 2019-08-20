@@ -8,7 +8,7 @@
 #include <Lexical/IToken.h>
 #include <functional>
 #include <unordered_map>
-#include <General/Type.h>
+#include <Types/Type.h>
 #include <memory>
 #include <General/ScopedSymbolTable.h>
 #include <list>

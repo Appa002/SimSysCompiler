@@ -9,7 +9,7 @@
 #include <Parser/ParseNode.h>
 #include <memory>
 #include <General/GeneralDataStore.h>
-#include <General/Type.h>
+#include <Types/Type.h>
 #include <Structure/Structure.h>
 
 namespace ACC {
@@ -72,9 +72,6 @@ namespace ACC {
      * `ACC::ASTNode::generate`.
      * */
     class ASTNode {
-    private:
-        std::string astOperator2String(AstOperator op) const;
-
     public:
         /*! Prints the tree from this node down. */
         void _print(std::string indent, bool isLast) const;
@@ -82,18 +79,11 @@ namespace ACC {
         /*! Constructor used for most types of ASTNodes. */
         ASTNode(AstOperator op, std::vector<ASTNode *> children);
 
-        /*! Constructor used when constructing ASTNode refering to literals. */
-        ASTNode(AstOperator op, GeneralDataStore literal, Type type);
-
-        /*! Constructor used when constructing ASTNodes refering to IDs.*/
-        ASTNode(AstOperator op, std::string str);
-
-        /*! Constructor used when constructing ASTNodes refering to types.*/
-        ASTNode(AstOperator op, GeneralDataStore store);
-
-        explicit ASTNode(AstOperator op);
+        explicit ASTNode();
 
         ~ASTNode();
+
+        virtual std::string createRepresentation() const;
 
         /*! Generates the assembly code for this node.
          * Might call generate for other ASTNodes, calling generate on the root node of a Abstract Syntax Tree
@@ -104,8 +94,6 @@ namespace ACC {
         std::vector<ASTNode *> children;
 
         AstOperator op;
-        GeneralDataStore data;
-        Type type;
 
         size_t lineNum;
         std::string lineContent;

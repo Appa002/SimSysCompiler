@@ -6,14 +6,19 @@
 #include <Structure/Structures/Pointer/PtrRValueStructure.h>
 #include <Structure/Structures/Char/CharRValueStructure.h>
 #include <Error/Errors.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
 
 #include "CallNode.h"
+#include "IdNode.h"
+#include "TypeDefNode.h"
 
 std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
     std::vector<ACC::Fn> overloads;
 
+    IdNode* asId = dynamic_cast<IdNode*>(children[0]);
+
     try {
-        overloads = code.getFnOverloads(children[0]->data.asT<std::string>());
+        overloads = code.getFnOverloads(asId->sym);
     } catch (errors::ASTError& err){
         err.lineContent = this->lineContent;
         err.lineNum = this->lineNum;
@@ -53,7 +58,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
 
     }
     if (!foundMatch)
-        throw errors::MissingOverload(this, children[0]->data.asT<std::string>());
+        throw errors::MissingOverload(this, asId->sym);
     // `callee` will now contain a COPY of the ACC::Fn object being called.
 
 
@@ -61,7 +66,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
         auto &value = arguments[i];
         if (callee.argsType[i] != value->type) {
             // We need to do argument conversion
-            if (callee.argsType[i] == BuiltIns::charType) {
+            if (callee.argsType[i] == Type("char", 1)) {
                 try {
                     value = value->operatorChar(code);
                 } catch (errors::ASTError &err) {
@@ -69,7 +74,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
                     err.lineContent = this->lineContent;
                     throw;
                 }
-            } else if (callee.argsType[i] == BuiltIns::numType) {
+            } else if (callee.argsType[i] == Type("num", 8)) {
                 try {
                     value = value->operatorNum(code);
                 } catch (errors::ASTError &err) {
@@ -77,7 +82,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
                     err.lineContent = this->lineContent;
                     throw;
                 }
-            } else if (callee.argsType[i] == BuiltIns::boolType) {
+            } else if (callee.argsType[i] == Type("bool", 1)) {
                 try {
                     value = value->operatorBool(code);
                 } catch (errors::ASTError &err) {
@@ -85,20 +90,20 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
                     err.lineContent = this->lineContent;
                     throw;
                 }
-            } else if (callee.argsType[i] == BuiltIns::ptrType) {
+            } else if (callee.argsType[i].isPtr) {
                 try {
-                    value = value->operatorPtr(code, Type(callee.argsType[i].getPointingTo()));
+                    value = value->operatorPtr(code, callee.argsType[i]);
                 } catch (errors::ASTError &err) {
                     err.lineNum = this->lineNum;
                     err.lineContent = this->lineContent;
                     throw;
                 }
             } else
-                throw errors::UnknownType(this, "NEED NEW TYPE SYSTEM"); // TODO: Implement
+                throw errors::UnknownType(this, callee.argsType[i].id);
         }
 
-        fn.writeLine("sub rsp, " + std::to_string(value->type.getSize()));
-        totalRspSubtracted += value->type.getSize();
+        fn.writeLine("sub rsp, " + std::to_string(value->type.size));
+        totalRspSubtracted += value->type.size;
 
         try {
             value->operatorCopy(std::make_shared<GenericLValueStructure>(value->type, "rsp"), code);
@@ -107,6 +112,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
             err.lineContent = this->lineContent;
             throw;
         }
+
 
         value->cleanUp(code);
     }
@@ -118,14 +124,17 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
 
     Type returnType = callee.returnType;
 
-    if (returnType == Type(BuiltIns::numType))
+    if (returnType == Type("num", 8))
         return std::make_shared<NumRValueStructure>(Register::rA);
 
-    else if (returnType == Type(BuiltIns::ptrType))
-        return std::make_shared<PtrRValueStructure>(Register::rA, Type(type.getPointingTo()));
-
-    else if (returnType == Type(BuiltIns::charType))
+    else if (returnType == Type("char", 1))
         return std::make_shared<CharRValueStructure>(Register::rA);
+
+    else if (returnType == Type("bool", 1))
+        return std::make_shared<BoolRValueStructure>(Register::rA);
+
+    else if (returnType.isPtr)
+        return std::make_shared<PtrRValueStructure>(Register::rA, returnType);
 
     return nullptr;
 }
@@ -137,7 +146,7 @@ ACC::CallNode::CallNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> childre
 std::vector<ACC::Type> ACC::CallNode::getArgumentTypes() {
     std::vector<Type> out;
     for (size_t i = 1; i < children.size(); i++) {
-        out.push_back(children[i]->type);
+        out.push_back(dynamic_cast<TypeDefNode*>(children[i])->getType());
     }
     return out;
 }
@@ -156,17 +165,9 @@ bool ACC::CallNode::isPerfectMatch(std::vector<std::shared_ptr<Structure>> value
 }
 
 bool ACC::CallNode::isConvertable(std::vector<std::shared_ptr<Structure>> values, Fn &overload) {
-    bool ok = true;
     for (size_t i = 0; i < values.size(); i++) {
-        bool canBeConverted = false;
-        for (const TypeId &conversion : values[i]->type.getTypeId().convertableTo) {
-            if (conversion == overload.argsType[i].getTypeId())
-                canBeConverted = true;
-        }
-        if (!canBeConverted) {
-            ok = false;
-            break;
-        }
+        if(!values[i]->hasConversionTo(overload.argsType[i]))
+            return false;
     }
-    return ok;
+    return true;
 }

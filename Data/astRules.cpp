@@ -1,6 +1,5 @@
 #include <Logger/Logger.h>
 #include <astRules.h>
-#include <Lexical/Tokens/LiteralToken.h>
 #include <AbstractSyntaxTree/process.h>
 #include <AbstractSyntaxTree/ASTNode.h>
 #include <General/builtinTypes.h>
@@ -8,7 +7,6 @@
 #include <Lexical/Tokens/IdToken.h>
 #include <Lexical/Tokens/SyscallToken.h>
 #include <Lexical/Tokens/DeclToken.h>
-#include <Lexical/Tokens/TypeToken.h>
 #include <Lexical/Tokens/ComparisionToken.h>
 #include <AbstractSyntaxTree/ASTNodes/SeqNode.h>
 #include <AbstractSyntaxTree/ASTNodes/IfConstructNode.h>
@@ -32,9 +30,13 @@
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ModuloNode.h>
+#include <AbstractSyntaxTree/ASTNodes/TypeDefNode.h>
 #include <Lexical/Tokens/SallocToken.h>
 #include <AbstractSyntaxTree/ASTNodes/DereferenceNode.h>
+#include <Types/UnverifiedType.h>
 #include <Lexical/Tokens/TextToken.h>
+#include <Error/Errors.h>
+#include <Types/TypeTable.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -226,34 +228,24 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::call, {Symbol::ID, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
-            std::vector<ASTNode*> vec = {new ASTNode(AstOperator::ID, dynamic_cast<IdToken*>(children[0]->token)->sym)};
+        {{Symbol::call, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data)};
              return new CallNode(AstOperator::CALL, vec);
         }},
 
 
         {{Symbol::type, {Symbol::TEXT, Symbol::CMP, Symbol::TEXT, Symbol::CMP}}, [](auto children, auto carry){
             std::string str = dynamic_cast<TextToken*>(children[2]->token)->data;
-            Type t;
-            if(str == "num"){
-                t = Type(BuiltIns::ptrType, BuiltIns::numType);
-            } else if(str == "char"){
-                t = Type(BuiltIns::ptrType, BuiltIns::charType);
-            }
+            UnverifiedType t = UnverifiedType::createPtr(str);
 
-            return new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(t));
+            return new TypeDefNode(AstOperator::TYPE_DEF, t);
         }},
 
         {{Symbol::type, {Symbol::TEXT}}, [](auto children, auto carry){
             std::string str = dynamic_cast<TextToken*>(children[0]->token)->data;
-            Type t;
-            if(str == "num"){
-                t = Type(BuiltIns::numType);
-            } else if(str == "char"){
-                t = Type(BuiltIns::charType);
-            }
+            UnverifiedType t = UnverifiedType(str);
 
-            return new ASTNode(AstOperator::TYPE_DEF, GeneralDataStore::create(t));
+            return new TypeDefNode(AstOperator::TYPE_DEF, t);
         }},
 
 
@@ -395,7 +387,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             if(isNumber){
                 GeneralDataStore value;
                 value.storeT(std::stoul(str));
-                Type t = Type(BuiltIns::numType);
+                Type t = Type("num", 8);
                 return new LiteralNode(AstOperator::LITERAL, value, t);
 
             } else {
@@ -416,7 +408,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             if(isNumber){
                 GeneralDataStore value;
                 value.storeT(std::stoul(str));
-                Type t = Type(BuiltIns::numType);
+                Type t = Type("num", 8);
                 auto literal = new LiteralNode(AstOperator::LITERAL, value, t);
                 return process(children[1], literal);
             } else {
@@ -429,7 +421,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             std::string str = dynamic_cast<TextToken*>(children[1]->token)->data;
 
             GeneralDataStore value;
-            Type t = Type(BuiltIns::ptrType, BuiltIns::charType);
+            Type t = Type::createPtr("char");
 
             value.storeT(str);
 
@@ -441,7 +433,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             std::string str = dynamic_cast<TextToken*>(children[1]->token)->data;
 
             GeneralDataStore value;
-            Type t = Type(BuiltIns::charType);
+            Type t = Type("char", 1);
 
             value.storeT(str[0]);
 

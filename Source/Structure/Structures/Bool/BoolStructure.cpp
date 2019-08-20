@@ -103,6 +103,6 @@ ACC::BoolStructure::operatorGreaterEqual(std::shared_ptr<ACC::Structure> other, 
     return std::make_shared<BoolRValueStructure>(lhs);
 }
 
-ACC::BoolStructure::BoolStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type(BuiltIns::boolType)){
+ACC::BoolStructure::BoolStructure(ACC::ValueCategory v) : ElementaryStructure(v, Type("bool", 1)){
 
 }

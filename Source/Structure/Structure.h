@@ -7,7 +7,8 @@
 
 #include <string>
 #include <memory>
-#include <General/Type.h>
+#include <Types/Type.h>
+#include <vector>
 
 namespace ACC {
     class Code;
@@ -72,6 +73,8 @@ namespace ACC {
         virtual std::shared_ptr<Structure> operatorNum(Code &code);
         virtual std::shared_ptr<Structure> operatorBool(Code &code);
         virtual std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo);
+
+        virtual bool hasConversionTo(const Type &id);
 
         void cleanUp(Code &code);
 

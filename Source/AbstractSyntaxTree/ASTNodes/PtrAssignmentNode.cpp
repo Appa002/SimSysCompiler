@@ -5,6 +5,7 @@
 #include <Error/ASTError.h>
 
 #include "PtrAssignmentNode.h"
+#include <Types/TypeTable.h>
 
 ACC::PtrAssignmentNode::PtrAssignmentNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op,
                                                                                                                std::move(
@@ -25,7 +26,7 @@ std::shared_ptr<ACC::Structure> ACC::PtrAssignmentNode::generate(ACC::Code &code
 
     ptr->loadToRegister(reg, code);
 
-    auto address = std::make_shared<GenericLValueStructure>(Type(ptr->type.getPointingTo()), registerToString(8, reg));
+    auto address = std::make_shared<GenericLValueStructure>(Type(ptr->type.id, TypeTable::get()->getSize(ptr->type.id)), registerToString(8, reg));
 
     try {
         expr->operatorCopy(address, code);

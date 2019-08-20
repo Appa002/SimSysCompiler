@@ -2,31 +2,40 @@
 #include <Structure/Structures/Number/NumLValueStructure.h>
 
 #include "AssignNode.h"
+#include "IdNode.h"
+#include "TypeDefNode.h"
 #include <memory>
 #include <Structure/Structures/GenericLValueStructure.h>
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
 #include <Structure/Structures/Char/CharLValueStructure.h>
 #include <Error/ASTError.h>
+#include <Structure/Structures/Bool/BoolLValueStructure.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
 
-    auto id  =  children[0]->data.asT<std::string>();
-    auto type = children[1]->data.asT<Type>();
+    auto id  = dynamic_cast<IdNode*>(children[0])->sym;
+    auto type = dynamic_cast<TypeDefNode*>(children[1])->getType();
     auto expr = children[2]->generate(code);
 
-    fn.curBpOffset += expr->type.getSize();
+    fn.curBpOffset += expr->type.size;
+
 
     std::shared_ptr<Structure> address;
 
-    if(type == BuiltIns::numType)
+    if(type == Type("num", 8))
         address = std::make_shared<NumLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
-    else if (type == BuiltIns::ptrType)
-        address = std::make_shared<PtrLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), Type(type.getPointingTo()));
-    else if (type == BuiltIns::charType){
+
+    else if (type.isPtr)
+        address = std::make_shared<PtrLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), type);
+
+    else if (type == Type("char", 1)){
         address = std::make_shared<CharLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
+
+    } else if (type == Type("bool", 1)){
+        address = std::make_shared<BoolLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     }
 
     try {

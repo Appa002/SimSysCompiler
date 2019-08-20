@@ -25,6 +25,9 @@ namespace ACC {
         std::shared_ptr<Structure> operatorNum(Code & code) override;
         std::shared_ptr<Structure> operatorBool(Code & code) override;
         std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo) override;
+
+        bool hasConversionTo(const Type &id) override;
+
     };
 }
 

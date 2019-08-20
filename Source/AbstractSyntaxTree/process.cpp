@@ -8,7 +8,7 @@ ACC::ASTNode *ACC::process(const ACC::ParseNode *node, ACC::ASTNode *carry) {
     Rule r = getRule(node);
     auto n = r.apply(node->children, carry);
 
-    if(node->children[0]->token) {
+    if(node->children[0]->token && n) {
         n->lineContent = node->children[0]->token->lineContent;
         n->lineNum = node->children[0]->token->lineNum;
     }

@@ -27,6 +27,9 @@ namespace ACC {
         std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
         void loadToRegister(Register reg, Code& code) override;
 
+        bool hasConversionTo(const Type &id) override;
+
+
 
     };
 }

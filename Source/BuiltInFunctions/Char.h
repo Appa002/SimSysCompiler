@@ -11,10 +11,10 @@
 namespace ACC::BuiltIns::Char{
     Fn get_num(){
         Fn fn;
-        fn.returnType = Type(BuiltIns::charType);
+        fn.returnType = Type("char", 1);
         fn.symbol = "char";
         fn.curBpOffset = 0;
-        fn.argsType = {Type(BuiltIns::numType)};
+        fn.argsType = {Type("num", 8)};
         fn.code =
 R"(
 mov al, [rbp + 16]
