@@ -25,8 +25,8 @@ namespace ACC{
             return data;
         };
 
-        friend inline bool operator==(const TextToken&, const TextToken&){
-            return true;
+        friend inline bool operator==(const TextToken& a, const TextToken& b){
+            return a.data == b.data;
         }
     };
 }

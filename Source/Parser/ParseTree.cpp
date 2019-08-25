@@ -238,6 +238,13 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::start, {Symbol::type_decl, Symbol::start});
+    START_PRODUCTION()
+            NONE_TERMINAL(typeDecl)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
     LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
@@ -752,6 +759,68 @@ ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {
             EXITING_OPTIONAL_TERMINAL(CMP)
             TERMINAL(TEXT)
             TERMINAL(CMP)
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::typeDecl(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [type_decl]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::type_decl;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::ASSIGN, Symbol::OPEN_CURLY, Symbol::type_decl_body, Symbol::CLOSED_CURLY, Symbol::EOS});
+    START_PRODUCTION()
+            TERMINAL(TYPE)
+            TERMINAL(TEXT)
+            TERMINAL(ASSIGN)
+            TERMINAL(OPEN_CURLY)
+            NONE_TERMINAL(typeDeclBody)
+            TERMINAL(CLOSED_CURLY)
+            TERMINAL(EOS)
+    END_PRODUCTION()
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::typeDeclBody(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [type_decl_body]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::type_decl_body;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::type_decl_body, {Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::EOS, Symbol::type_decl_body});
+    START_PRODUCTION()
+            if(other = match(pos, Symbol::INDENT), other != nullptr) // Ignores indents.
+                pos++;
+
+            TERMINAL(TEXT)
+            TERMINAL(COLON)
+            NONE_TERMINAL(type)
+            TERMINAL(EOS)
+            if(other = match(pos, Symbol::EXTENT), other != nullptr) // Ignores extent.
+                pos++;
+
+            EXITING_OPTIONAL_NONE_TERMINAL(typeDeclBody)
+
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";

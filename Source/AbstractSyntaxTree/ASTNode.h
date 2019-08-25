@@ -30,6 +30,8 @@ namespace ACC {
     enum class AstOperator {
         ADD,
         NOT,
+        TYPE_DECL_BODY,
+        TYPE_DECL,
         SUBTRACT,
         DEREFERENCE,
         MULTIPLICATION,

@@ -12,6 +12,7 @@ namespace ACC {
         empty = -1,
         VAR = 0,
         DECL,
+        TYPE,
         TEXT,
         IMPORT,
         DOUBLE_QUOTE,
@@ -39,7 +40,6 @@ namespace ACC {
         COLON,
         COMMA,
         RETURN,
-        TYPE,
         IF,
         NOT,
         ELSE,
@@ -66,6 +66,8 @@ namespace ACC {
         else_construct,
         elseIf_construct,
         type,
+        type_decl,
+        type_decl_body,
 
         __debug_escape_sequence
     };

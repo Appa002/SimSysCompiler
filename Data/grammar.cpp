@@ -122,7 +122,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "type";
         case Symbol::__debug_escape_sequence:
             return "__debug_escape_sequence";
-
+        case Symbol::type_decl:
+            return "type_decl";
+        case Symbol::type_decl_body:
+            return "type_decl_body";
     }
     throw std::runtime_error("Symbol not known.");
 }
@@ -243,6 +246,10 @@ std::string ACC::data::symbolToStringForErrReporting(ACC::Symbol s) {
             return "a type definition";
         case Symbol::__debug_escape_sequence:
             return "a escape sequence";
+        case Symbol::type_decl:
+            return "type_decl";
+        case Symbol::type_decl_body:
+            return "type_decl_body";
     }
     throw std::runtime_error("Symbol not known.");
 }

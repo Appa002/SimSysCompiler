@@ -44,6 +44,7 @@
 #include <Lexical/Tokens/TextToken.h>
 #include <Lexical/Tokens/QuoteToken.h>
 #include <Lexical/Tokens/ImportToken.h>
+#include <Lexical/Tokens/TypeToken.h>
 #include <Error/SyntaxError.h>
 
 bool contains(const std::string &str, std::vector<std::string> options) {
@@ -321,6 +322,9 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingP
 
     else if (buffer == "while")
         tokens.push_back(new WhileToken(idx.lineNum));
+
+    else if (buffer == "type")
+        tokens.push_back(new TypeToken(idx.lineNum));
 
     else
         return false;

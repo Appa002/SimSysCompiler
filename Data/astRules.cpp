@@ -29,8 +29,11 @@
 #include <AbstractSyntaxTree/ASTNodes/ComparisionNode.h>
 #include <AbstractSyntaxTree/ASTNodes/NotNode.h>
 #include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
+#include <AbstractSyntaxTree/ASTNodes/TypeDeclNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ModuloNode.h>
 #include <AbstractSyntaxTree/ASTNodes/TypeDefNode.h>
+#include <AbstractSyntaxTree/ASTNodes/TypeDeclBodyNode.h>
+
 #include <Lexical/Tokens/SallocToken.h>
 #include <AbstractSyntaxTree/ASTNodes/DereferenceNode.h>
 #include <Types/UnverifiedType.h>
@@ -65,6 +68,9 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::call, Symbol::EOS}}, [](auto children, auto carry){
             return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
+        {{Symbol::start, {Symbol::type_decl}}, [](auto children, auto carry){
+            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
+        }},
 
 
         {{Symbol::start, {Symbol::assignment, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
@@ -97,6 +103,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
         {{Symbol::start, {Symbol::call, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
+            return new SeqNode(AstOperator::SEQ, vec);
+        }},
+        {{Symbol::start, {Symbol::type_decl, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
             return new SeqNode(AstOperator::SEQ, vec);
         }},
 
@@ -330,6 +340,38 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                         new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[3]->token)->data)};
             return new SallocNode(AstOperator::SALLOC, vec);
         }},
+
+
+        {{Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::ASSIGN, Symbol::OPEN_CURLY, Symbol::type_decl_body, Symbol::CLOSED_CURLY, Symbol::EOS}}, [](auto children, auto carry){
+            auto out = new TypeDeclNode(AstOperator::TYPE_DECL, dynamic_cast<TextToken*>(children[1]->token)->data);
+
+            process(children[4], out);
+
+            return out;
+        }},
+
+        {{Symbol::type_decl_body, {Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::EOS}}, [](auto children, ASTNode* carry){
+            carry->children.push_back(
+                    new TypeDeclBodyNode(
+                            AstOperator::TYPE_DECL_BODY,
+                            {process(children[2], nullptr)},
+                            dynamic_cast<TextToken*>(children[0]->token)->data));
+
+            return nullptr;
+        }},
+
+        {{Symbol::type_decl_body, {Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::EOS, Symbol::type_decl_body}}, [](auto children, ASTNode* carry){
+            carry->children.push_back(
+                    new TypeDeclBodyNode(
+                            AstOperator::TYPE_DECL_BODY,
+                            {process(children[2], nullptr)},
+                            dynamic_cast<TextToken*>(children[0]->token)->data));
+
+            process(children[4], carry);
+
+            return nullptr;
+        }},
+
 
         {{Symbol::expr, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
                 return new CallNode(AstOperator::CALL,
