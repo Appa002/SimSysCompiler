@@ -9,7 +9,7 @@
 #include "CharStructure.h"
 
 namespace ACC {
-    class CharIValueStructure : public CharStructure, ImmediatAccessible{
+    class CharIValueStructure : public CharStructure, public ImmediatAccessible{
         uint8_t value;
 
     public:

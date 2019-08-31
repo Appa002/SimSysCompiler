@@ -51,8 +51,14 @@ std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorCopy(std::shar
         auto *objAsI = dynamic_cast<ImmediatAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
 
-
-        fn.writeLine("mov " + registerToString(1, reg) +  ", " + objAsI->getValue());
+        if(obj->type.size == 8)
+            fn.writeLine("mov qword "+ registerToString(1, reg) +" " + objAsI->getValue());
+        else if(obj->type.size == 4)
+            fn.writeLine("mov dword "+ registerToString(1, reg) +", " + objAsI->getValue());
+        else if(obj->type.size == 2)
+            fn.writeLine("mov word "+ registerToString(1, reg) +", " + objAsI->getValue());
+        else if(obj->type.size == 1)
+            fn.writeLine("mov byte "+ registerToString(1, reg) +", " + objAsI->getValue());
 
         return nullptr;
     }

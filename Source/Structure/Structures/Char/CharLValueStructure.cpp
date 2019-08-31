@@ -58,8 +58,14 @@ ACC::CharLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC:
         auto *objAsI = dynamic_cast<ImmediatAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
 
-
-        fn.writeLine("mov [ " + access + " ], " + objAsI->getValue());
+        if(obj->type.size == 8)
+            fn.writeLine("mov qword [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 4)
+            fn.writeLine("mov dword [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 2)
+            fn.writeLine("mov word [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 1)
+            fn.writeLine("mov byte [ " + access + " ], " + objAsI->getValue());
 
     }
 

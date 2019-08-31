@@ -29,8 +29,8 @@ void ACC::CharIValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
     fn.writeLine("mov " + registerToString(1, reg) + ", " + std::to_string(value));
 }
 
-uint8_t ACC::CharIValueStructure::getValue() const {
-    return value;
+std::string ACC::CharIValueStructure::getValue() const {
+    return std::to_string(value);
 }
 
 std::shared_ptr<ACC::Structure> ACC::CharIValueStructure::operatorChar(ACC::Code &code) {
