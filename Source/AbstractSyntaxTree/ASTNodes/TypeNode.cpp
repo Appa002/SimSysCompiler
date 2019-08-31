@@ -29,6 +29,8 @@ ACC::Type ACC::TypeNode::getType() {
 
     auto out = TypeTable::get()->getType(unverifiedType.id);
     out.isPtr = unverifiedType.isPtr;
+    if(unverifiedType.isPtr)
+        out.size = 8;
     return out;
 }
 
