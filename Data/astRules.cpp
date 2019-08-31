@@ -31,7 +31,7 @@
 #include <AbstractSyntaxTree/ASTNodes/PtrAssignmentNode.h>
 #include <AbstractSyntaxTree/ASTNodes/TypeDeclNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ModuloNode.h>
-#include <AbstractSyntaxTree/ASTNodes/TypeDefNode.h>
+#include <AbstractSyntaxTree/ASTNodes/TypeNode.h>
 #include <AbstractSyntaxTree/ASTNodes/TypeDeclBodyNode.h>
 
 #include <Lexical/Tokens/SallocToken.h>
@@ -248,14 +248,14 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             std::string str = dynamic_cast<TextToken*>(children[2]->token)->data;
             UnverifiedType t = UnverifiedType::createPtr(str);
 
-            return new TypeDefNode(AstOperator::TYPE_DEF, t);
+            return new TypeNode(AstOperator::TYPE_DEF, t);
         }},
 
         {{Symbol::type, {Symbol::TEXT}}, [](auto children, auto carry){
             std::string str = dynamic_cast<TextToken*>(children[0]->token)->data;
             UnverifiedType t = UnverifiedType(str);
 
-            return new TypeDefNode(AstOperator::TYPE_DEF, t);
+            return new TypeNode(AstOperator::TYPE_DEF, t);
         }},
 
 

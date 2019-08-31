@@ -10,7 +10,7 @@
 
 #include "CallNode.h"
 #include "IdNode.h"
-#include "TypeDefNode.h"
+#include "TypeNode.h"
 
 std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
     std::vector<ACC::Fn> overloads;
@@ -146,7 +146,7 @@ ACC::CallNode::CallNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> childre
 std::vector<ACC::Type> ACC::CallNode::getArgumentTypes() {
     std::vector<Type> out;
     for (size_t i = 1; i < children.size(); i++) {
-        out.push_back(dynamic_cast<TypeDefNode*>(children[i])->getType());
+        out.push_back(dynamic_cast<TypeNode*>(children[i])->getType());
     }
     return out;
 }

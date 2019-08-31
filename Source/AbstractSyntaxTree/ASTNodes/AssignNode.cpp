@@ -3,7 +3,7 @@
 
 #include "AssignNode.h"
 #include "IdNode.h"
-#include "TypeDefNode.h"
+#include "TypeNode.h"
 #include <memory>
 #include <Structure/Structures/GenericLValueStructure.h>
 #include <General/builtinTypes.h>
@@ -17,7 +17,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     auto& fn = code.getFnSymbol();
 
     auto id  = dynamic_cast<IdNode*>(children[0])->sym;
-    auto type = dynamic_cast<TypeDefNode*>(children[1])->getType();
+    auto type = dynamic_cast<TypeNode*>(children[1])->getType();
     auto expr = children[2]->generate(code);
 
     fn.curBpOffset += expr->type.size;

@@ -7,7 +7,7 @@
 #include <Structure/Structures/Bool/BoolLValueStructure.h>
 
 #include "FunctionNode.h"
-#include "TypeDefNode.h"
+#include "TypeNode.h"
 #include "IdNode.h"
 
 
@@ -15,7 +15,7 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     auto name = dynamic_cast<IdNode*>(children[0])->sym;
 
     auto& fn = code.emplaceFnSymbol(name);
-    fn.returnType = dynamic_cast<TypeDefNode*>(children[1])->getType();
+    fn.returnType = dynamic_cast<TypeNode*>(children[1])->getType();
     fn.argsType = getArgumentTypes();
 
     size_t offset = 16;
@@ -25,7 +25,7 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     for(size_t i = 2; i < children.size() - 1; i++){
         std::shared_ptr<Structure> structure;
         auto container = children[i];
-        auto type = dynamic_cast<TypeDefNode*>(container->children[1])->getType();
+        auto type = dynamic_cast<TypeNode*>(container->children[1])->getType();
         auto size = type.size;
         auto sym = dynamic_cast<IdNode*>(container->children[0])->sym;
         auto loc = fn.curBpOffset + size;
@@ -83,7 +83,7 @@ std::vector<ACC::Type> ACC::FunctionNode::getArgumentTypes() {
     std::vector<Type> argumentsType;
 
     for(size_t i = 2; i < children.size() - 1; i++) {
-        auto type = dynamic_cast<TypeDefNode*>(children[i]->children[1])->getType();
+        auto type = dynamic_cast<TypeNode*>(children[i]->children[1])->getType();
         argumentsType.push_back(type);
     }
 
