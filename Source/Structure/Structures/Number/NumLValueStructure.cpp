@@ -14,6 +14,7 @@
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Char/CharLValueStructure.h>
 #include <Error/Errors.h>
+#include <Structure/ImmediatAccessible.h>
 
 ACC::NumLValueStructure::NumLValueStructure(std::string const &access)
         : NumStructure(ValueCategory::lvalue), access(access) {
@@ -51,7 +52,8 @@ ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::
         fn.writeLine("mov [ " + access + " ], " + registerToString(8, objAsR->getRegister()));
     }
     else if (obj->vCategory == ValueCategory::ivalue){
-        auto *objAsB = dynamic_cast<ImmediatAccessible *>(obj.get());
+        auto *objAsB = dynamic_cast<ImmediatAccessible*>(obj.get());
+
 
         auto &fn = code.getFnSymbol();
 

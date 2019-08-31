@@ -8,7 +8,7 @@
 #include "PtrStructure.h"
 
 namespace ACC {
-    class PtrIValueStructure : public PtrStructure, ImmediatAccessible{
+    class PtrIValueStructure : public PtrStructure, public ImmediatAccessible{
         uint64_t value;
 
     public:

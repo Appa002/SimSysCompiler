@@ -7,7 +7,7 @@
 #include <Structure/ImmediatAccessible.h>
 
 namespace ACC {
-    class BoolIValueStructure : public BoolStructure, ImmediatAccessible{
+    class BoolIValueStructure : public BoolStructure, public ImmediatAccessible{
         bool value;
 
     public:

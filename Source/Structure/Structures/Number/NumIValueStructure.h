@@ -11,7 +11,7 @@
 #include <Structure/ImmediatAccessible.h>
 
 namespace ACC {
-    class NumIValueStructure : public NumStructure, ImmediatAccessible{
+    class NumIValueStructure : public NumStructure, public ImmediatAccessible{
         int64_t value;
 
     public:
