@@ -11,7 +11,7 @@ std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
     auto var = code.getVarSymbol(id);
 
     try {
-        auto out = expr->operatorCopy(var, code);
+        var->operatorCopy(expr, code);
     } catch (errors::ASTError& err){
         err.lineNum = this->lineNum;
         err.lineContent = this->lineContent;

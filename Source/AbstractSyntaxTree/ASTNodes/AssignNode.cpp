@@ -42,7 +42,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     }
 
     try {
-        expr->operatorCopy(address, code);
+        address->operatorCopy(expr, code);
     }catch (errors::ASTError& err){
         err.lineNum = this->lineNum;
         err.lineContent = this->lineContent;
