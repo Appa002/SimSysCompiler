@@ -4,6 +4,7 @@
 
 #include "TypeDeclNode.h"
 #include "TypeDeclBodyNode.h"
+#include <Assembly/Code.h>
 #include <Types/TypeTable.h>
 
 #include <utility>
@@ -26,6 +27,25 @@ std::shared_ptr<ACC::Structure> ACC::TypeDeclNode::generate(ACC::Code &code) {
 
     Type type = Type(sym, totalSize, fields);
     TypeTable::get()->addType(sym, type);
+
+    auto& fn = code.emplaceFnSymbol("?" + type.id + ".operatorCopy");
+    code.popFnFromStack();
+    fn.curBpOffset = 20;
+    fn.returnType = Type("num", 8);
+    fn.argsType = {Type("num", 8)};
+
+    fn.code = R"(
+mov rax, 1
+mov rdi, 1
+mov dword [rbp - 12], 0x79706f43
+mov dword [rbp - 8], 0x000a6465
+lea rsi, [rbp - 12]
+mov rdx, 7
+syscall
+mov rax, 0
+leave
+ret
+)";
 
     return nullptr;
 }
