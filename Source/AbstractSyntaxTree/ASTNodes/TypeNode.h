@@ -7,10 +7,10 @@
 #include <Types/UnverifiedType.h>
 
 namespace ACC {
-    class TypeDefNode : public ASTNode {
+    class TypeNode : public ASTNode {
     public:
-        TypeDefNode(AstOperator op, Type t);
-        TypeDefNode(AstOperator op, UnverifiedType t);
+        TypeNode(AstOperator op, Type t);
+        TypeNode(AstOperator op, UnverifiedType t);
 
 
         std::shared_ptr<Structure> generate(ACC::Code &code) override;

@@ -2,25 +2,25 @@
 // Created by a_mod on 20.08.2019.
 //
 
-#include "TypeDefNode.h"
+#include "TypeNode.h"
 #include <Types/TypeTable.h>
 
 #include <utility>
 #include <Error/Errors.h>
 
-ACC::TypeDefNode::TypeDefNode(ACC::AstOperator op, ACC::Type t) : ASTNode(op, {}), type(std::move(t)){
+ACC::TypeNode::TypeNode(ACC::AstOperator op, ACC::Type t) : ASTNode(op, {}), type(std::move(t)){
 
 }
 
-std::shared_ptr<ACC::Structure> ACC::TypeDefNode::generate(ACC::Code &code) {
+std::shared_ptr<ACC::Structure> ACC::TypeNode::generate(ACC::Code &code) {
     throw std::runtime_error("Can't generate type def node.");
 }
 
-ACC::TypeDefNode::TypeDefNode(ACC::AstOperator op, ACC::UnverifiedType t) : ASTNode(op, {}), unverifiedType(std::move(t)) {
+ACC::TypeNode::TypeNode(ACC::AstOperator op, ACC::UnverifiedType t) : ASTNode(op, {}), unverifiedType(std::move(t)) {
 
 }
 
-ACC::Type ACC::TypeDefNode::getType() {
+ACC::Type ACC::TypeNode::getType() {
     if(type != Type("", 0))
         return type;
 
@@ -37,6 +37,6 @@ ACC::Type ACC::TypeDefNode::getType() {
 
 }
 
-std::string ACC::TypeDefNode::createRepresentation() const {
+std::string ACC::TypeNode::createRepresentation() const {
     return "Type: " + unverifiedType.id + (unverifiedType.isPtr ? ("*"):(""));
 }
