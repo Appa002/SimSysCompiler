@@ -7,10 +7,12 @@
 
 #include <Structure/Structure.h>
 
+#include <utility>
+
 namespace ACC {
     class ElementaryStructure : public Structure{
     public:
-        explicit ElementaryStructure(ValueCategory v, Type type);
+        explicit ElementaryStructure(ValueCategory v, Type type) : Structure(v, std::move(type)) {};
         virtual void loadToRegister(Register reg, Code& code) = 0;
     };
 }
