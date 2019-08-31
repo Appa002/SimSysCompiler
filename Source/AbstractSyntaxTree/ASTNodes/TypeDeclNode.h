@@ -14,7 +14,7 @@ namespace ACC {
 
         std::shared_ptr<Structure> generate(ACC::Code &code) override;
 
-        std::string createRepresentation() const override;
+        [[nodiscard]] std::string createRepresentation() const override;
 
     private:
         std::string sym;

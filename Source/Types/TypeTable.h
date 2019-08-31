@@ -8,15 +8,15 @@
 #include <General/Singleton.h>
 #include <unordered_map>
 #include <vector>
+#include "Type.h"
 
 namespace ACC {
     class TypeTable : public Singleton<TypeTable> {
     private:
         /*! Maps type names (e.g. "num", "char") to their size.
          * Used to keep track of existing types and to aid in the creation of `Type` objects.*/
-        std::unordered_map<std::string, size_t> sizeMap;
+        std::unordered_map<std::string, Type> typeMap;
 
-        std::unordered_map<std::string, std::vector<std::string>> conversionMap;
 
     public:
         TypeTable();
@@ -24,7 +24,8 @@ namespace ACC {
 
         bool isType(std::string const & id);
         size_t getSize (std::string const & id);
-        void addType(std::string const & id, size_t size, const std::vector<std::string>& conversions);
+        Type getType (std::string const & id);
+        void addType(std::string const & id, Type info);
 
     };
 }

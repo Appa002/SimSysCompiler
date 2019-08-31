@@ -4,26 +4,34 @@
 
 #include "TypeTable.h"
 
+#include <utility>
+
 ACC::TypeTable::TypeTable() {
     // Builtin Types;
 
-    addType("char", 1, {});
-    addType("bool", 1, {});
-    addType("num", 8, {});
+    addType("char", Type("char", 1));
+    addType("bool", Type("bool", 1));
+    addType("num", Type("num", 8));
 
 }
 
 bool ACC::TypeTable::isType(std::string const &id) {
-    return sizeMap.find(id) != sizeMap.cend();
+    return typeMap.find(id) != typeMap.cend();
 }
 
 size_t ACC::TypeTable::getSize(std::string const &id) {
     if(!isType(id))
         throw std::runtime_error("Not a type.");
-    return sizeMap.at(id);
+    return typeMap.at(id).size;
 }
 
-void ACC::TypeTable::addType(std::string const &id, size_t size, const std::vector<std::string>& conversions) {
-    sizeMap[id] = size;
+ACC::Type ACC::TypeTable::getType(std::string const &id){
+    if(!isType(id))
+        throw std::runtime_error("Not a type.");
+    return typeMap.at(id);
+}
+
+void ACC::TypeTable::addType(std::string const &id, Type info) {
+    typeMap[id] = std::move(info);
 }
 

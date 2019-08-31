@@ -27,14 +27,9 @@ ACC::Type ACC::TypeNode::getType() {
     if(!TypeTable::get()->isType(unverifiedType.id))
         throw errors::UnknownType(this, unverifiedType.id);
 
-    if(unverifiedType.isPtr){
-        type = Type::createPtr(unverifiedType.id);
-        return type;
-    }
-
-    type = Type(unverifiedType.id, TypeTable::get()->getSize(unverifiedType.id));
-    return type;
-
+    auto out = TypeTable::get()->getType(unverifiedType.id);
+    out.isPtr = unverifiedType.isPtr;
+    return out;
 }
 
 std::string ACC::TypeNode::createRepresentation() const {

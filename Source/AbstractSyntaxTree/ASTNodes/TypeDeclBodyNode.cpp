@@ -7,6 +7,7 @@
 
 #include <utility>
 #include <Error/Errors.h>
+#include <AbstractSyntaxTree/ASTNodes/TypeNode.h>
 
 ACC::TypeDeclBodyNode::TypeDeclBodyNode(ACC::AstOperator op, std::vector<ASTNode*> children, std::string sym)
 : ASTNode(op, std::move(children)), sym(std::move(sym)){
@@ -19,4 +20,12 @@ std::shared_ptr<ACC::Structure> ACC::TypeDeclBodyNode::generate(ACC::Code &code)
 
 std::string ACC::TypeDeclBodyNode::createRepresentation() const {
     return "TypeDeclBody ("+sym+")";
+}
+
+ACC::Type ACC::TypeDeclBodyNode::getType() {
+    return dynamic_cast<TypeNode*>(children[0])->getType();
+}
+
+std::string ACC::TypeDeclBodyNode::getName() {
+    return sym;
 }
