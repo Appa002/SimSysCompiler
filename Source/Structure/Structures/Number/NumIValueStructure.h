@@ -8,9 +8,10 @@
 #include <Structure/Structure.h>
 #include <Structure/Structures/ElementaryStructure.h>
 #include <Structure/Structures/Number/NumStructure.h>
+#include <Structure/ImmediatAccessible.h>
 
 namespace ACC {
-    class NumIValueStructure : public NumStructure{
+    class NumIValueStructure : public NumStructure, ImmediatAccessible{
         int64_t value;
 
     public:
@@ -20,11 +21,10 @@ namespace ACC {
         std::shared_ptr<Structure> operatorBool(Code & code) override;
         std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo) override;
 
-        int64_t getValue() const;
+        std::string getValue() const override;
 
         explicit NumIValueStructure(int64_t value);
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
         void loadToRegister(Register reg, Code& code) override;
 
         bool hasConversionTo(const Type &id) override;

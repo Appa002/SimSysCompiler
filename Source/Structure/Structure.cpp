@@ -7,6 +7,7 @@
 #include <Structure/Structure.h>
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
+#include <Error/Errors.h>
 
 ACC::Structure::~Structure() = default;
 
@@ -19,7 +20,7 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorForNext(Code &code) {
     throw std::runtime_error("Operator not implemented");
 }
 
-std::shared_ptr<ACC::Structure> ACC::Structure::operatorCopy(std::shared_ptr<Structure> address, Code &code) {
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorCopy(std::shared_ptr<Structure> obj, Code &code) {
     throw std::runtime_error("Operator not implemented");
 }
 
@@ -81,19 +82,19 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorDereference(ACC::Code &c
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorChar(ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::InvalidType(nullptr, "char", "copy");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorNum(ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::InvalidType(nullptr, "num", "copy");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorBool(ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::InvalidType(nullptr, "bool", "copy");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorPtr(Code &code, Type pointingTo) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::InvalidType(nullptr, "ptr", "copy");
 }
 
 std::shared_ptr<ACC::Structure>

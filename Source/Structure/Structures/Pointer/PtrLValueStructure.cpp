@@ -5,6 +5,8 @@
 #include <General/builtinTypes.h>
 #include <Structure/Structures/Number/NumLValueStructure.h>
 #include <Error/Errors.h>
+#include <Structure/RegisterAccessible.h>
+#include <Structure/ImmediatAccessible.h>
 
 
 ACC::PtrLValueStructure::PtrLValueStructure(std::string access, ACC::Type type)
@@ -18,26 +20,29 @@ void ACC::PtrLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code)
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::PtrLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
-    if(address->type == Type("num", 8)){
-        auto thisAsNum = operatorNum(code);
-        return thisAsNum->operatorCopy(address, code);
-    }
+ACC::PtrLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code &code) {
+    if(!obj->type.isPtr)
+        obj = obj->operatorPtr(code, this->type);
 
-    if(!address->type.isPtr)
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
-
-    if (address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
+    if (obj->vCategory == ValueCategory::lvalue) {
+        auto *objAsL = dynamic_cast<AsmAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
         Register reg = code.getFreeRegister();
         std::string regStr = registerToString(8, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+        fn.writeLine("mov " + regStr + ", [" + objAsL->getAccess() + "]");
+        fn.writeLine("mov [ " + access + " ], " + regStr);
         code.freeRegister(reg);
+    } else if (obj->vCategory == ValueCategory::rvalue){
+        auto *objAsR = dynamic_cast<RegisterAccessible*>(obj.get());
+        auto &fn = code.getFnSymbol();
 
-        return address;
+        fn.writeLine("mov [ " + access + " ], " + registerToString(8, objAsR->getRegister()));
+    } else if (obj->vCategory == ValueCategory::ivalue){
+        auto *objAsI = dynamic_cast<ImmediatAccessible*>(obj.get());
+        auto &fn = code.getFnSymbol();
+
+        fn.writeLine("mov [ " + access + " ], " + objAsI->getValue());
     }
     return nullptr;
 }

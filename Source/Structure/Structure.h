@@ -50,7 +50,7 @@ namespace ACC {
         virtual std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code);
         virtual std::shared_ptr<Structure> operatorForNext(Code &code);
 
-        virtual std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &code);
+        virtual std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> obj, Code &code);
 
         virtual std::shared_ptr<Structure> operatorAdd(std::shared_ptr<Structure> amount, Code &code);
         virtual std::shared_ptr<Structure> operatorSubtract(std::shared_ptr<Structure> amount, Code &code);

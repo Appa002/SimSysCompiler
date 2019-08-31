@@ -15,7 +15,7 @@ namespace ACC {
         Register reg;
 
         explicit BoolRValueStructure(Register reg);
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
+        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> obj, Code &) override;
 
         void loadToRegister(Register reg, Code& code) override;
 

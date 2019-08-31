@@ -16,7 +16,7 @@ namespace ACC {
         explicit CharLValueStructure(std::string const & access);
 
         void loadToRegister(Register reg, Code& code) override;
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
+        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> obj, Code &) override;
         std::string const & getAccess() const override;
 
         std::shared_ptr<Structure> operatorChar(Code & code) override;

@@ -12,6 +12,7 @@
 #include <Assembly/Code.h>
 #include <Structure/Structures/Number/NumRValueStructure.h>
 #include <Error/Errors.h>
+#include <Structure/ImmediatAccessible.h>
 
 ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
         : PtrStructure(ValueCategory::rvalue, type), reg(reg) {
@@ -19,33 +20,40 @@ ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
-    if(address->type == Type("num", 8)){
-        auto thisAsNum = operatorNum(code);
-        return thisAsNum->operatorCopy(address, code);
-    }
-
-    if(!address->type.isPtr)
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
+ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code &code) {
+    if(!obj->type.isPtr)
+        obj = obj->operatorPtr(code, type);
 
 
-
-    if (address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
+    if (obj->vCategory == ValueCategory::lvalue) {
+        auto *objAsL = dynamic_cast<AsmAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
 
-        Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(8, reg);
+        if (!access.empty()) {
+            Register reg = code.getFreeRegister();
+            fn.writeLine("mov " + registerToString(8, reg) + ", [" + objAsL->getAccess() + "]");
+            fn.writeLine("mov [" + access + "], " + registerToString(8, reg));
+            code.freeRegister(reg);
+        } else
+            fn.writeLine("mov " + registerToString(8, this->reg) + ", [" + objAsL->getAccess() + "]");
+    } else if (obj->vCategory == ValueCategory::rvalue) {
+        auto *objAsR = dynamic_cast<RegisterAccessible *>(obj.get());
+        auto &fn = code.getFnSymbol();
 
-        if (!access.empty())
-            fn.writeLine("lea " + regStr + ", [" + access + "]");
-        else
-            fn.writeLine("mov " + regStr + ", " + registerToString(8, this->reg));
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
-        code.freeRegister(reg);
+        if (!access.empty()) {
+            fn.writeLine("mov [" + access + "], " + registerToString(8, objAsR->getRegister()));
+        } else
+            fn.writeLine("mov " + registerToString(8, this->reg) + ", [" + registerToString(8, objAsR->getRegister()) + "]");
+    }else if (obj->vCategory == ValueCategory::rvalue) {
+        auto *objAsI = dynamic_cast<ImmediatAccessible *>(obj.get());
+        auto &fn = code.getFnSymbol();
 
-        return std::make_shared<PtrLValueStructure>(addressAsLValue->getAccess(), type);
+        if (!access.empty()) {
+            fn.writeLine("mov [" + access + "], " + objAsI->getValue());
+        } else
+            fn.writeLine("mov " + registerToString(8, this->reg) + ", " + objAsI->getValue());
     }
+
     return nullptr;
 }
 

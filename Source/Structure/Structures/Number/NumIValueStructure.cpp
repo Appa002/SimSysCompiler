@@ -19,39 +19,13 @@ ACC::NumIValueStructure::NumIValueStructure(int64_t value) : value(value), NumSt
 
 }
 
-std::shared_ptr<ACC::Structure>
-ACC::NumIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->type == Type("char", 1)){
-        auto thisAsChar = operatorChar(code);
-        return thisAsChar->operatorCopy(address, code);
-    } else if (address->type.isPtr){
-        auto thisAsPtr = operatorPtr(code, Type(address->type));
-        return thisAsPtr->operatorCopy(address, code);
-    }
-
-    if(address->type != Type("num", 8))
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
-
-
-    if(address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
-
-        auto &fn = code.getFnSymbol();
-
-
-        fn.writeLine("mov qword [" + addressAsLValue->getAccess() + "], 0x" + toHex(value));
-    }
-    return address;
-}
-
-
 void ACC::NumIValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(8, reg) + ", " + std::to_string(value));
 }
 
-int64_t ACC::NumIValueStructure::getValue() const {
-    return value;
+std::string ACC::NumIValueStructure::getValue() const {
+    return std::to_string(value);
 }
 
 std::shared_ptr<ACC::Structure> ACC::NumIValueStructure::operatorChar(ACC::Code &code) {

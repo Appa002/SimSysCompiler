@@ -18,7 +18,7 @@ namespace ACC {
         PtrRValueStructure(Register reg, Type type);
         PtrRValueStructure(std::string access, Type type);
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> obj, Code &code) override;
 
         void loadToRegister(Register reg, Code& code) override;
         Register getRegister() const override;

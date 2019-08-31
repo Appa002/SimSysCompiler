@@ -3,18 +3,19 @@
 //
 
 #pragma once
+
+#include <Structure/ImmediatAccessible.h>
 #include "PtrStructure.h"
 
 namespace ACC {
-    class PtrIValueStructure : public PtrStructure{
+    class PtrIValueStructure : public PtrStructure, ImmediatAccessible{
         uint64_t value;
 
     public:
-        uint64_t getValue() const;
+        std::string getValue() const override;
 
         explicit PtrIValueStructure(uint64_t value, Type pointingTo);
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
         void loadToRegister(Register reg, Code& code) override;
 
         std::shared_ptr<Structure> operatorChar(Code & code) override;

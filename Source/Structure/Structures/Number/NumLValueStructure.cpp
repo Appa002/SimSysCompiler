@@ -26,33 +26,36 @@ void ACC::NumLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code)
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
-    if(address->type == Type("char", 1)){
-        auto thisAsChar = operatorChar(code);
-        return thisAsChar->operatorCopy(address, code);
-    } else if (address->type.isPtr){
-        auto thisAsPtr = operatorPtr(code, Type(address->type));
-        return thisAsPtr->operatorCopy(address, code);
+ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code &code) {
+    if(obj->type != Type("num", 8)){
+        obj = obj->operatorNum(code);
     }
 
-    if(address->type != Type("num", 8))
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
-
-
-
-    if (address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
+    if (obj->vCategory == ValueCategory::lvalue) {
+        auto *objAsLvalue = dynamic_cast<AsmAccessible *>(obj.get());
 
         auto &fn = code.getFnSymbol();
 
         Register reg = code.getFreeRegister();
         std::string regStr = registerToString(8, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+        fn.writeLine("mov " + regStr + ", [" + objAsLvalue->getAccess() + "]");
+        fn.writeLine("mov [ " + access + " ], " + regStr);
         code.freeRegister(reg);
+    }
+    else if (obj->vCategory == ValueCategory::rvalue) {
+        auto *objAsR = dynamic_cast<RegisterAccessible *>(obj.get());
 
-        return address;
+        auto &fn = code.getFnSymbol();
+
+        fn.writeLine("mov [ " + access + " ], " + registerToString(8, objAsR->getRegister()));
+    }
+    else if (obj->vCategory == ValueCategory::ivalue){
+        auto *objAsB = dynamic_cast<ImmediatAccessible *>(obj.get());
+
+        auto &fn = code.getFnSymbol();
+
+        fn.writeLine("mov [ " + access + " ], " + objAsB->getValue());
     }
     return nullptr;
 }

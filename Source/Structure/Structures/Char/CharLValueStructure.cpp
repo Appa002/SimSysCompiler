@@ -17,6 +17,7 @@
 #include <Assembly/Code.h>
 #include <General/builtinTypes.h>
 #include <Error/Errors.h>
+#include <Structure/ImmediatAccessible.h>
 
 ACC::CharLValueStructure::CharLValueStructure(std::string const &access)
         : CharStructure(ValueCategory::lvalue), access(access) {
@@ -29,28 +30,37 @@ void ACC::CharLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::CharLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code &code) {
-    if(address->type == Type("num", 8)){
-        auto asNum = this->operatorNum(code);
-        asNum->operatorCopy(address, code);
-    }
+ACC::CharLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code &code) {
+    if (obj->type != Type("char", 1))
+        obj = obj->operatorChar(code);
 
-    if(address->type  != Type("char", 1))
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
-
-
-    if (address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
+    if (obj->vCategory == ValueCategory::lvalue) {
+        auto *objAsL = dynamic_cast<AsmAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
 
         Register reg = code.getFreeRegister();
         std::string regStr = registerToString(1, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+        fn.writeLine("mov " + regStr + ", [" + objAsL->getAccess() + "]");
+        fn.writeLine("mov [ " + access + " ], " + regStr);
         code.freeRegister(reg);
 
-        return address;
+        return nullptr;
+    } else if (obj->vCategory == ValueCategory::rvalue) {
+        auto *objAsR = dynamic_cast<RegisterAccessible *>(obj.get());
+        auto &fn = code.getFnSymbol();
+
+
+        fn.writeLine("mov [ " + access + " ], " + registerToString(1, objAsR->getRegister()));
+
+        return nullptr;
+    } else if (obj->vCategory == ValueCategory::ivalue) {
+        auto *objAsI = dynamic_cast<ImmediatAccessible *>(obj.get());
+        auto &fn = code.getFnSymbol();
+
+
+        fn.writeLine("mov [ " + access + " ], " + objAsI->getValue());
+
     }
 
     return nullptr;

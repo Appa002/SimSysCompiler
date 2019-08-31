@@ -4,17 +4,17 @@
 
 #pragma once
 #include "BoolStructure.h"
+#include <Structure/ImmediatAccessible.h>
 
 namespace ACC {
-    class BoolIValueStructure : public BoolStructure{
+    class BoolIValueStructure : public BoolStructure, ImmediatAccessible{
         bool value;
 
     public:
-        bool getValue() const;
+        std::string getValue() const override;
 
         explicit BoolIValueStructure(bool value);
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
         void loadToRegister(Register reg, Code& code) override;
 
         std::shared_ptr<Structure> operatorChar(Code & code) override;

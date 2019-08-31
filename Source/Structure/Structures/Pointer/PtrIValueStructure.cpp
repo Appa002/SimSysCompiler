@@ -19,34 +19,14 @@ PtrStructure(ValueCategory::ivalue, pointingTo) {
 
 }
 
-std::shared_ptr<ACC::Structure>
-ACC::PtrIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->type == Type("num", 8)){
-        auto thisAsNum = operatorNum(code);
-        return thisAsNum->operatorCopy(address, code);
-    }
-
-    if(!address->type.isPtr)
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
-
-    if(address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
-
-        auto &fn = code.getFnSymbol();
-
-        fn.writeLine("mov qword [" + addressAsLValue->getAccess() + "], 0x" + toHex(value));
-    }
-    return address;
-}
-
 
 void ACC::PtrIValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
     fn.writeLine("mov " + registerToString(8, reg) + ", " + std::to_string(value));
 }
 
-uint64_t ACC::PtrIValueStructure::getValue() const {
-    return value;
+std::string ACC::PtrIValueStructure::getValue() const {
+    return std::to_string(value);
 }
 
 

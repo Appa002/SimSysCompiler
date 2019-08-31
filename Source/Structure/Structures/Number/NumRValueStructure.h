@@ -20,7 +20,7 @@ namespace ACC {
         void loadToRegister(Register reg, Code& code) override;
         Register getRegister() const override;
 
-        std::shared_ptr<ACC::Structure> operatorCopy(std::shared_ptr<Structure> address, ACC::Code &code) override;
+        std::shared_ptr<ACC::Structure> operatorCopy(std::shared_ptr<Structure> obj, ACC::Code &code) override;
         std::shared_ptr<Structure> operatorChar(Code & code) override;
         std::shared_ptr<Structure> operatorNum(Code & code) override;
         std::shared_ptr<Structure> operatorBool(Code & code) override;

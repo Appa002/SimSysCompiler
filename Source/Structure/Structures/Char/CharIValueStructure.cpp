@@ -23,27 +23,6 @@ ACC::CharIValueStructure::CharIValueStructure(uint8_t value) : value(value), Cha
 
 }
 
-std::shared_ptr<ACC::Structure>
-ACC::CharIValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->type == Type("num", 8)){
-        auto asNum = this->operatorNum(code);
-        asNum->operatorCopy(address, code);
-    }
-
-    if(address->type  != Type("char", 1))
-        throw errors::InvalidType(nullptr, address->type.id, "copy");
-
-
-    if(address->vCategory == ValueCategory::lvalue) {
-        auto *addressAsLValue = dynamic_cast<AsmAccessible*>(address.get());
-
-        auto &fn = code.getFnSymbol();
-
-        fn.writeLine("mov byte [" + addressAsLValue->getAccess() + "], 0x" +  toHex(value));
-    }
-    return address;
-}
-
 
 void ACC::CharIValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();

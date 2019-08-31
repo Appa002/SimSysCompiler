@@ -5,18 +5,18 @@
 #ifndef SIMSYSCOMPILER_CHARIVALUESTRUCTURE_H
 #define SIMSYSCOMPILER_CHARIVALUESTRUCTURE_H
 
+#include <Structure/ImmediatAccessible.h>
 #include "CharStructure.h"
 
 namespace ACC {
-    class CharIValueStructure : public CharStructure{
+    class CharIValueStructure : public CharStructure, ImmediatAccessible{
         uint8_t value;
 
     public:
-        uint8_t getValue() const;
+        std::string getValue() const;
 
         explicit CharIValueStructure(uint8_t value);
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> address, Code &) override;
         void loadToRegister(Register reg, Code& code) override;
 
         std::shared_ptr<Structure> operatorChar(Code & code) override;
