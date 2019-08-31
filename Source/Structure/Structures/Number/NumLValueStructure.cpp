@@ -52,13 +52,18 @@ ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::
         fn.writeLine("mov [ " + access + " ], " + registerToString(8, objAsR->getRegister()));
     }
     else if (obj->vCategory == ValueCategory::ivalue){
-        auto *objAsB = dynamic_cast<ImmediatAccessible*>(obj.get());
+        auto *objAsI = dynamic_cast<ImmediatAccessible*>(obj.get());
 
 
         auto &fn = code.getFnSymbol();
-
-        fn.writeLine("mov [ " + access + " ], " + objAsB->getValue());
-    }
+        if(obj->type.size == 8)
+            fn.writeLine("mov qword [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 4)
+            fn.writeLine("mov dword [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 2)
+            fn.writeLine("mov word [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 1)
+            fn.writeLine("mov byte [ " + access + " ], " + objAsI->getValue());    }
     return nullptr;
 }
 

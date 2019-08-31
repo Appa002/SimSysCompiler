@@ -13,6 +13,7 @@
 #include <Structure/Structures/Number/NumLValueStructure.h>
 #include <Structure/Structures/Bool/BoolLValueStructure.h>
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
+#include <Structure/ImmediatAccessible.h>
 #include "GenericLValueStructure.h"
 
 ACC::GenericLValueStructure::GenericLValueStructure(ACC::Type type, std::string access)
@@ -27,19 +28,42 @@ void ACC::GenericLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &c
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> address, ACC::Code & code) {
-    if(address->vCategory == ValueCategory::lvalue) {
+ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code & code) {
+    if(obj->vCategory == ValueCategory::lvalue) {
         auto &fn = code.getFnSymbol();
-        auto *addressAsLValue = dynamic_cast<AsmAccessible *>(address.get());
+        auto *objAsL = dynamic_cast<AsmAccessible *>(obj.get());
 
         Register reg = code.getFreeRegister();
         std::string regStr = registerToString(type.size, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + access + "]");
-        fn.writeLine("mov [ " + addressAsLValue->getAccess() + " ], " + regStr);
+        fn.writeLine("mov " + regStr + ", [" + objAsL->getAccess() + "]");
+        fn.writeLine("mov [ " + access + " ], " + regStr);
         code.freeRegister(reg);
 
-        return address;
+        return obj;
+    } else if(obj->vCategory == ValueCategory::rvalue) {
+        auto &fn = code.getFnSymbol();
+        auto *objAsR = dynamic_cast<RegisterAccessible *>(obj.get());
+
+        fn.writeLine("mov [ " + access + " ], " + registerToString(obj->type.size, objAsR->getRegister()));
+
+        return obj;
+
+    } else if(obj->vCategory == ValueCategory::ivalue) {
+        auto &fn = code.getFnSymbol();
+        auto *objAsI = dynamic_cast<ImmediatAccessible *>(obj.get());
+
+        if(obj->type.size == 8)
+            fn.writeLine("mov qword [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 4)
+            fn.writeLine("mov dword [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 2)
+            fn.writeLine("mov word [ " + access + " ], " + objAsI->getValue());
+        else if(obj->type.size == 1)
+            fn.writeLine("mov byte [ " + access + " ], " + objAsI->getValue());
+
+
+            return obj;
     }
     return nullptr;
 }

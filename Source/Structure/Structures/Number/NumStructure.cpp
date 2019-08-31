@@ -21,7 +21,7 @@ ACC::NumStructure::NumStructure(ACC::ValueCategory v) : ElementaryStructure(v, T
 
 std::shared_ptr<ACC::Structure> ACC::NumStructure::operatorForNext(ACC::Code &code) {
     auto rValue = operatorAdd(std::make_shared<NumIValueStructure>(1), code);
-    rValue->operatorCopy(shared_from_this(), code);
+    shared_from_this()->operatorCopy(rValue, code);
     rValue->cleanUp(code);
     return shared_from_this();
 }

@@ -36,6 +36,7 @@ ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::
             code.freeRegister(reg);
         } else
             fn.writeLine("mov " + registerToString(8, this->reg) + ", [" + objAsL->getAccess() + "]");
+
     } else if (obj->vCategory == ValueCategory::rvalue) {
         auto *objAsR = dynamic_cast<RegisterAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
@@ -44,14 +45,32 @@ ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::
             fn.writeLine("mov [" + access + "], " + registerToString(8, objAsR->getRegister()));
         } else
             fn.writeLine("mov " + registerToString(8, this->reg) + ", [" + registerToString(8, objAsR->getRegister()) + "]");
-    }else if (obj->vCategory == ValueCategory::rvalue) {
+
+    }else if (obj->vCategory == ValueCategory::ivalue) {
         auto *objAsI = dynamic_cast<ImmediatAccessible *>(obj.get());
         auto &fn = code.getFnSymbol();
 
         if (!access.empty()) {
-            fn.writeLine("mov [" + access + "], " + objAsI->getValue());
-        } else
-            fn.writeLine("mov " + registerToString(8, this->reg) + ", " + objAsI->getValue());
+            if(obj->type.size == 8)
+                fn.writeLine("mov qword [" + access + "], " + objAsI->getValue());
+            else if(obj->type.size == 4)
+                fn.writeLine("mov dword [" + access + "], " + objAsI->getValue());
+            else if(obj->type.size == 2)
+                fn.writeLine("mov word [" + access + "], " + objAsI->getValue());
+            else if(obj->type.size == 1)
+                fn.writeLine("mov byte [" + access + "], " + objAsI->getValue());
+
+        } else{
+            if(obj->type.size == 8)
+                fn.writeLine("mov qword" + registerToString(8, this->reg) + ", " + objAsI->getValue());
+            else if(obj->type.size == 4)
+                fn.writeLine("mov dword" + registerToString(8, this->reg) + ", " + objAsI->getValue());
+            else if(obj->type.size == 2)
+                fn.writeLine("mov word" + registerToString(8, this->reg) + ", " + objAsI->getValue());
+            else if(obj->type.size == 1)
+                fn.writeLine("mov byte" + registerToString(8, this->reg) + ", " + objAsI->getValue());
+
+        }
     }
 
     return nullptr;
