@@ -133,6 +133,9 @@ void ACC::LexicalAnalysis::addZeroExit() {
 }
 
 int ACC::LexicalAnalysis::readDepth(LineCountingPosition &pos) {
+    if(pos == document.size())
+        return 0;
+
     int newGap = 0;
     while (contains(document.at(pos), {" ", "\n", "\r"})) {
         if (document.at(pos) == '\n') {
