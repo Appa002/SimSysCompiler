@@ -68,6 +68,17 @@ namespace ACC::errors {
         };
     };
 
+    struct UnimplementedFunction : public ASTError {
+        explicit UnimplementedFunction(const ASTNode *node, std::string const & type, std::string const &functionName) :
+                ASTError("Type `"+type+"` doesn't implement function `"+functionName+"`.") {
+            if (node != nullptr) {
+                lineNum = node->lineNum;
+                lineContent = node->lineContent;
+            }
+        };
+
+    };
+
     struct Unique : public ASTError {
         explicit Unique(const ASTNode *node, std::string const &msg) :
                 ASTError(msg) {
