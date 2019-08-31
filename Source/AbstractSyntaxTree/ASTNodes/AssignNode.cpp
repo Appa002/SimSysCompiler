@@ -11,6 +11,7 @@
 #include <Structure/Structures/Char/CharLValueStructure.h>
 #include <Error/ASTError.h>
 #include <Structure/Structures/Bool/BoolLValueStructure.h>
+#include <Structure/Structures/User/UserStructure.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
@@ -36,6 +37,8 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
 
     } else if (type == Type("bool", 1)){
         address = std::make_shared<BoolLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
+    } else{
+        address = std::make_shared<UserStructure>(ValueCategory::lvalue, Type(type));
     }
 
     try {
