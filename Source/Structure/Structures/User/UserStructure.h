@@ -17,7 +17,6 @@ namespace ACC {
 
         void loadAddress(Register reg, Code& code) override {};
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> obj, Code &) override;
 
         bool hasCopyFunc = true;
 

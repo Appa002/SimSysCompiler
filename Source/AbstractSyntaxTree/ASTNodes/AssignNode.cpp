@@ -12,6 +12,7 @@
 #include <Error/ASTError.h>
 #include <Structure/Structures/Bool/BoolLValueStructure.h>
 #include <Structure/Structures/User/UserStructure.h>
+#include <Structure/Structures/User/UserLValueStructure.h>
 
 
 std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
@@ -21,7 +22,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     auto type = dynamic_cast<TypeNode*>(children[1])->getType();
     auto expr = children[2]->generate(code);
 
-    fn.curBpOffset += expr->type.size;
+    fn.curBpOffset += type.size;
 
 
     std::shared_ptr<Structure> address;
@@ -38,7 +39,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     } else if (type == Type("bool", 1)){
         address = std::make_shared<BoolLValueStructure>("rbp - " + std::to_string(fn.curBpOffset));
     } else{
-        address = std::make_shared<UserStructure>(ValueCategory::lvalue, Type(type));
+        address = std::make_shared<UserLValueStructure>("rbp - " + std::to_string(fn.curBpOffset), Type(type));
     }
 
     try {

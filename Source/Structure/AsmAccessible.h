@@ -5,6 +5,8 @@
 #ifndef SIMSYSCOMPILER_LVALUESTRUCTURE_H
 #define SIMSYSCOMPILER_LVALUESTRUCTURE_H
 
+#include <string>
+
 namespace ACC {
     class AsmAccessible{
     public:

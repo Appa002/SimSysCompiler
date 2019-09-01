@@ -5,6 +5,8 @@
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
 #include <Structure/Structures/Char/CharLValueStructure.h>
 #include <Structure/Structures/Bool/BoolLValueStructure.h>
+#include <Structure/Structures/User/UserStructure.h>
+#include <Structure/Structures/User/UserLValueStructure.h>
 
 #include "FunctionNode.h"
 #include "TypeNode.h"
@@ -42,6 +44,9 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
 
         else if (type == Type("bool", 1))
             structure = std::make_shared<BoolLValueStructure>("rbp - " + locStr);
+
+        else
+            structure = std::make_shared<UserLValueStructure>("rbp - " + locStr, type);
 
         fn.writeLine(copyIntoStackFrame(offset, loc, size, code));
         structure->cleanUp(code);

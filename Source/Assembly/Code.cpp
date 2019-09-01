@@ -10,6 +10,7 @@
 #include <BuiltInFunctions/getFunctions.h>
 #include <General/builtinTypes.h>
 #include <Error/Errors.h>
+#include <BuiltInFunctions/ByteWiseCopy.h>
 
 ACC::Code::Code() {
     globalScope = std::make_shared<ScopedSymbolTable<std::shared_ptr<Structure>>>();
@@ -24,6 +25,7 @@ ACC::Code::Code() {
     // Builtin Functions
     emplaceFnSymbol("char") = BuiltIns::getCharFn_num();
     emplaceFnSymbol("num") = BuiltIns::getNumFn_char();
+  // emplaceFnSymbol("byteWiseCopy") = BuiltIns::byteWiseCopy::get();
 
     emplaceFnSymbol("_start");
 
@@ -143,6 +145,10 @@ void ACC::Code::popScope() {
 
 std::string ACC::Code::getUUID() {
     return numberToLetterSequence(uuidCounter++);
+}
+
+bool ACC::Code::hasOverload(const std::string& sym) {
+    return fnTable.find(sym) != fnTable.end();
 }
 
 std::string ACC::registerToString(size_t size, ACC::Register reg) {
