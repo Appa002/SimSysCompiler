@@ -33,19 +33,78 @@ ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, A
         auto &fn = code.getFnSymbol();
         auto *objAsL = dynamic_cast<AsmAccessible *>(obj.get());
 
-        Register reg = code.getFreeRegister();
-        std::string regStr = registerToString(type.size, reg);
 
-        fn.writeLine("mov " + regStr + ", [" + objAsL->getAccess() + "]");
-        fn.writeLine("mov [ " + access + " ], " + regStr);
-        code.freeRegister(reg);
+        if(obj->type.size <= 8) {
+            Register reg = code.getFreeRegister();
+            std::string regStr = registerToString(type.size, reg);
+
+            fn.writeLine("mov " + regStr + ", [" + objAsL->getAccess() + "]");
+            fn.writeLine("mov [ " + access + " ], " + regStr);
+            code.freeRegister(reg);
+        } else{
+            // The type can't be moved using a single register like above as it is larger then a qword.
+
+            Register reg = code.getFreeRegister();
+            std::string regStr = registerToString(type.size, reg);
+
+            long bytesLeftToMove = obj->type.size;
+
+            while(bytesLeftToMove > 0){
+
+                if (bytesLeftToMove >= 8) {
+                    std::string offset = "+" + std::to_string(obj->type.size - bytesLeftToMove);
+
+                    fn.writeLine("mov qword " + regStr + ", [" + objAsL->getAccess() + offset + "]");
+                    fn.writeLine("mov qword [ " + access + offset + " ], " + regStr);
+                    bytesLeftToMove -= 8;
+                } else{
+                    std::string offset = "+" + std::to_string(obj->type.size - bytesLeftToMove);
+
+                    if(bytesLeftToMove == 1){
+                        fn.writeLine("mov byte " + regStr + ", [" + objAsL->getAccess() + offset + "]");
+                        fn.writeLine("mov byte [ " + access + offset + " ], " + regStr);
+                        bytesLeftToMove -= 1;
+
+                    } else if(bytesLeftToMove == 2){
+                        fn.writeLine("mov word " + regStr + ", [" + objAsL->getAccess() +  offset + "]");
+                        fn.writeLine("mov word [ " + access +  offset + " ], " + regStr);
+                        bytesLeftToMove -= 2;
+
+                    } else if(bytesLeftToMove >= 3){
+                        fn.writeLine("mov dword " + regStr + ", [" + objAsL->getAccess() + offset + "]");
+                        fn.writeLine("mov dword [ " + access +  offset + " ], " + regStr);
+                        bytesLeftToMove -= 4;
+                    }
+                }
+            }
+
+            code.freeRegister(reg);
+
+        }
 
         return obj;
+
     } else if(obj->vCategory == ValueCategory::rvalue) {
         auto &fn = code.getFnSymbol();
         auto *objAsR = dynamic_cast<RegisterAccessible *>(obj.get());
 
-        fn.writeLine("mov [ " + access + " ], " + registerToString(obj->type.size, objAsR->getRegister()));
+        Register r;
+
+        if(obj->type.isPtr){
+            auto* objAsPtr = dynamic_cast<PtrRValueStructure*>(obj.get());
+
+            if(!objAsPtr->access.empty()){
+                r = code.getFreeRegister();
+                fn.writeLine("lea " + registerToString(8, r) + ", [" + objAsPtr->access + "]");
+                code.freeRegister(r);
+            }else{
+                r = objAsPtr->reg;
+            }
+        }else{
+            r = objAsR->getRegister();
+        }
+
+        fn.writeLine("mov [ " + access + " ], " + registerToString(obj->type.size, r));
 
         return obj;
 
@@ -57,7 +116,7 @@ ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, A
             fn.writeLine("mov qword [ " + access + " ], " + objAsI->getValue());
         else if(obj->type.size == 4)
             fn.writeLine("mov dword [ " + access + " ], " + objAsI->getValue());
-        else if(obj->type.size == 2)
+        else if(obj->type.size >= 2)
             fn.writeLine("mov word [ " + access + " ], " + objAsI->getValue());
         else if(obj->type.size == 1)
             fn.writeLine("mov byte [ " + access + " ], " + objAsI->getValue());

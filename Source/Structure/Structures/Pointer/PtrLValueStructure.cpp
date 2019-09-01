@@ -1,4 +1,5 @@
 #include "PtrLValueStructure.h"
+#include "PtrRValueStructure.h"
 
 #include <utility>
 #include <Assembly/Code.h>
@@ -36,8 +37,23 @@ ACC::PtrLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::
     } else if (obj->vCategory == ValueCategory::rvalue){
         auto *objAsR = dynamic_cast<RegisterAccessible*>(obj.get());
         auto &fn = code.getFnSymbol();
+        Register r;
 
-        fn.writeLine("mov [ " + access + " ], " + registerToString(8, objAsR->getRegister()));
+        if(obj->type.isPtr){
+            auto* objAsPtr = dynamic_cast<PtrRValueStructure*>(obj.get());
+
+            if(!objAsPtr->access.empty()){
+                r = code.getFreeRegister();
+                fn.writeLine("lea " + registerToString(8, r) + ", [" + objAsPtr->access + "]");
+                code.freeRegister(r);
+            }else{
+                r = objAsPtr->reg;
+            }
+        }else{
+            r = objAsR->getRegister();
+        }
+
+        fn.writeLine("mov [ " + access + " ], " + registerToString(8, r));
     } else if (obj->vCategory == ValueCategory::ivalue){
         auto *objAsI = dynamic_cast<ImmediatAccessible*>(obj.get());
         auto &fn = code.getFnSymbol();
