@@ -7,26 +7,28 @@
 #include <utility>
 #include "TypeField.h"
 #include <vector>
+#include <unordered_map>
 
 namespace ACC {
 
     class Type {
     private:
         Type(std::string id, size_t size, bool isPtr) : id(std::move(id)), size(size), isPtr(isPtr) {};
-        Type(std::string id, size_t size, bool isPtr, std::vector<TypeField> fields)
+        Type(std::string id, size_t size, bool isPtr, std::unordered_map<std::string, TypeField> fields)
         : id(std::move(id)), size(size), isPtr(isPtr), fields(std::move(fields)) {};
 
 
     public:
         Type() = default;
         Type(std::string id, size_t size) : id(std::move(id)), size(size) {};
-        Type(std::string id, size_t size, std::vector<TypeField> fields) : id(std::move(id)), size(size), fields(std::move(fields)) {}
+        Type(std::string id, size_t size, std::unordered_map<std::string, TypeField> fields) : id(std::move(id)), size(size), fields(std::move(fields)) {}
 
 
         std::string id;
         size_t size = 0;
         bool isPtr = false;
-        std::vector<TypeField> fields;
+        std::unordered_map<std::string, TypeField> fields;
+        std::unordered_map<std::string, size_t> fieldSizes;
 
 
 
@@ -43,7 +45,7 @@ namespace ACC {
             return Type(std::move(id), 8, true);
         }
 
-        static Type createPtr(std::string id, std::vector<TypeField> fields){
+        static Type createPtr(std::string id, std::unordered_map<std::string, TypeField> fields){
             return Type(std::move(id), 8, true, std::move(fields));
         }
 
