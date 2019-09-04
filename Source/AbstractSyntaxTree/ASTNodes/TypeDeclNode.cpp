@@ -16,16 +16,19 @@ ACC::TypeDeclNode::TypeDeclNode(ACC::AstOperator op, std::string sym) : ASTNode(
 }
 
 std::shared_ptr<ACC::Structure> ACC::TypeDeclNode::generate(ACC::Code &code) {
-    std::vector<TypeField> fields;
+    std::unordered_map<std::string, TypeField> fields;
+    std::unordered_map<std::string, size_t> fieldMap;
     size_t totalSize = 0;
 
     for(ASTNode* child : children){
         auto* asBody = dynamic_cast<TypeDeclBodyNode*>(child);
-        fields.emplace_back(asBody->getName(), asBody->getType().id, asBody->getType().isPtr);
+        fields[asBody->getName()]  = TypeField(asBody->getName(), asBody->getType().id, asBody->getType().isPtr);
+        fieldMap[asBody->getName()] = totalSize;
         totalSize += asBody->getType().size;
     }
 
     Type type = Type(sym, totalSize, fields);
+    type.fieldSizes = fieldMap;
     TypeTable::get()->addType(sym, type);
 
     auto& fn = code.emplaceFnSymbol("?" + type.id + ".operatorCopy");

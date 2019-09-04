@@ -27,8 +27,6 @@ namespace ACC{
         std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo) override;
 
         bool hasConversionTo(const Type &id) override;
-
-
     };
 }
 

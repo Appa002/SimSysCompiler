@@ -20,6 +20,8 @@ namespace ACC {
 
         bool hasCopyFunc = true;
 
+
+
 /*
         std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code) override;
         std::shared_ptr<Structure> operatorForNext(Code &) override;
