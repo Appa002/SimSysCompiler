@@ -79,6 +79,17 @@ namespace ACC::errors {
 
     };
 
+    struct UnknownMember : public ASTError {
+        explicit UnknownMember(const ASTNode *node, std::string const & type, std::string const &member) :
+                ASTError("Type `"+type+"` doesn't contain member `"+member+"`.") {
+            if (node != nullptr) {
+                lineNum = node->lineNum;
+                lineContent = node->lineContent;
+            }
+        };
+
+    };
+
     struct Unique : public ASTError {
         explicit Unique(const ASTNode *node, std::string const &msg) :
                 ASTError(msg) {
