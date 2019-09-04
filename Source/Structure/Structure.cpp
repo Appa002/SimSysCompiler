@@ -106,6 +106,10 @@ bool ACC::Structure::hasConversionTo(const Type &id) {
     return true;
 }
 
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorDot(ACC::Code &code, std::string member) {
+    throw std::runtime_error("Operator not implemented");
+}
+
 
 
 

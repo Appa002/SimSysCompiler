@@ -74,6 +74,9 @@ namespace ACC {
         virtual std::shared_ptr<Structure> operatorBool(Code &code);
         virtual std::shared_ptr<Structure> operatorPtr(Code &code, Type pointingTo);
 
+        virtual std::shared_ptr<Structure> operatorDot(Code &code, std::string member);
+
+
         virtual bool hasConversionTo(const Type &id);
 
         void cleanUp(Code &code);
