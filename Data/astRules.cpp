@@ -40,6 +40,7 @@
 #include <Lexical/Tokens/TextToken.h>
 #include <Error/Errors.h>
 #include <Types/TypeTable.h>
+#include <AbstractSyntaxTree/ASTNodes/MemberAccessNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -539,6 +540,24 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
         {{Symbol::expr, {Symbol::NOT, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
             return new NotNode(AstOperator::NOT, {process(children[1])});
+        }},
+
+        {{Symbol::expr, {Symbol::TEXT, Symbol::DOT, Symbol::TEXT}}, [](std::vector<ParseNode*> children, auto carry){
+            std::string obj = dynamic_cast<TextToken*>(children[0]->token)->data;
+            std::string member = dynamic_cast<TextToken*>(children[2]->token)->data;
+            new MemberAccessNode(AstOperator::MEMBER_ACCESS, obj, member);
+
+            return new MemberAccessNode(AstOperator::MEMBER_ACCESS, obj, member);
+        }},
+
+        {{Symbol::expr, {Symbol::TEXT, Symbol::DOT, Symbol::TEXT, Symbol::expr }}, [](std::vector<ParseNode*> children, auto carry){
+            std::string obj = dynamic_cast<TextToken*>(children[0]->token)->data;
+            std::string member = dynamic_cast<TextToken*>(children[2]->token)->data;
+            new MemberAccessNode(AstOperator::MEMBER_ACCESS, obj, member);
+
+            auto vec = {carry, process(children[3], nullptr)};
+            return new MemberAccessNode(AstOperator::MEMBER_ACCESS, vec, obj, member);
+
         }},
     };
 }

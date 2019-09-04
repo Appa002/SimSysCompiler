@@ -245,6 +245,7 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+
     LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
@@ -455,12 +456,6 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::expr});
-    START_PRODUCTION()
-            TERMINAL(TEXT)
-            OPTIONAL_NONE_TERMINAL(expr)
-    END_PRODUCTION()
-
     logable.loadProduction(Symbol::expr, {Symbol::PLUS, Symbol::expr});
     START_PRODUCTION()
             TERMINAL(PLUS)
@@ -501,6 +496,20 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
     START_PRODUCTION()
             TERMINAL(MODULO)
             NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::DOT, Symbol::TEXT, Symbol::expr });
+    START_PRODUCTION()
+            TERMINAL(TEXT)
+            TERMINAL(DOT)
+            TERMINAL(TEXT)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(TEXT)
+            OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
 

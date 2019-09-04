@@ -29,6 +29,7 @@ namespace ACC {
      * */
     enum class AstOperator {
         ADD,
+        MEMBER_ACCESS,
         NOT,
         TYPE_DECL_BODY,
         TYPE_DECL,
