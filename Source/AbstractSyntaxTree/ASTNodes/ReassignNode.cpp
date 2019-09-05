@@ -6,9 +6,8 @@
 
 
 std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
-    auto id = dynamic_cast<IdNode*>( children[0])->sym;
     auto expr = children[1]->generate(code);
-    auto var = code.getVarSymbol(id);
+    auto var = children[0]->generate(code);
 
     try {
         var->operatorCopy(expr, code);
@@ -18,6 +17,7 @@ std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
         throw;
     }
     expr->cleanUp(code);
+    var->cleanUp(code);
 
     return nullptr;
 }
