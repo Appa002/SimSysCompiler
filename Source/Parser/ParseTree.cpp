@@ -231,16 +231,22 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::start, {Symbol::ptr_assign, Symbol::start});
+    logable.loadProduction(Symbol::start, {Symbol::type_decl, Symbol::start});
     START_PRODUCTION()
-            NONE_TERMINAL(ptrAssign)
+            NONE_TERMINAL(typeDecl)
             OPTIONAL_NONE_TERMINAL(start);
 
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::start, {Symbol::type_decl, Symbol::start});
+
+    logable.loadProduction(Symbol::start, {Symbol::TEXT, Symbol::DOT, Symbol::TEXT, Symbol::ASSIGN, Symbol::expr, Symbol::EOS, Symbol::start});
     START_PRODUCTION()
-            NONE_TERMINAL(typeDecl)
+            TERMINAL(TEXT)
+            TERMINAL(DOT)
+            TERMINAL(TEXT)
+            TERMINAL(ASSIGN)
+            NONE_TERMINAL(expr)
+            TERMINAL(EOS)
             OPTIONAL_NONE_TERMINAL(start);
 
     END_PRODUCTION()
@@ -274,12 +280,22 @@ ACC::ParseNode *ACC::ParseTree::assignment(size_t &pos) {
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::assignment, {Symbol::TEXT, Symbol::ASSIGN, Symbol::expr});
+    logable.loadProduction(Symbol::assignment, {Symbol::STAR, Symbol::expr, Symbol::ASSIGN, Symbol::expr});
     START_PRODUCTION()
-            TERMINAL(TEXT)
+            TERMINAL(STAR)
+            NONE_TERMINAL(expr)
             TERMINAL(ASSIGN)
             NONE_TERMINAL(expr)
     END_PRODUCTION()
+
+    logable.loadProduction(Symbol::assignment, {Symbol::expr, Symbol::ASSIGN, Symbol::expr});
+    START_PRODUCTION()
+            NONE_TERMINAL(expr)
+            TERMINAL(ASSIGN)
+            NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+
 
 
     LOG() << Log::Colour::Magenta << "..done\n";
@@ -722,33 +738,6 @@ ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
     pos = oldPos;
     delete node;
     return nullptr;
-}
-
-ACC::ParseNode *ACC::ParseTree::ptrAssign(size_t &pos) {
-    ACC::LogableProduction logable;
-    LOG() << "\n";
-    LOG() << Log::Colour::Magenta << "Entering [ptr_assign]...\n";
-
-    ParseNode *node = new ParseNode;
-    node->symbol = Symbol::ptr_assign;
-
-    size_t oldPos = pos;
-    ParseNode *other;
-
-    logable.loadProduction(Symbol::ptr_assign, {Symbol::expr, Symbol::ASSIGN, Symbol::expr, Symbol::EOS});
-    START_PRODUCTION()
-            NONE_TERMINAL(expr)
-            TERMINAL(ASSIGN)
-            NONE_TERMINAL(expr)
-            TERMINAL(EOS)
-    END_PRODUCTION()
-
-    LOG() << Log::Colour::Magenta << "..done\n";
-
-    pos = oldPos;
-    delete node;
-    return nullptr;
-
 }
 
 ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {

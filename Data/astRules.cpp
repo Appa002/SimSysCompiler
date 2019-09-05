@@ -116,6 +116,26 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new PtrAssignmentNode(AstOperator::PTR_ASSIGN, vec);
         }},
 
+        {{Symbol::assignment, {Symbol::expr, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {process(children[0]),
+                                         process(children[2], nullptr)};
+            return new ReassignNode(AstOperator::REASSIGN, vec);
+        }},
+
+        {{Symbol::assignment, {Symbol::STAR, Symbol::expr, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {process(children[1]),
+                                         process(children[3], nullptr)};
+            return new PtrAssignmentNode(AstOperator::PTR_ASSIGN, vec);
+        }},
+
+        {{Symbol::assignment, {Symbol::VAR, Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+            std::vector<ASTNode*> vec = {
+                    new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data),
+                    process(children[3]),
+                    process(children[5], nullptr)};
+            return new AssignNode(AstOperator::ASSIGN, vec);
+        }},
+
 
         {{Symbol::if_construct, {Symbol::IF, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[4], nullptr)};
@@ -260,19 +280,13 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::assignment, {Symbol::VAR, Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
-            std::vector<ASTNode*> vec = {
-                        new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data),
-                        process(children[3]),
-                        process(children[5], nullptr)};
-            return new AssignNode(AstOperator::ASSIGN, vec);
-        }},
 
-        {{Symbol::assignment, {Symbol::TEXT, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
+
+       /* {{Symbol::assignment, {Symbol::TEXT, Symbol::ASSIGN, Symbol::expr}}, [](auto children, auto carry){
             std::vector<ASTNode*> vec = {new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[0]->token)->data),
                         process(children[2], nullptr)};
             return new ReassignNode(AstOperator::REASSIGN, vec);
-        }},
+        }},*/
 
 
         {{Symbol::keyword, {Symbol::SYSCALL, Symbol::expr, Symbol::COMMA, Symbol::expr, Symbol::COMMA, Symbol::expr,
