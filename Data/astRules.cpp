@@ -556,22 +556,19 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new NotNode(AstOperator::NOT, {process(children[1])});
         }},
 
-        {{Symbol::expr, {Symbol::TEXT, Symbol::DOT, Symbol::TEXT}}, [](std::vector<ParseNode*> children, auto carry){
-            std::string obj = dynamic_cast<TextToken*>(children[0]->token)->data;
-            std::string member = dynamic_cast<TextToken*>(children[2]->token)->data;
-            new MemberAccessNode(AstOperator::MEMBER_ACCESS, obj, member);
+        {{Symbol::expr, {Symbol::DOT, Symbol::TEXT}}, [](std::vector<ParseNode*> children, ASTNode* carry){
+            // In expression obj.b `obj` would be in carry
 
-            return new MemberAccessNode(AstOperator::MEMBER_ACCESS, obj, member);
+            auto member = dynamic_cast<TextToken*>(children[1]->token)->data;
+
+            return new MemberAccessNode(AstOperator::MEMBER_ACCESS, {carry},  member);
         }},
 
-        {{Symbol::expr, {Symbol::TEXT, Symbol::DOT, Symbol::TEXT, Symbol::expr }}, [](std::vector<ParseNode*> children, auto carry){
-            std::string obj = dynamic_cast<TextToken*>(children[0]->token)->data;
-            std::string member = dynamic_cast<TextToken*>(children[2]->token)->data;
-            new MemberAccessNode(AstOperator::MEMBER_ACCESS, obj, member);
+        {{Symbol::expr, {Symbol::DOT, Symbol::TEXT, Symbol::expr }}, [](std::vector<ParseNode*> children, auto carry){
+            std::string member = dynamic_cast<TextToken*>(children[1]->token)->data;
 
-            auto vec = {carry, process(children[3], nullptr)};
-            return new MemberAccessNode(AstOperator::MEMBER_ACCESS, vec, obj, member);
-
+            auto out = new MemberAccessNode(AstOperator::MEMBER_ACCESS, {carry},  member);
+            return process(children[2], out);
         }},
     };
 }
