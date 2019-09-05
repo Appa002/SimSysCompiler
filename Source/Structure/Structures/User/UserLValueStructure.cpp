@@ -99,29 +99,27 @@ std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorDot(ACC::Code 
 
 
     if(type.fields[member].typeName == "char"){
-        Register reg = code.getFreeRegister();
-        auto out = std::make_shared<CharRValueStructure>(reg);
-        auto memberAsL = std::make_shared<CharLValueStructure>(this->access + " + " + std::to_string(offset));
 
-        out->operatorCopy(memberAsL, code);
+        auto out = std::make_shared<CharLValueStructure>(this->access + " + " + std::to_string(offset));
         return out;
 
     } else if(type.fields[member].typeName == "num"){
-        Register reg = code.getFreeRegister();
-        auto out = std::make_shared<NumRValueStructure>(reg);
-        auto memberAsL = std::make_shared<NumLValueStructure>(this->access + " + " + std::to_string(offset));
-
-        out->operatorCopy(memberAsL, code);
+        auto out = std::make_shared<NumLValueStructure>(this->access + " + " + std::to_string(offset));
         return out;
-    }  else if(type.fields[member].typeName == "ptr"){
-        Register reg = code.getFreeRegister();
+
+    }  else if(type.fields[member].isPtr ){
 
         auto ptrType = TypeTable::get()->getType(type.fields[member].typeName);
 
-        auto out = std::make_shared<PtrRValueStructure>(reg, ptrType);
-        auto memberAsL = std::make_shared<PtrLValueStructure>(this->access + " + " + std::to_string(offset), ptrType);
+        auto out = std::make_shared<PtrLValueStructure>(this->access + " + " + std::to_string(offset), ptrType);
 
-        out->operatorCopy(memberAsL, code);
+        return out;
+
+    } else {
+        auto memberType = TypeTable::get()->getType(type.fields[member].typeName);
+
+        auto out = std::make_shared<UserLValueStructure>(this->access + " + " + std::to_string(offset), memberType);
+
         return out;
     }
 
