@@ -357,10 +357,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::ASSIGN, Symbol::OPEN_CURLY, Symbol::type_decl_body, Symbol::CLOSED_CURLY, Symbol::EOS}}, [](auto children, auto carry){
+        {{Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::COLON, Symbol::type_decl_body}}, [](auto children, auto carry){
             auto out = new TypeDeclNode(AstOperator::TYPE_DECL, dynamic_cast<TextToken*>(children[1]->token)->data);
 
-            process(children[4], out);
+            process(children[3], out);
 
             return out;
         }},

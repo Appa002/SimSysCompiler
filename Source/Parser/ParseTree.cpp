@@ -766,15 +766,12 @@ ACC::ParseNode *ACC::ParseTree::typeDecl(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::ASSIGN, Symbol::OPEN_CURLY, Symbol::type_decl_body, Symbol::CLOSED_CURLY, Symbol::EOS});
+    logable.loadProduction(Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::COLON, Symbol::type_decl_body});
     START_PRODUCTION()
             TERMINAL(TYPE)
             TERMINAL(TEXT)
-            TERMINAL(ASSIGN)
-            TERMINAL(OPEN_CURLY)
+            TERMINAL(COLON)
             NONE_TERMINAL(typeDeclBody)
-            TERMINAL(CLOSED_CURLY)
-            TERMINAL(EOS)
     END_PRODUCTION()
     LOG() << Log::Colour::Magenta << "..done\n";
 
