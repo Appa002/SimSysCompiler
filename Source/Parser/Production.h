@@ -14,6 +14,7 @@ namespace ACC {
         DECL,
         TYPE,
         TEXT,
+        TRAIT,
         IMPORT,
         DOUBLE_QUOTE,
         QUOTE,
@@ -49,6 +50,7 @@ namespace ACC {
         PLUS,
         MINUS,
 
+        trait,
         ptr_assign,
         for_construct,
         while_construct,

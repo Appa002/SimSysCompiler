@@ -126,6 +126,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "type_decl";
         case Symbol::type_decl_body:
             return "type_decl_body";
+        case Symbol::TRAIT:
+            return "TRAIT";
+        case Symbol::trait:
+            return "trait";
     }
     throw std::runtime_error("Symbol not known.");
 }
@@ -250,6 +254,10 @@ std::string ACC::data::symbolToStringForErrReporting(ACC::Symbol s) {
             return "type_decl";
         case Symbol::type_decl_body:
             return "type_decl_body";
+        case Symbol::TRAIT:
+            return "trait";
+        case Symbol::trait:
+            return "a member function definition";
     }
     throw std::runtime_error("Symbol not known.");
 }

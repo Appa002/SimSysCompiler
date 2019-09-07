@@ -110,6 +110,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
             return new SeqNode(AstOperator::SEQ, vec);
         }},
+        {{Symbol::start, {Symbol::trait, Symbol::EXTENT, Symbol::start}}, [](auto children, auto carry){
+            auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
+            return new SeqNode(AstOperator::SEQ, vec);
+        }},
 
         {{Symbol::ptr_assign, {Symbol::expr, Symbol::ASSIGN, Symbol::expr, Symbol::EOS}}, [](auto children, auto carry){
             auto vec = {process(children[0]->children[1], nullptr), process(children[2], nullptr)};
@@ -241,6 +245,51 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
 
+
+        {{Symbol::trait, {Symbol::TRAIT, Symbol::CMP, Symbol::TEXT, Symbol::CMP, Symbol::TEXT,
+                          Symbol::OPEN_BRACKET, Symbol::paramsDecl, Symbol::CLOSED_BRACKET,
+                          Symbol::ARROW, Symbol::type, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+
+            std::vector<ASTNode*> vec;
+            auto prefix = "?" + dynamic_cast<TextToken*>(children[2]->token)->data + ".";
+            vec.push_back(new IdNode(AstOperator::ID, prefix + dynamic_cast<TextToken*>(children[4]->token)->data));
+
+            vec.push_back(process(children[9]));
+
+            auto params = children[6];
+            while(params != nullptr){
+                std::vector<ASTNode*> paramsVec = {
+                        new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(params->children[0]->token)->data),
+                        process(params->children[2])
+                };
+                vec.push_back(new ASTNode(AstOperator::__CONTAINER, paramsVec));
+
+                if(params->children.size() == 5)
+                    params = params->children[4];
+                else
+                    params = nullptr;
+            }
+
+            vec.push_back(process(children[12], nullptr));
+
+            return new FunctionNode(AstOperator::FUNCTION, vec);
+        }},
+
+        {{Symbol::trait, {Symbol::TRAIT,Symbol::CMP, Symbol::TEXT, Symbol::CMP, Symbol::TEXT,
+                          Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::ARROW, Symbol::type,
+                          Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
+
+            auto prefix = "?" + dynamic_cast<TextToken*>(children[2]->token)->data + ".";
+
+            std::vector<ASTNode*> vec;
+            vec.push_back(new IdNode(AstOperator::ID,prefix + dynamic_cast<TextToken*>(children[4]->token)->data));
+            vec.push_back(process(children[8]));
+
+            vec.push_back(process(children[11], nullptr));
+
+            return new FunctionNode(AstOperator::FUNCTION, vec);
+        }},
+
         {{Symbol::call, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
@@ -357,10 +406,10 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         }},
 
 
-        {{Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::COLON, Symbol::type_decl_body}}, [](auto children, auto carry){
+        {{Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::COLON, Symbol::INDENT, Symbol::type_decl_body, Symbol::EXTENT}}, [](auto children, auto carry){
             auto out = new TypeDeclNode(AstOperator::TYPE_DECL, dynamic_cast<TextToken*>(children[1]->token)->data);
 
-            process(children[3], out);
+            process(children[4], out);
 
             return out;
         }},

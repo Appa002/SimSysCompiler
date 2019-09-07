@@ -238,6 +238,14 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::start, {Symbol::trait, Symbol::EXTENT, Symbol::start});
+    START_PRODUCTION()
+            NONE_TERMINAL(trait)
+            TERMINAL(EXTENT)
+            OPTIONAL_NONE_TERMINAL(start);
+
+    END_PRODUCTION()
+
 
 
 
@@ -766,12 +774,14 @@ ACC::ParseNode *ACC::ParseTree::typeDecl(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::COLON, Symbol::type_decl_body});
+    logable.loadProduction(Symbol::type_decl, {Symbol::TYPE, Symbol::TEXT, Symbol::COLON, Symbol::INDENT, Symbol::type_decl_body, Symbol::EXTENT});
     START_PRODUCTION()
             TERMINAL(TYPE)
             TERMINAL(TEXT)
             TERMINAL(COLON)
+            TERMINAL(INDENT)
             NONE_TERMINAL(typeDeclBody)
+            TERMINAL(EXTENT)
     END_PRODUCTION()
     LOG() << Log::Colour::Magenta << "..done\n";
 
@@ -793,18 +803,49 @@ ACC::ParseNode *ACC::ParseTree::typeDeclBody(size_t &pos) {
 
     logable.loadProduction(Symbol::type_decl_body, {Symbol::TEXT, Symbol::COLON, Symbol::type, Symbol::EOS, Symbol::type_decl_body});
     START_PRODUCTION()
-            if(other = match(pos, Symbol::INDENT), other != nullptr) // Ignores indents.
-                pos++;
 
-            TERMINAL(TEXT)
+    TERMINAL(TEXT)
             TERMINAL(COLON)
             NONE_TERMINAL(type)
             TERMINAL(EOS)
-            if(other = match(pos, Symbol::EXTENT), other != nullptr) // Ignores extent.
-                pos++;
-
             EXITING_OPTIONAL_NONE_TERMINAL(typeDeclBody)
 
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::trait(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [trait]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::trait;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::function, {Symbol::TRAIT, Symbol::CMP, Symbol::TEXT ,Symbol::CMP, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsDecl,
+                                              Symbol::CLOSED_BRACKET, Symbol::ARROW,  Symbol::type, Symbol::COLON, Symbol::INDENT, Symbol::start});
+    START_PRODUCTION()
+            TERMINAL(TRAIT)
+            TERMINAL(CMP)
+            TERMINAL(TEXT)
+            TERMINAL(CMP)
+            TERMINAL(TEXT)
+            TERMINAL(OPEN_BRACKET)
+            OPTIONAL_NONE_TERMINAL(paramDecl)
+            TERMINAL(CLOSED_BRACKET)
+            TERMINAL(ARROW)
+            NONE_TERMINAL(type)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";

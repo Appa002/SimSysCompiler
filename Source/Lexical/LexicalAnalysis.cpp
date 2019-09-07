@@ -46,6 +46,7 @@
 #include <Lexical/Tokens/ImportToken.h>
 #include <Lexical/Tokens/TypeToken.h>
 #include <Error/SyntaxError.h>
+#include <Lexical/Tokens/TraitToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options) {
     for (auto const &option : options) {
@@ -328,6 +329,9 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingP
 
     else if (buffer == "type")
         tokens.push_back(new TypeToken(idx.lineNum));
+
+    else if (buffer == "trait")
+        tokens.push_back(new TraitToken(idx.lineNum));
 
     else
         return false;

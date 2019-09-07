@@ -39,6 +39,7 @@ namespace ACC {
         ParseNode* start(size_t& pos);
         ParseNode* assignment(size_t& pos);
         ParseNode* function(size_t& pos);
+        ParseNode* trait(size_t& pos);
         ParseNode* keyword(size_t& pos);
         ParseNode* call(size_t& pos);
         ParseNode* expr(size_t& pos);
