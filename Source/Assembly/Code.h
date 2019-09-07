@@ -102,7 +102,7 @@ namespace ACC{
          * @return A reference to a `std::vector<Fn>&` object containg all overloads of a function.*/
         std::vector<Fn>& getFnOverloads(std::string sym);
 
-        bool hasOverload(const std::string& sym);
+        bool hasOverload(const std::string &sym, const Type& returnType, const std::vector<Type>& argsType);
 
         /*! Gets the last function overload emplaced using `Code::emplaceFnSymbol`. This is used to get the function
          * into which the assembly code being generated should be written, for instance this will return the `Fn` object for

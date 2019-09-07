@@ -25,7 +25,7 @@ ACC::Code::Code() {
     // Builtin Functions
     emplaceFnSymbol("char") = BuiltIns::getCharFn_num();
     emplaceFnSymbol("num") = BuiltIns::getNumFn_char();
-  // emplaceFnSymbol("byteWiseCopy") = BuiltIns::byteWiseCopy::get();
+    emplaceFnSymbol("?byteWiseCopy") = BuiltIns::byteWiseCopy::get();
 
     emplaceFnSymbol("_start");
 
@@ -147,8 +147,21 @@ std::string ACC::Code::getUUID() {
     return numberToLetterSequence(uuidCounter++);
 }
 
-bool ACC::Code::hasOverload(const std::string& sym) {
-    return fnTable.find(sym) != fnTable.end();
+bool ACC::Code::hasOverload(const std::string &sym, const Type& returnType, const std::vector<Type>& argsType) {
+    if(fnTable.find(sym) == fnTable.end())
+        return false;
+
+    auto overloads = fnTable[sym];
+
+    for(Fn const & overload : overloads) {
+        if (overload.returnType != returnType)
+            continue;
+
+        if(overload.argsType == argsType)
+            return true;
+    }
+
+    return false;
 }
 
 std::string ACC::registerToString(size_t size, ACC::Register reg) {
