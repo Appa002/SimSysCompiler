@@ -15,7 +15,7 @@ namespace ACC::BuiltIns::byteWiseCopy{
 
         Fn fn;
         fn.returnType = Type("num", 8);
-        fn.symbol = "byteWiseCopy";
+        fn.symbol = "?byteWiseCopy";
         fn.curBpOffset = 32;
         fn.argsType = {
                 Type::createPtr("char"),
@@ -40,10 +40,10 @@ cmp r15, r14
 setl r15b
 cmp r15b, 1
 jne .b
-mov r15, [rbp - 16]
+mov r15, [rbp - 8]
 mov r14, [rbp - 32]
 add r15, r14
-mov r14, [rbp - 8]
+mov r14, [rbp - 16]
 mov r13, [rbp - 32]
 add r14, r13
 mov r13, r14
@@ -58,7 +58,6 @@ jmp .a
 .b:
 mov rax, 0
 leave
-ret
 )";
         return fn;
 
