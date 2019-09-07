@@ -41,6 +41,10 @@ namespace ACC {
             return !(lhs == rhs);
         };
 
+        static Type createPtr(const Type& other){
+            return Type(other.id, 8, true, other.fields);
+        }
+
         static Type createPtr(std::string id){
             return Type(std::move(id), 8, true);
         }
