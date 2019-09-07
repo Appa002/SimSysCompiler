@@ -26,7 +26,10 @@ namespace ACC {
         std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code) override;
         std::shared_ptr<Structure> operatorDereference(Code &code) override;
 
+        std::shared_ptr<Structure> operatorDot(Code &code, std::string member) override;
+
     };
+
 }
 
 #endif //SIMSYSCOMPILER_PTRSTRUCTURE_H

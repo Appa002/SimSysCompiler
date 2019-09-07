@@ -14,6 +14,10 @@
 #include <Structure/Structures/Bool/BoolRValueStructure.h>
 #include <Error/Errors.h>
 #include <Types/TypeTable.h>
+#include <Structure/Structures/User/UserLValueStructure.h>
+#include <unordered_map>
+#include <Structure/Structures/Char/CharLValueStructure.h>
+#include <Structure/Structures/Number/NumLValueStructure.h>
 
 std::shared_ptr<ACC::Structure>
 ACC::PtrStructure::operatorForDone(std::shared_ptr<ACC::Structure> limit, ACC::Code &code) {
@@ -226,6 +230,7 @@ ACC::PtrStructure::PtrStructure(ValueCategory v, Type t) : ElementaryStructure(v
 
 }
 
+
 std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDereference(ACC::Code &code) {
     Type underlying = Type(type.id, TypeTable::get()->getSize(type.id));
 
@@ -236,6 +241,7 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDereference(ACC::Code
     this->loadToRegister(reg, code);
     fn.writeLine("mov "+registerToString(underlying.size, reg)+", ["+registerToString(8, reg)+"]");
 
+
     if (underlying == Type("num", 8))
         return std::make_shared<NumRValueStructure>(reg);
 
@@ -244,6 +250,65 @@ std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDereference(ACC::Code
 
     else if (underlying == Type("bool", 1))
         return std::make_shared<BoolRValueStructure>(reg);
+
     code.freeRegister(reg);
+
+    return nullptr;
+}
+
+std::shared_ptr<ACC::Structure> ACC::PtrStructure::operatorDot(ACC::Code &code, std::string member) {
+    auto& fn = code.getFnSymbol();
+
+    Type underlying = TypeTable::get()->getType(type.id);
+
+    if(underlying.fieldSizes.find(member) == underlying.fieldSizes.cend())
+        throw errors::UnknownMember(nullptr, underlying.id, member);
+
+    size_t offset = underlying.fieldSizes[member];
+
+
+    if(underlying.fields[member].typeName == "char"){
+        Register reg = code.getFreeRegister();
+
+        this->loadToRegister(reg, code);
+        fn.writeLine("add " + registerToString(8, reg) + ", " + std::to_string(offset));
+
+        auto out = std::make_shared<CharLValueStructure>(registerToString(8, reg));
+        out->registerInUse.push_back(reg);
+        return out;
+
+    } else if(underlying.fields[member].typeName == "num"){
+        Register reg = code.getFreeRegister();
+
+        this->loadToRegister(reg, code);
+        fn.writeLine("add " + registerToString(8, reg) + ", " + std::to_string(offset));
+
+        auto out = std::make_shared<NumLValueStructure>(registerToString(8, reg));
+        out->registerInUse.push_back(reg);
+        return out;
+
+    }  else if(underlying.fields[member].isPtr ){
+        Register reg = code.getFreeRegister();
+
+        this->loadToRegister(reg, code);
+        fn.writeLine("add " + registerToString(8, reg) + ", " + std::to_string(offset));
+
+        auto out = std::make_shared<PtrLValueStructure>(registerToString(8, reg), underlying);
+        out->registerInUse.push_back(reg);
+        return out;
+
+    } else {
+        Register reg = code.getFreeRegister();
+
+        this->loadToRegister(reg, code);
+        fn.writeLine("add " + registerToString(8, reg) + ", " + std::to_string(offset));
+
+        auto out = std::make_shared<UserLValueStructure>(registerToString(8, reg), TypeTable::get()->getType(underlying.fields[member].typeName));
+        out->registerInUse.push_back(reg);
+        return out;
+
+
+    }
+
     return nullptr;
 }
