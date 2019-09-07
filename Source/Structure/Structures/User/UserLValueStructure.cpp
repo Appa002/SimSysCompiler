@@ -27,21 +27,33 @@ std::string const &ACC::UserLValueStructure::getAccess() const {
 
 std::shared_ptr<ACC::Structure>
 ACC::UserLValueStructure::operatorCopy(std::shared_ptr<Structure> obj, ACC::Code &code) {
-    if (obj->type == type && !code.hasOverload("?" + type.id + ".operatorCopy")) {
+
+    if (obj->type == type
+    && !code.hasOverload(
+            "?" + type.id + ".operatorCopy",
+            Type("num", 8),
+            {Type::createPtr(type), obj->type})) {
+
         auto &fn = code.getFnSymbol();
-        auto byteWiseCopyFn = code.getFnOverloads("byteWiseCopy")[0];
+        auto byteWiseCopyFn = code.getFnOverloads("?byteWiseCopy")[0];
 
 
         fn.writeLine("sub rsp, 8");
-        std::make_shared<GenericLValueStructure>(obj->type, "rsp")->operatorCopy(obj, code);
+        fn.writeLine("mov qword [rsp], " + std::to_string(obj->type.size));
 
-
-        fn.writeLine("sub rsp, 8");
-        fn.writeLine("lea rsp, [" + access + "]");
-
+        auto asmAccessible = dynamic_cast<AsmAccessible*>(obj.get());
 
         fn.writeLine("sub rsp, 8");
-        fn.writeLine("mov rsp, " + std::to_string(type.size));
+        Register ptr = code.getFreeRegister();
+        fn.writeLine("lea " + registerToString(8, ptr) + ", [" + asmAccessible->getAccess() + "]");
+        fn.writeLine("mov [rsp], " + registerToString(8, ptr));
+        code.freeRegister(ptr);
+
+        Register r = code.getFreeRegister();
+        fn.writeLine("sub rsp, 8");
+        fn.writeLine("lea "+registerToString(8, r)+", [" + access + "]");
+        fn.writeLine("mov [rsp], " + registerToString(8, r));
+        code.freeRegister(r);
 
         fn.writeLine("call " + byteWiseCopyFn.mangledName()); //Move size and address
 
