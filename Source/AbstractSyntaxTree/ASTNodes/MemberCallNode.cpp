@@ -7,6 +7,10 @@
 #include <Structure/Structures/Char/CharRValueStructure.h>
 #include <Error/Errors.h>
 #include <Structure/Structures/Bool/BoolRValueStructure.h>
+#include <Structure/Structures/User/UserLValueStructure.h>
+#include <Structure/Structures/Pointer/PtrLValueStructure.h>
+#include <Structure/Structures/Bool/BoolLValueStructure.h>
+#include <Structure/Structures/Char/CharLValueStructure.h>
 
 #include "MemberCallNode.h"
 #include "IdNode.h"
@@ -71,49 +75,29 @@ std::shared_ptr<ACC::Structure> ACC::MemberCallNode::generate(ACC::Code &code) {
 
     for (long i = arguments.size() - 1; i >= 0; i--) {
         auto &value = arguments[i];
-        if (callee.argsType[i] != value->type) {
-            // We need to do argument conversion
-            if (callee.argsType[i] == Type("char", 1)) {
-                try {
-                    value = value->operatorChar(code);
-                } catch (errors::ASTError &err) {
-                    err.lineNum = this->lineNum;
-                    err.lineContent = this->lineContent;
-                    throw;
-                }
-            } else if (callee.argsType[i] == Type("num", 8)) {
-                try {
-                    value = value->operatorNum(code);
-                } catch (errors::ASTError &err) {
-                    err.lineNum = this->lineNum;
-                    err.lineContent = this->lineContent;
-                    throw;
-                }
-            } else if (callee.argsType[i] == Type("bool", 1)) {
-                try {
-                    value = value->operatorBool(code);
-                } catch (errors::ASTError &err) {
-                    err.lineNum = this->lineNum;
-                    err.lineContent = this->lineContent;
-                    throw;
-                }
-            } else if (callee.argsType[i].isPtr) {
-                try {
-                    value = value->operatorPtr(code, callee.argsType[i]);
-                } catch (errors::ASTError &err) {
-                    err.lineNum = this->lineNum;
-                    err.lineContent = this->lineContent;
-                    throw;
-                }
-            } else
-                throw errors::UnknownType(this, callee.argsType[i].id);
-        }
+
+        std::shared_ptr<Structure> atRsp;
+
+        if (value->type == Type("num", 8))
+            atRsp = std::make_shared<NumLValueStructure>("rsp");
+
+        else if (value->type == Type("char", 1))
+            atRsp = std::make_shared<CharLValueStructure>("rsp");
+
+        else if (value->type == Type("bool", 1))
+            atRsp = std::make_shared<BoolLValueStructure>("rsp");
+
+        else if (value->type.isPtr)
+            atRsp = std::make_shared<PtrLValueStructure>("rsp", value->type);
+
+        else
+            atRsp = std::make_shared<UserLValueStructure>("rsp", value->type);
 
         fn.writeLine("sub rsp, " + std::to_string(value->type.size));
         totalRspSubtracted += value->type.size;
 
         try {
-            std::make_shared<GenericLValueStructure>(value->type, "rsp")->operatorCopy(value, code);
+            atRsp->operatorCopy(value, code);
         } catch (errors::ASTError &err) {
             err.lineNum = this->lineNum;
             err.lineContent = this->lineContent;
