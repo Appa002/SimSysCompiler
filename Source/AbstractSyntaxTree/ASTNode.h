@@ -30,6 +30,7 @@ namespace ACC {
     enum class AstOperator {
         ADD,
         MEMBER_ACCESS,
+        MEMBER_CALL,
         NOT,
         TYPE_DECL_BODY,
         TYPE_DECL,
@@ -86,7 +87,7 @@ namespace ACC {
 
         ~ASTNode();
 
-        virtual std::string createRepresentation() const;
+        [[nodiscard]] virtual std::string createRepresentation() const;
 
         /*! Generates the assembly code for this node.
          * Might call generate for other ASTNodes, calling generate on the root node of a Abstract Syntax Tree

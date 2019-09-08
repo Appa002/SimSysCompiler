@@ -167,6 +167,14 @@ std::string ACC::ASTNode::createRepresentation() const {
             return "salloc";
         case AstOperator::DEREFERENCE:
             return "dereference";
+        case AstOperator::MEMBER_ACCESS:
+            break;
+        case AstOperator::MEMBER_CALL:
+            break;
+        case AstOperator::TYPE_DECL_BODY:
+            break;
+        case AstOperator::TYPE_DECL:
+            break;
     }
     throw std::runtime_error("Unknown Symbol!");
 

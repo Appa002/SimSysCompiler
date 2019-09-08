@@ -19,6 +19,7 @@
 #include <AbstractSyntaxTree/ASTNodes/AssignNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ReassignNode.h>
 #include <AbstractSyntaxTree/ASTNodes/SyscallNode.h>
+#include <AbstractSyntaxTree/ASTNodes/MemberCallNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ExitNode.h>
 #include <AbstractSyntaxTree/ASTNodes/ReturnNode.h>
 #include <AbstractSyntaxTree/ASTNodes/LiteralNode.h>
@@ -632,6 +633,33 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
             auto out = new MemberAccessNode(AstOperator::MEMBER_ACCESS, {carry},  member);
             return process(children[2], out);
+        }},
+
+        {{Symbol::expr, {Symbol::DOT, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET}}, [](std::vector<ParseNode*> children, ASTNode* carry){
+            // In expression obj.b `obj` would be in carry
+
+            auto traitName = dynamic_cast<TextToken*>(children[1]->token)->data;
+
+            return new MemberCallNode(AstOperator::MEMBER_CALL, traitName, {carry});
+        }},
+
+        {{Symbol::expr, {Symbol::DOT, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET}}, [](std::vector<ParseNode*> children, ASTNode* carry){
+            // In expression obj.b `obj` would be in carry
+
+            auto traitName = dynamic_cast<TextToken*>(children[1]->token)->data;
+
+            std::vector<ASTNode*> vec = {carry};
+
+            ParseNode* params = children[3];
+            while(params != nullptr){
+                vec.push_back(process(params->children[0], nullptr));
+                if(params->children.size() == 3)
+                    params = params->children[2];
+                else
+                    params = nullptr;
+            }
+
+            return new MemberCallNode(AstOperator::MEMBER_CALL, traitName, vec);
         }},
     };
 }

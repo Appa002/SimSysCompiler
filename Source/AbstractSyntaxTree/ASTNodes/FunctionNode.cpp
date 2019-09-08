@@ -36,7 +36,8 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
         auto loc = fn.curBpOffset + size;
         auto locStr = std::to_string(loc);
 
-        checkIfReserved(sym);
+        if(!(i == 2 && sym == "this"))
+            checkIfReserved(sym);
 
         if(type.isPtr)
             structure = std::make_shared<PtrLValueStructure>("rbp - " + locStr, type);

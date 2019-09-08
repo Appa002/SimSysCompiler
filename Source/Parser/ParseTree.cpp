@@ -512,12 +512,24 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             NONE_TERMINAL(expr)
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::expr, {Symbol::DOT, Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET, Symbol::expr });
+    START_PRODUCTION()
+            TERMINAL(DOT)
+            TERMINAL(TEXT)
+            TERMINAL(OPEN_BRACKET)
+            OPTIONAL_NONE_TERMINAL(paramList)
+            TERMINAL(CLOSED_BRACKET)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
     logable.loadProduction(Symbol::expr, {Symbol::DOT, Symbol::TEXT, Symbol::expr });
     START_PRODUCTION()
             TERMINAL(DOT)
             TERMINAL(TEXT)
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
+
+
 
     logable.loadProduction(Symbol::expr, {Symbol::TEXT, Symbol::expr});
     START_PRODUCTION()
