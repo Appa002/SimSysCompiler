@@ -30,7 +30,7 @@ namespace ACC {
         std::unordered_map<std::string, TypeField> fields;
         std::unordered_map<std::string, size_t> fieldSizes;
 
-
+        bool isComplex = false;
 
 
         friend bool operator==(Type const & lhs, Type const & rhs){

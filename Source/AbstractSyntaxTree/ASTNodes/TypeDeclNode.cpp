@@ -29,6 +29,7 @@ std::shared_ptr<ACC::Structure> ACC::TypeDeclNode::generate(ACC::Code &code) {
 
     Type type = Type(sym, totalSize, fields);
     type.fieldSizes = fieldMap;
+    type.isComplex = true;
     TypeTable::get()->addType(sym, type);
 
     auto& fn = code.emplaceFnSymbol("?" + type.id + ".operatorCopy");

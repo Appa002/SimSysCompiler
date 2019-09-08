@@ -24,8 +24,13 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     fn.argsType = getArgumentTypes();
 
     size_t offset = 16;
-
     code.pushScope();
+
+    if(fn.returnType.isComplex){
+        code.freeRegister(Register::rDI);
+        fn.writeLine("mov [rbp -8], rdi");
+        fn.curBpOffset += 8;
+    }
 
     for(size_t i = 2; i < children.size() - 1; i++){
         std::shared_ptr<Structure> structure;
