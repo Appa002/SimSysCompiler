@@ -90,6 +90,17 @@ namespace ACC::errors {
 
     };
 
+    struct ReservedNameError : public ASTError {
+        explicit ReservedNameError(const ASTNode *node, std::string const & name) :
+                ASTError("Name `"+name+"` is reserved and can't be used.") {
+            if (node != nullptr) {
+                lineNum = node->lineNum;
+                lineContent = node->lineContent;
+            }
+        };
+
+    };
+
     struct Unique : public ASTError {
         explicit Unique(const ASTNode *node, std::string const &msg) :
                 ASTError(msg) {

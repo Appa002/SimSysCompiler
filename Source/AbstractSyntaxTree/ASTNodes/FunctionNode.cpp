@@ -7,6 +7,7 @@
 #include <Structure/Structures/Bool/BoolLValueStructure.h>
 #include <Structure/Structures/User/UserStructure.h>
 #include <Structure/Structures/User/UserLValueStructure.h>
+#include <Error/Errors.h>
 
 #include "FunctionNode.h"
 #include "TypeNode.h"
@@ -15,6 +16,8 @@
 
 std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
     auto name = dynamic_cast<IdNode*>(children[0])->sym;
+
+    checkIfReserved(name);
 
     auto& fn = code.emplaceFnSymbol(name);
     fn.returnType = dynamic_cast<TypeNode*>(children[1])->getType();
@@ -32,6 +35,8 @@ std::shared_ptr<ACC::Structure> ACC::FunctionNode::generate(ACC::Code &code) {
         auto sym = dynamic_cast<IdNode*>(container->children[0])->sym;
         auto loc = fn.curBpOffset + size;
         auto locStr = std::to_string(loc);
+
+        checkIfReserved(sym);
 
         if(type.isPtr)
             structure = std::make_shared<PtrLValueStructure>("rbp - " + locStr, type);
@@ -93,4 +98,51 @@ std::vector<ACC::Type> ACC::FunctionNode::getArgumentTypes() {
     }
 
     return argumentsType;
+}
+
+void ACC::FunctionNode::checkIfReserved(std::string const &name) {
+    if (name == "fn")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "else")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "elif")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "exit")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "for")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "if")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "import")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "return")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "salloc")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "syscall")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "var")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "while")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "type")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "trait")
+        throw errors::ReservedNameError(this, name);
+
+    else if (name == "this")
+        throw errors::ReservedNameError(this, name);
 }

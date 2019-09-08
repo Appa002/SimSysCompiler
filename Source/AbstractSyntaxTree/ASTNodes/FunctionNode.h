@@ -16,6 +16,8 @@ namespace ACC{
 
         std::string copyIntoStackFrame(size_t offset, size_t loc, size_t size, ACC::Code &code);
 
+        void checkIfReserved(std::string const & name);
+
         std::vector<Type> getArgumentTypes();
     };
 }
