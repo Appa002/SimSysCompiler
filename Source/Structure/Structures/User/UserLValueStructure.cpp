@@ -28,8 +28,14 @@ std::string const &ACC::UserLValueStructure::getAccess() const {
 std::shared_ptr<ACC::Structure>
 ACC::UserLValueStructure::operatorCopy(std::shared_ptr<Structure> obj, ACC::Code &code) {
 
-    if (obj->type == type
-    && !code.hasOverload(
+
+    /* Tl;Dr For If:
+     * Checks if we should use the default copy method
+     * i.e. copy each member of the `obj` into `this`.
+     * It does that if `obj` and `this` are of the same type and
+     * the user hasn't defined a custom `operatorCopy` trait.
+     * */
+    if (obj->type == type && !code.hasOverload(
             "?" + type.id + ".operatorCopy",
             Type("num", 8),
             {Type::createPtr(type), obj->type})) {

@@ -251,10 +251,18 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                           Symbol::ARROW, Symbol::type, Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
             std::vector<ASTNode*> vec;
-            auto prefix = "?" + dynamic_cast<TextToken*>(children[2]->token)->data + ".";
+
+            auto typeName = dynamic_cast<TextToken*>(children[2]->token)->data;
+
+            auto prefix = "?" + typeName + ".";
             vec.push_back(new IdNode(AstOperator::ID, prefix + dynamic_cast<TextToken*>(children[4]->token)->data));
 
-            vec.push_back(process(children[9]));
+            vec.push_back(process(children[9])); //type
+
+            vec.push_back(new ASTNode(AstOperator::__CONTAINER, {
+                    new IdNode(AstOperator::ID, "this"),
+                    new TypeNode(AstOperator::TYPE_DEF, UnverifiedType::createPtr(typeName))
+            }));
 
             auto params = children[6];
             while(params != nullptr){
@@ -279,13 +287,19 @@ std::vector<ACC::Rule> ACC::data::getRules() {
                           Symbol::OPEN_BRACKET, Symbol::CLOSED_BRACKET, Symbol::ARROW, Symbol::type,
                           Symbol::COLON, Symbol::INDENT, Symbol::start}}, [](auto children, auto carry){
 
-            auto prefix = "?" + dynamic_cast<TextToken*>(children[2]->token)->data + ".";
+            auto typeName = dynamic_cast<TextToken*>(children[2]->token)->data;
+            auto prefix = "?" + typeName + ".";
 
             std::vector<ASTNode*> vec;
             vec.push_back(new IdNode(AstOperator::ID,prefix + dynamic_cast<TextToken*>(children[4]->token)->data));
-            vec.push_back(process(children[8]));
+            vec.push_back(process(children[8])); //Type
 
-            vec.push_back(process(children[11], nullptr));
+            vec.push_back(new ASTNode(AstOperator::__CONTAINER, {
+                    new IdNode(AstOperator::ID, "this"),
+                    new TypeNode(AstOperator::TYPE_DEF, UnverifiedType::createPtr(typeName))
+            }));
+
+            vec.push_back(process(children[11], nullptr)); // start
 
             return new FunctionNode(AstOperator::FUNCTION, vec);
         }},
