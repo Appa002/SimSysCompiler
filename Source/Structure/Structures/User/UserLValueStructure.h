@@ -19,6 +19,8 @@ namespace ACC {
         std::shared_ptr<Structure> operatorDot(Code &code, std::string member) override;
 
 
+        bool haveSameTypes(std::vector<Type> a, std::vector<std::shared_ptr<Structure>> b);
+
         std::string const & getAccess() const override;
 
     };

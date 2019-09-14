@@ -145,3 +145,19 @@ std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorDot(ACC::Code 
 
 
 }
+
+bool ACC::UserLValueStructure::haveSameTypes(std::vector<Type> a,
+                                             std::vector<std::shared_ptr<Structure>> b) {
+
+    //ignores this argument
+
+    if (a.size() != b.size() + 1)
+        return false;
+
+    for(size_t i = 0; i < b.size(); i++){
+        if(a[i + 1] != b[i]->type)
+            return false;
+    }
+
+    return true;
+}
