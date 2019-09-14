@@ -17,7 +17,7 @@ namespace ACC {
 
         void loadToRegister(Register reg, Code& code) override;
 
-        std::shared_ptr<ACC::Structure> operatorCopy(std::shared_ptr<Structure> obj, ACC::Code &code) override;
+        std::shared_ptr<ACC::Structure> operatorCopy(std::vector<std::shared_ptr<Structure>> objList, ACC::Code &code) override;
 
         Register getRegister() const override;
 

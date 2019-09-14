@@ -29,7 +29,7 @@ std::shared_ptr<ACC::Structure> ACC::PtrAssignmentNode::generate(ACC::Code &code
     auto address = std::make_shared<GenericLValueStructure>(Type(ptr->type.id, TypeTable::get()->getSize(ptr->type.id)), registerToString(8, reg));
 
     try {
-        address->operatorCopy(expr, code);
+        address->operatorCopy({expr}, code);
     }catch (errors::ASTError& err){
         err.lineNum = this->lineNum;
         err.lineContent = this->lineContent;

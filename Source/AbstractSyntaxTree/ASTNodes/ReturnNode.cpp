@@ -20,7 +20,7 @@ std::shared_ptr<ACC::Structure> ACC::ReturnNode::generate(ACC::Code &code) {
 
         fn.writeLine("mov rdi, [rbp - 8]");
 
-        std::make_shared<UserLValueStructure>("rdi", returnValue->type)->operatorCopy(returnValue, code);
+        std::make_shared<UserLValueStructure>("rdi", returnValue->type)->operatorCopy({returnValue}, code);
 
         fn.writeLine("mov rsp, rbp");
         fn.writeLine("pop rbp");

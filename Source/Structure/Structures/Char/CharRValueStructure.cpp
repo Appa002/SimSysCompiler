@@ -22,8 +22,10 @@ ACC::CharRValueStructure::CharRValueStructure(ACC::Register reg)
     registerInUse.push_back(reg);
 }
 
-std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorCopy(std::shared_ptr<Structure> obj,
+std::shared_ptr<ACC::Structure> ACC::CharRValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList,
                                                                        ACC::Code &code){
+    auto & obj = objList[0];
+
     if(obj->type != Type("char", 1))
         obj = obj->operatorChar(code);
 

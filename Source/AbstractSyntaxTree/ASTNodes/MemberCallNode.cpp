@@ -106,7 +106,7 @@ std::shared_ptr<ACC::Structure> ACC::MemberCallNode::generate(ACC::Code &code) {
         totalRspSubtracted += value->type.size;
 
         try {
-            atRsp->operatorCopy(value, code);
+            atRsp->operatorCopy({value}, code);
         } catch (errors::ASTError &err) {
             err.lineNum = this->lineNum;
             err.lineContent = this->lineContent;

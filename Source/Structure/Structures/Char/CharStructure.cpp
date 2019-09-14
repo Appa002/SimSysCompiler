@@ -27,7 +27,7 @@ ACC::CharStructure::CharStructure(ACC::ValueCategory v) : ElementaryStructure(v,
 
 std::shared_ptr<ACC::Structure> ACC::CharStructure::operatorForNext(ACC::Code &code) {
     auto rValue = operatorAdd(std::make_shared<NumIValueStructure>(1), code);
-    shared_from_this()->operatorCopy(rValue, code);
+    shared_from_this()->operatorCopy({rValue}, code);
     return shared_from_this();
 }
 

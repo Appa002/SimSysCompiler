@@ -10,7 +10,7 @@ std::shared_ptr<ACC::Structure> ACC::ReassignNode::generate(ACC::Code &code) {
     auto var = children[0]->generate(code);
 
     try {
-        var->operatorCopy(expr, code);
+        var->operatorCopy({expr}, code);
     } catch (errors::ASTError& err){
         err.lineNum = this->lineNum;
         err.lineContent = this->lineContent;

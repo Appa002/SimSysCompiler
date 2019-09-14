@@ -27,7 +27,8 @@ void ACC::NumLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code)
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::NumLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code &code) {
+ACC::NumLValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, ACC::Code &code) {
+   auto & obj = objList[0];
     if(obj->type != Type("num", 8)){
         obj = obj->operatorNum(code);
     }

@@ -23,7 +23,8 @@ void ACC::BoolLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::BoolLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code & code) {
+ACC::BoolLValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, ACC::Code & code) {
+    auto & obj = objList[0];
     if(obj->type != Type("bool", 1))
         throw errors::InvalidType(nullptr, obj->type.id, "copy");
 

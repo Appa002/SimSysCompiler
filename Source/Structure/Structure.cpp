@@ -20,7 +20,7 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorForNext(Code &code) {
     throw std::runtime_error("Operator not implemented");
 }
 
-std::shared_ptr<ACC::Structure> ACC::Structure::operatorCopy(std::shared_ptr<Structure> obj, Code &code) {
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, Code &code) {
     throw std::runtime_error("Operator not implemented");
 }
 

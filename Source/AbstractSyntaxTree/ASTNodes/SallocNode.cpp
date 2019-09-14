@@ -26,7 +26,7 @@ std::shared_ptr<ACC::Structure> ACC::SallocNode::generate(ACC::Code &code) {
     auto ptr = std::make_shared<PtrRValueStructure>(reg, Type(var->type));
 
     try {
-        var->operatorCopy(ptr, code);
+        var->operatorCopy({ptr}, code);
     } catch (errors::ASTError& err){
         err.lineNum = this->lineNum;
         err.lineContent = this->lineContent;

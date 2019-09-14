@@ -20,7 +20,8 @@ ACC::PtrRValueStructure::PtrRValueStructure(Register reg, Type type)
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::PtrRValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code &code) {
+ACC::PtrRValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, ACC::Code &code) {
+   auto & obj = objList[0];
     if(!obj->type.isPtr)
         obj = obj->operatorPtr(code, type);
 

@@ -12,7 +12,6 @@ namespace ACC {
     class ComplexStructure : public Structure{
     public:
         explicit ComplexStructure(ValueCategory v, Type type) : Structure(v, std::move(type)) {};
-        virtual void loadAddress(Register reg, Code& code) = 0;
     };
 }
 

@@ -28,7 +28,8 @@ void ACC::GenericLValueStructure::loadToRegister(ACC::Register reg, ACC::Code &c
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, ACC::Code & code) {
+ACC::GenericLValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, ACC::Code & code) {
+    auto const & obj = objList[0];
     if(obj->vCategory == ValueCategory::lvalue) {
         auto &fn = code.getFnSymbol();
         auto *objAsL = dynamic_cast<AsmAccessible *>(obj.get());
@@ -45,11 +46,12 @@ ACC::GenericLValueStructure::operatorCopy(std::shared_ptr<ACC::Structure> obj, A
             // The type can't be moved using a single register like above as it is larger then a qword.
 
             Register reg = code.getFreeRegister();
-            std::string regStr = registerToString(type.size, reg);
 
             long bytesLeftToMove = obj->type.size;
 
+
             while(bytesLeftToMove > 0){
+                std::string regStr = registerToString(bytesLeftToMove > 8 ? (8) : (bytesLeftToMove), reg);
 
                 if (bytesLeftToMove >= 8) {
                     std::string offset = "+" + std::to_string(obj->type.size - bytesLeftToMove);
