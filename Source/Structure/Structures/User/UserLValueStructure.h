@@ -20,8 +20,12 @@ namespace ACC {
 
 
         std::shared_ptr<Structure> operatorAdd(std::shared_ptr<Structure> amount, Code &code) override;
+        std::shared_ptr<Structure> operatorSubtract(std::shared_ptr<Structure> amount, Code &code) override;
+        std::shared_ptr<Structure> operatorMultiplication(std::shared_ptr<Structure> amount, Code &code) override;
+        std::shared_ptr<Structure> operatorDivision(std::shared_ptr<Structure> amount, Code &code) override;
 
 
+        void doUnaryOperator(const std::shared_ptr<Structure>& obj, const std::string& operatorName, Code& code);
 
 
         bool haveSameTypes(std::vector<Type> a, std::vector<std::shared_ptr<Structure>> b);

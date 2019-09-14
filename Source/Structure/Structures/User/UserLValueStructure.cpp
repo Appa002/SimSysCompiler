@@ -171,9 +171,34 @@ bool ACC::UserLValueStructure::haveSameTypes(std::vector<Type> a,
 }
 
 std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorAdd(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    doUnaryOperator(obj, "operatorAdd", code);
+    return nullptr;
+}
+
+std::shared_ptr<ACC::Structure>
+ACC::UserLValueStructure::operatorSubtract(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    doUnaryOperator(obj, "operatorSubtract", code);
+    return nullptr;
+}
+
+std::shared_ptr<ACC::Structure>
+ACC::UserLValueStructure::operatorMultiplication(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    doUnaryOperator(obj, "operatorMultiplication", code);
+    return nullptr;
+}
+
+
+std::shared_ptr<ACC::Structure>
+ACC::UserLValueStructure::operatorDivision(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    doUnaryOperator(obj, "operatorDivision", code);
+    return nullptr;
+}
+
+void
+ACC::UserLValueStructure::doUnaryOperator(const std::shared_ptr<Structure>& obj, const std::string& operatorName, ACC::Code &code) {
     std::vector<Fn> overloads;
     try {
-        overloads = code.getFnOverloads("?" + type.id + ".operatorAdd");
+        overloads = code.getFnOverloads("?" + type.id + "." + operatorName);
     }
     catch (errors::MissingOverload &) {
         std::string typeRep;
@@ -183,7 +208,7 @@ std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorAdd(std::share
             typeRep = obj->type.id;
         }
 
-        throw errors::UnimplementedFunction(nullptr, type.id, "operatorAdd(" + typeRep + ")");
+        throw errors::UnimplementedFunction(nullptr, type.id, operatorName + "(" + typeRep + ")");
     }
 
     auto &fn = code.getFnSymbol();
@@ -202,10 +227,12 @@ std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorAdd(std::share
 
 
             fn.writeLine("call " + overload.mangledName());
-            return obj;
+            return;
 
         }
     }
 
-    throw errors::MissingOverload(nullptr, "operatorAdd(" + obj->type.id + ") for `" + type.id + "`");
+    throw errors::MissingOverload(nullptr, operatorName + "(" + obj->type.id + ") for `" + type.id + "`");
 }
+
+
