@@ -110,6 +110,14 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorDot(ACC::Code &code, std
     throw std::runtime_error("Operator not implemented");
 }
 
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorOr(std::shared_ptr<Structure> other, ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+
+std::shared_ptr<ACC::Structure> ACC::Structure::operatorAnd(std::shared_ptr<Structure> other, ACC::Code &code) {
+    throw std::runtime_error("Operator not implemented");
+}
+
 
 
 

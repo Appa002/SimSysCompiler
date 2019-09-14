@@ -132,6 +132,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "trait";
         case Symbol::initializer_list:
             return  "initializer_list";
+        case Symbol::AND:
+            return "AND";
+        case Symbol::OR:
+            return "OR";
     }
     throw std::runtime_error("Symbol not known.");
 }
@@ -262,6 +266,10 @@ std::string ACC::data::symbolToStringForErrReporting(ACC::Symbol s) {
             return "a member function definition";
         case Symbol::initializer_list:
             return "an expression list";
+        case Symbol::AND:
+            return "&&";
+        case Symbol::OR:
+            return "||";
     }
     throw std::runtime_error("Symbol not known.");
 }

@@ -29,6 +29,8 @@ namespace ACC {
      * */
     enum class AstOperator {
         INITIALIZER_LIST,
+        AND,
+        OR,
         ADD,
         MEMBER_ACCESS,
         MEMBER_CALL,

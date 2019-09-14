@@ -168,13 +168,19 @@ std::string ACC::ASTNode::createRepresentation() const {
         case AstOperator::DEREFERENCE:
             return "dereference";
         case AstOperator::MEMBER_ACCESS:
-            break;
+            return "member access";
         case AstOperator::MEMBER_CALL:
-            break;
+            return "member call";
         case AstOperator::TYPE_DECL_BODY:
-            break;
+            return "type decl body";
         case AstOperator::TYPE_DECL:
-            break;
+            return "type decl";
+        case AstOperator::INITIALIZER_LIST:
+            return "initializer list";
+        case AstOperator::AND:
+            return "and";
+        case AstOperator::OR:
+            return "or";
     }
     throw std::runtime_error("Unknown Symbol!");
 

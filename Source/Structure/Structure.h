@@ -76,6 +76,10 @@ namespace ACC {
 
         virtual std::shared_ptr<Structure> operatorDot(Code &code, std::string member);
 
+        virtual std::shared_ptr<Structure> operatorOr(std::shared_ptr<Structure> other, Code &code);
+        virtual std::shared_ptr<Structure> operatorAnd(std::shared_ptr<Structure> other, Code &code);
+
+
 
         virtual bool hasConversionTo(const Type &id);
 

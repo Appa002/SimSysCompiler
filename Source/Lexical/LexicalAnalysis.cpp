@@ -47,6 +47,8 @@
 #include <Lexical/Tokens/TypeToken.h>
 #include <Error/SyntaxError.h>
 #include <Lexical/Tokens/TraitToken.h>
+#include <Lexical/Tokens/AndToken.h>
+#include <Lexical/Tokens/OrToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options) {
     for (auto const &option : options) {
@@ -225,6 +227,12 @@ bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, LineCountingP
     else if (buffer == "<=")
         tokens.push_back(new ComparisionToken(ComparisionTokenKind::LessEqual, idx.lineNum));
 
+    else if (buffer == "&&")
+        tokens.push_back(new AndToken(idx.lineNum));
+
+    else if (buffer == "||")
+        tokens.push_back(new OrToken(idx.lineNum));
+
     else if (buffer == ">=")
         tokens.push_back(new ComparisionToken(ComparisionTokenKind::GreaterEqual, idx.lineNum));
 
@@ -361,7 +369,7 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingP
 
 std::string ACC::LexicalAnalysis::loadBuffer(LineCountingPosition &idx) {
     const std::vector<std::string> specialTokens = {"\"", ";", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
-                                                    "<", ">", "!", ":", "\'", "\"", "%", ",", "{", "}", ".", " "};
+                                                    "<", ">", "!", ":", "\'", "\"", "%", ",", "{", "}", ".", " ", "&&", "||"};
 
     std::string buffer;
 
@@ -424,6 +432,12 @@ std::string ACC::LexicalAnalysis::loadBuffer(LineCountingPosition &idx) {
             idx++;
         } else if (toTest == "!=") {
             buffer = "!=";
+            idx++;
+        } else if (toTest == "&&") {
+            buffer = "&&";
+            idx++;
+        } else if (toTest == "||") {
+            buffer = "||";
             idx++;
         }
     } else {

@@ -43,6 +43,8 @@
 #include <Types/TypeTable.h>
 #include <AbstractSyntaxTree/ASTNodes/MemberAccessNode.h>
 #include <AbstractSyntaxTree/ASTNodes/InitializerListNode.h>
+#include <AbstractSyntaxTree/ASTNodes/AndNode.h>
+#include <AbstractSyntaxTree/ASTNodes/OrNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -577,6 +579,16 @@ std::vector<ACC::Rule> ACC::data::getRules() {
              // Its unary therefor dereference
              return new DereferenceNode(AstOperator::DEREFERENCE, {process(children[1], nullptr)});
          }},
+
+        {{Symbol::expr, {Symbol::AND, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            auto vec = {carry, process(children[1], nullptr)};
+            return new AndNode(AstOperator::AND, vec);
+        }},
+
+        {{Symbol::expr, {Symbol::OR, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
+            auto vec = {carry, process(children[1], nullptr)};
+            return new OrNode(AstOperator::OR, vec);
+        }},
 
         {{Symbol::expr, {Symbol::PLUS, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
             auto vec = {carry, process(children[1], nullptr)};
