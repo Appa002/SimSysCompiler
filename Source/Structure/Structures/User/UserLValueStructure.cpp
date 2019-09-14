@@ -169,3 +169,43 @@ bool ACC::UserLValueStructure::haveSameTypes(std::vector<Type> a,
 
     return true;
 }
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorAdd(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    std::vector<Fn> overloads;
+    try {
+        overloads = code.getFnOverloads("?" + type.id + ".operatorAdd");
+    }
+    catch (errors::MissingOverload &) {
+        std::string typeRep;
+        if (obj->type.isPtr) {
+            typeRep = "ptr<" + obj->type.id + ">";
+        } else {
+            typeRep = obj->type.id;
+        }
+
+        throw errors::UnimplementedFunction(nullptr, type.id, "operatorAdd(" + typeRep + ")");
+    }
+
+    auto &fn = code.getFnSymbol();
+
+    for (auto const &overload : overloads) {
+        if (overload.argsType.size() == 2 && obj->type == overload.argsType[1]) {
+
+            fn.writeLine("sub rsp, " + std::to_string(obj->type.size));
+            std::make_shared<GenericLValueStructure>(obj->type, "rsp")->operatorCopy({obj}, code);
+
+            Register r = code.getFreeRegister();
+            fn.writeLine("sub rsp, 8");
+            fn.writeLine("lea "+registerToString(8, r)+", [" + access + "]");
+            fn.writeLine("mov [rsp], " + registerToString(8, r));
+            code.freeRegister(r);
+
+
+            fn.writeLine("call " + overload.mangledName());
+            return obj;
+
+        }
+    }
+
+    throw errors::MissingOverload(nullptr, "operatorAdd(" + obj->type.id + ") for `" + type.id + "`");
+}
