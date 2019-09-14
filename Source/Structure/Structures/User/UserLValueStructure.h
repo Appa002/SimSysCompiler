@@ -15,10 +15,11 @@ namespace ACC {
     public:
         explicit UserLValueStructure(std::string  access, const Type& type);
 
-        std::shared_ptr<Structure> operatorCopy(std::shared_ptr<Structure> obj, Code &) override;
+        std::shared_ptr<Structure> operatorCopy(std::vector<std::shared_ptr<Structure>> objList, Code &) override;
         std::shared_ptr<Structure> operatorDot(Code &code, std::string member) override;
 
 
         std::string const & getAccess() const override;
+
     };
 }

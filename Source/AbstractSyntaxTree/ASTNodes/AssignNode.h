@@ -15,6 +15,9 @@ namespace ACC{
 
         AssignNode(AstOperator op, std::vector<ASTNode *> children);
 
+        std::shared_ptr<Structure> handleCommon(Code& code);
+        std::shared_ptr<Structure> handleInitList(Code& code);
+
     };
 }
 

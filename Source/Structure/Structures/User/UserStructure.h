@@ -15,8 +15,6 @@ namespace ACC {
 
         UserStructure(ValueCategory v, const Type& t);
 
-        void loadAddress(Register reg, Code& code) override {};
-
 
         bool hasCopyFunc = true;
 

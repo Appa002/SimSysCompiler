@@ -42,6 +42,7 @@
 #include <Error/Errors.h>
 #include <Types/TypeTable.h>
 #include <AbstractSyntaxTree/ASTNodes/MemberAccessNode.h>
+#include <AbstractSyntaxTree/ASTNodes/InitializerListNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -661,5 +662,28 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
             return new MemberCallNode(AstOperator::MEMBER_CALL, traitName, vec);
         }},
+
+        {{Symbol::expr, {Symbol::OPEN_CURLY, Symbol::initializer_list, Symbol::CLOSED_CURLY}},  [](std::vector<ParseNode*> children, ASTNode* carry){
+            auto out = new InitializerListNode(AstOperator::INITIALIZER_LIST, {});
+
+            process(children[1], out);
+            return out;
+        }},
+
+        {{Symbol::initializer_list, {Symbol::expr, Symbol::COMMA,  Symbol::initializer_list}}, [](std::vector<ParseNode*> children, ASTNode* carry){
+            carry->children.push_back(process(children[0]));
+
+            process(children[2], carry);
+
+            return nullptr;
+        }},
+
+        {{Symbol::initializer_list, {Symbol::expr}}, [](std::vector<ParseNode*> children, ASTNode* carry){
+            carry->children.push_back(process(children[0]));
+            return nullptr;
+        }},
+
     };
+
+
 }

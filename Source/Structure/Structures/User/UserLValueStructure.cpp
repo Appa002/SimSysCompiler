@@ -26,8 +26,9 @@ std::string const &ACC::UserLValueStructure::getAccess() const {
 }
 
 std::shared_ptr<ACC::Structure>
-ACC::UserLValueStructure::operatorCopy(std::shared_ptr<Structure> obj, ACC::Code &code) {
+ACC::UserLValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, ACC::Code & code) {
 
+    auto & obj = objList[0];
 
     /* Tl;Dr For If:
      * Checks if we should use the default copy method
@@ -84,11 +85,12 @@ ACC::UserLValueStructure::operatorCopy(std::shared_ptr<Structure> obj, ACC::Code
     auto &fn = code.getFnSymbol();
 
     for (auto const &overload : overloads) {
-        if (overload.argsType.size() == 2 && overload.argsType[1] == obj->type) {
+        if (overload.argsType.size() >= 2 && haveSameTypes(overload.argsType, objList)) {
 
-            fn.writeLine("sub rsp, 8");
-            std::make_shared<GenericLValueStructure>(obj->type, "rsp")->operatorCopy(obj, code);
-
+            for (size_t i = 0; i < objList.size(); i++){
+                fn.writeLine("sub rsp, " + std::to_string(objList[i]->type.size));
+                std::make_shared<GenericLValueStructure>(objList[i]->type, "rsp")->operatorCopy({objList[i]}, code);
+            }
 
             Register r = code.getFreeRegister();
             fn.writeLine("sub rsp, 8");

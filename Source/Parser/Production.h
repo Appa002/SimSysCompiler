@@ -51,6 +51,7 @@ namespace ACC {
         MINUS,
 
         trait,
+        initializer_list,
         ptr_assign,
         for_construct,
         while_construct,

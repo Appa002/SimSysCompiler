@@ -508,6 +508,14 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
     END_PRODUCTION()
 
 
+    logable.loadProduction(Symbol::expr, {Symbol::OPEN_CURLY, Symbol::initializer_list, Symbol::CLOSED_CURLY});
+    START_PRODUCTION()
+            TERMINAL(OPEN_CURLY)
+            NONE_TERMINAL(initializerList)
+            TERMINAL(CLOSED_CURLY)
+    END_PRODUCTION()
+
+
     LOG() << Log::Colour::Magenta << "..done\n";
 
     pos = oldPos;
@@ -828,6 +836,31 @@ ACC::ParseNode *ACC::ParseTree::trait(size_t &pos) {
             TERMINAL(COLON)
             TERMINAL(INDENT)
             NONE_TERMINAL(start)
+    END_PRODUCTION()
+
+    LOG() << Log::Colour::Magenta << "..done\n";
+
+    pos = oldPos;
+    delete node;
+    return nullptr;
+}
+
+ACC::ParseNode *ACC::ParseTree::initializerList(size_t &pos) {
+    ACC::LogableProduction logable;
+    LOG() << "\n";
+    LOG() << Log::Colour::Magenta << "Entering [initializer_list]...\n";
+
+    ParseNode *node = new ParseNode;
+    node->symbol = Symbol::initializer_list;
+
+    size_t oldPos = pos;
+    ParseNode *other;
+
+    logable.loadProduction(Symbol::initializer_list, {Symbol::expr, Symbol::COMMA, Symbol::initializer_list});
+    START_PRODUCTION()
+            NONE_TERMINAL(expr)
+            EXITING_OPTIONAL_TERMINAL(COMMA)
+            NONE_TERMINAL(initializerList)
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
