@@ -116,6 +116,11 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             return new SeqNode(AstOperator::SEQ, vec);
         }},
 
+        {{Symbol::start, {Symbol::expr, Symbol::EOS, Symbol::start}}, [](std::vector < ACC::ParseNode * > children, auto carry) {
+            auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
+            return new SeqNode(AstOperator::SEQ, vec);
+        }},
+
         {{Symbol::ptr_assign, {Symbol::expr, Symbol::ASSIGN, Symbol::expr, Symbol::EOS}}, [](auto children, auto carry){
             auto vec = {process(children[0]->children[1], nullptr), process(children[2], nullptr)};
             return new PtrAssignmentNode(AstOperator::PTR_ASSIGN, vec);

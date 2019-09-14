@@ -246,9 +246,13 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::start, {Symbol::expr, Symbol::EOS, Symbol::start});
+    START_PRODUCTION()
+            NONE_TERMINAL(expr)
+            TERMINAL(EOS)
+            OPTIONAL_NONE_TERMINAL(start);
 
-
-
+    END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
 
