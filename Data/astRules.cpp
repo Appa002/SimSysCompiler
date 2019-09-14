@@ -67,9 +67,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
         {{Symbol::start, {Symbol::while_construct}}, [](auto children, auto carry){
             return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
-        {{Symbol::start, {Symbol::call, Symbol::EOS}}, [](auto children, auto carry){
-            return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
-        }},
+
         {{Symbol::start, {Symbol::type_decl}}, [](auto children, auto carry){
             return new SeqNode(AstOperator::SEQ, {process(children[0], nullptr)});
         }},
@@ -103,10 +101,7 @@ std::vector<ACC::Rule> ACC::data::getRules() {
             auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
             return new SeqNode(AstOperator::SEQ, vec);
         }},
-        {{Symbol::start, {Symbol::call, Symbol::EOS, Symbol::start}}, [](auto children, auto carry){
-            auto vec = {process(children[2], nullptr), process(children[0], nullptr)};
-            return new SeqNode(AstOperator::SEQ, vec);
-        }},
+
         {{Symbol::start, {Symbol::type_decl, Symbol::start}}, [](auto children, auto carry){
             auto vec = {process(children[1], nullptr), process(children[0], nullptr)};
             return new SeqNode(AstOperator::SEQ, vec);

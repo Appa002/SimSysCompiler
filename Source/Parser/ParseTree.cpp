@@ -206,14 +206,6 @@ ACC::ParseNode *ACC::ParseTree::start(size_t &pos) {
 
     END_PRODUCTION()
 
-    logable.loadProduction(Symbol::start, {Symbol::call, Symbol::EOS, Symbol::start});
-    START_PRODUCTION()
-
-            NONE_TERMINAL(call)
-            TERMINAL(EOS)
-            OPTIONAL_NONE_TERMINAL(start);
-
-    END_PRODUCTION()
 
     logable.loadProduction(Symbol::start, {Symbol::while_construct, Symbol::start});
     START_PRODUCTION()
@@ -388,32 +380,6 @@ ACC::ParseNode *ACC::ParseTree::keyword(size_t &pos) {
                 OPTIONAL_TERMINAL(COMMA)
             }
 
-    END_PRODUCTION()
-
-    LOG() << Log::Colour::Magenta << "..done\n";
-
-    pos = oldPos;
-    delete node;
-    return nullptr;
-}
-
-ACC::ParseNode *ACC::ParseTree::call(size_t &pos) {
-    ACC::LogableProduction logable;
-    LOG() << "\n";
-    LOG() << Log::Colour::Magenta << "Entering [call]...\n";
-
-    ParseNode *node = new ParseNode;
-    node->symbol = Symbol::call;
-
-    size_t oldPos = pos;
-    ParseNode *other;
-
-    logable.loadProduction(Symbol::call, {Symbol::TEXT, Symbol::OPEN_BRACKET, Symbol::paramsList, Symbol::CLOSED_BRACKET});
-    START_PRODUCTION()
-            TERMINAL(TEXT)
-            TERMINAL(OPEN_BRACKET)
-            OPTIONAL_NONE_TERMINAL(paramList)
-            TERMINAL(CLOSED_BRACKET)
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
