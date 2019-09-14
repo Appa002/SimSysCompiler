@@ -13,55 +13,55 @@ ACC::Structure::~Structure() = default;
 
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorForDone(std::shared_ptr<Structure> limit, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorForDone");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorForNext(Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorForNext");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorCopy(std::vector<std::shared_ptr<Structure>> objList, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorCopy");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorAdd(std::shared_ptr<Structure> amount, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorAdd");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorSubtract(std::shared_ptr<Structure> amount, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorSubtract");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorMultiplication(std::shared_ptr<Structure> amount, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorMultiplication");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorDivision(std::shared_ptr<Structure> amount, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorDivision");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorEqual(std::shared_ptr<Structure> other, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorEqual");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorNotEqual(std::shared_ptr<Structure> other, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorNotEqual");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorLess(std::shared_ptr<Structure> other, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorLess");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorGreater(std::shared_ptr<Structure> other, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorGreater");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorLessEqual(std::shared_ptr<Structure> other, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorLessEqual");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorGreaterEqual");
 }
 
 ACC::Structure::Structure(ACC::ValueCategory valueCategory, Type type)
@@ -70,7 +70,7 @@ ACC::Structure::Structure(ACC::ValueCategory valueCategory, Type type)
 
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorNot(ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorNot");
 }
 
 void ACC::Structure::cleanUp(Code& code) {
@@ -78,7 +78,7 @@ void ACC::Structure::cleanUp(Code& code) {
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorDereference(ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorDereference");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorChar(ACC::Code &code) {
@@ -99,7 +99,7 @@ std::shared_ptr<ACC::Structure> ACC::Structure::operatorPtr(Code &code, Type poi
 
 std::shared_ptr<ACC::Structure>
 ACC::Structure::operatorModulo(std::shared_ptr<ACC::Structure> amount, ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorModulo");
 }
 
 bool ACC::Structure::hasConversionTo(const Type &id) {
@@ -107,15 +107,15 @@ bool ACC::Structure::hasConversionTo(const Type &id) {
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorDot(ACC::Code &code, std::string member) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorDot");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorOr(std::shared_ptr<Structure> other, ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorOr");
 }
 
 std::shared_ptr<ACC::Structure> ACC::Structure::operatorAnd(std::shared_ptr<Structure> other, ACC::Code &code) {
-    throw std::runtime_error("Operator not implemented");
+    throw errors::UnimplementedFunction(nullptr, this->type.id, "operatorAnd");
 }
 
 
