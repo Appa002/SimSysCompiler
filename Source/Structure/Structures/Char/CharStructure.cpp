@@ -108,8 +108,11 @@ ACC::CharStructure::operatorMultiplication(std::shared_ptr<Structure> amount, AC
     Register lhs = code.getFreeRegister();
     Register rhs = code.getFreeRegister();
 
-    std::string lhsAsString = registerToString(1, lhs);
-    std::string rhsAsString = registerToString(1, rhs); /* TODO: Compiler warning about size. */
+    std::string lhsAsString = registerToString(2, lhs);
+    std::string rhsAsString = registerToString(2, rhs); /* TODO: Compiler warning about size. */
+
+    fn.writeLine("xor " + lhsAsString + ", " + lhsAsString);
+    fn.writeLine("xor " + rhsAsString + ", " + rhsAsString);
 
     this->loadToRegister(lhs, code);
     amountAsElem->loadToRegister(rhs, code);
