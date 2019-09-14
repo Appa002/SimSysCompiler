@@ -69,7 +69,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
         // We can't return from the function simply by setting rdx. rdi will contain an address for where the returned
         // structure should go. The return node will place the structure there.
 
-        fn.curBpOffset += callee.returnType.size;
+        fn.curBpOffset += 8;
         code.reserveRegister(Register::rDI);
         fn.writeLine("lea rdi, [rbp-"+ std::to_string(fn.curBpOffset) +"]");
     }
@@ -131,7 +131,7 @@ std::shared_ptr<ACC::Structure> ACC::CallNode::generate(ACC::Code &code) {
 
     else if (returnType.isComplex){
         code.freeRegister(Register::rDI);
-        return std::make_shared<UserLValueStructure>("rbp - "+ std::to_string(fn.curBpOffset) ,returnType);
+        return std::make_shared<UserLValueStructure>("rbp - "+ std::to_string(fn.curBpOffset), returnType);
     }
 
     return nullptr;
