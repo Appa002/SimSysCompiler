@@ -15,6 +15,7 @@
 #include <Structure/Structures/Pointer/PtrRValueStructure.h>
 #include <Structure/Structures/Pointer/PtrLValueStructure.h>
 #include <Types/TypeTable.h>
+#include <Structure/Structures/Bool/BoolRValueStructure.h>
 
 ACC::UserLValueStructure::UserLValueStructure(std::string access, const Type &type)
         : access(std::move(access)), UserStructure(ValueCategory::lvalue, type) {
@@ -171,31 +172,94 @@ bool ACC::UserLValueStructure::haveSameTypes(std::vector<Type> a,
 }
 
 std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorAdd(std::shared_ptr<Structure> obj, ACC::Code &code) {
-    doUnaryOperator(obj, "operatorAdd", code);
-    return nullptr;
+    generalBinaryOperator(obj, "operatorAdd", code);
+    return std::make_shared<NumRValueStructure>(Register::rA);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::UserLValueStructure::operatorSubtract(std::shared_ptr<Structure> obj, ACC::Code &code) {
-    doUnaryOperator(obj, "operatorSubtract", code);
-    return nullptr;
+    generalBinaryOperator(obj, "operatorSubtract", code);
+    return std::make_shared<NumRValueStructure>(Register::rA);
 }
 
 std::shared_ptr<ACC::Structure>
 ACC::UserLValueStructure::operatorMultiplication(std::shared_ptr<Structure> obj, ACC::Code &code) {
-    doUnaryOperator(obj, "operatorMultiplication", code);
-    return nullptr;
+    generalBinaryOperator(obj, "operatorMultiplication", code);
+    return std::make_shared<NumRValueStructure>(Register::rA);
 }
 
 
 std::shared_ptr<ACC::Structure>
 ACC::UserLValueStructure::operatorDivision(std::shared_ptr<Structure> obj, ACC::Code &code) {
-    doUnaryOperator(obj, "operatorDivision", code);
-    return nullptr;
+    generalBinaryOperator(obj, "operatorDivision", code);
+    return std::make_shared<NumRValueStructure>(Register::rA);
 }
 
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorModulo(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorModulo", code);
+    return std::make_shared<NumRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorEqual(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorEqual", code);
+    return std::make_shared<BoolRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorNotEqual(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorNotEqual", code);
+    return std::make_shared<BoolRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorLess(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorLess", code);
+    return std::make_shared<BoolRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorGreater(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorGreater", code);
+    return std::make_shared<BoolRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorLessEqual(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorLessEqual", code);
+    return std::make_shared<BoolRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorGreaterEqual(std::shared_ptr<Structure> obj, ACC::Code &code) {
+    generalBinaryOperator(obj, "operatorGreaterEqual", code);
+    return std::make_shared<BoolRValueStructure>(Register::rA);
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorNot(Code& code) {
+    std::vector<Fn> overloads;
+    try {
+        overloads = code.getFnOverloads("?" + type.id + ".operatorNot");
+    }
+    catch (errors::MissingOverload &) {
+        throw errors::UnimplementedFunction(nullptr, type.id, "operatorNot()");
+    }
+
+    auto &fn = code.getFnSymbol();
+
+    for (auto const &overload : overloads) {
+        if (overload.argsType.size() == 1 && overload.argsType[0] == Type::createPtr(this->type)) {
+            Register r = code.getFreeRegister();
+            fn.writeLine("sub rsp, 8");
+            fn.writeLine("lea "+registerToString(8, r)+", [" + access + "]");
+            fn.writeLine("mov [rsp], " + registerToString(8, r));
+            code.freeRegister(r);
+
+            fn.writeLine("call " + overload.mangledName());
+            return std::make_shared<BoolRValueStructure>(Register::rA);
+        }
+    }
+
+    throw errors::MissingOverload(nullptr, std::string("operatorNot()") + " for `" + type.id + "`");
+}
+
+
 void
-ACC::UserLValueStructure::doUnaryOperator(const std::shared_ptr<Structure>& obj, const std::string& operatorName, ACC::Code &code) {
+ACC::UserLValueStructure::generalBinaryOperator(const std::shared_ptr<Structure>& obj, const std::string& operatorName, ACC::Code &code) {
     std::vector<Fn> overloads;
     try {
         overloads = code.getFnOverloads("?" + type.id + "." + operatorName);

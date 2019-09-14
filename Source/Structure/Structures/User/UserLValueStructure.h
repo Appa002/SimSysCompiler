@@ -24,8 +24,18 @@ namespace ACC {
         std::shared_ptr<Structure> operatorMultiplication(std::shared_ptr<Structure> amount, Code &code) override;
         std::shared_ptr<Structure> operatorDivision(std::shared_ptr<Structure> amount, Code &code) override;
 
+        std::shared_ptr<Structure> operatorModulo(std::shared_ptr<Structure> other, Code &code) override;
 
-        void doUnaryOperator(const std::shared_ptr<Structure>& obj, const std::string& operatorName, Code& code);
+        std::shared_ptr<Structure> operatorEqual(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorNotEqual(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorLess(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorGreater(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorLessEqual(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code) override;
+        std::shared_ptr<Structure> operatorNot(Code &code) override;
+
+
+        void generalBinaryOperator(const std::shared_ptr<Structure>& obj, const std::string& operatorName, Code& code);
 
 
         bool haveSameTypes(std::vector<Type> a, std::vector<std::shared_ptr<Structure>> b);
