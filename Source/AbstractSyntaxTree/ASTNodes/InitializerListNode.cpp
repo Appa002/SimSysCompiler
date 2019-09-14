@@ -15,8 +15,8 @@ ACC::InitializerListNode::InitializerListNode(ACC::AstOperator op, std::vector<A
 
 std::vector<std::shared_ptr<ACC::Structure>> ACC::InitializerListNode::unpack(ACC::Code &code) {
     std::vector<std::shared_ptr<ACC::Structure>> out;
-    for(auto rItr = children.rbegin(); rItr != children.rend(); rItr++){
-        out.push_back((*rItr)->generate(code));
+    for(auto const & child : children){
+        out.push_back(child->generate(code));
     }
 
     return out;

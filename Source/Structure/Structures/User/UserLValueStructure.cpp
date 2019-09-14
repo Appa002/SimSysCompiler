@@ -88,9 +88,9 @@ ACC::UserLValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> o
     for (auto const &overload : overloads) {
         if (overload.argsType.size() >= 2 && haveSameTypes(overload.argsType, objList)) {
 
-            for (size_t i = 0; i < objList.size(); i++){
-                fn.writeLine("sub rsp, " + std::to_string(objList[i]->type.size));
-                std::make_shared<GenericLValueStructure>(objList[i]->type, "rsp")->operatorCopy({objList[i]}, code);
+            for (auto rItr = objList.rbegin(); rItr != objList.rend(); rItr++){
+                fn.writeLine("sub rsp, " + std::to_string((*rItr)->type.size));
+                std::make_shared<GenericLValueStructure>((*rItr)->type, "rsp")->operatorCopy({*rItr}, code);
             }
 
             Register r = code.getFreeRegister();
