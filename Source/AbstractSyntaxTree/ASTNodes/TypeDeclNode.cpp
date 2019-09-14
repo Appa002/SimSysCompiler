@@ -32,36 +32,6 @@ std::shared_ptr<ACC::Structure> ACC::TypeDeclNode::generate(ACC::Code &code) {
     type.isComplex = true;
     TypeTable::get()->addType(sym, type);
 
-    auto& fn = code.emplaceFnSymbol("?" + type.id + ".operatorCopy");
-    code.popFnFromStack();
-    fn.curBpOffset = 16;
-    fn.returnType = Type("num", 8);
-    fn.argsType = {Type::createPtr("char"),Type::createPtr("char")};
-
-    fn.code = R"(
-mov r15, [rbp + 16]
-mov [rbp - 8], r15
-mov r15, [rbp + 24]
-mov [rbp - 16], r15
-mov r15, [rbp - 16]
-mov r15b, [r15]
-mov r14, [rbp - 8]
-mov [ r14 ], r15b
-mov r15, [rbp - 8]
-mov r14, 1
-add r15, r14
-mov r14, [rbp - 16]
-mov r13, 1
-add r14, r13
-mov r13, r14
-mov r13b, [r13]
-mov r14, r15
-mov [ r14 ], r13b
-mov rax, 0
-leave
-ret
-)";
-
     return nullptr;
 }
 
