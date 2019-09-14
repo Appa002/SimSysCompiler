@@ -105,7 +105,15 @@ ACC::UserLValueStructure::operatorCopy(std::vector<std::shared_ptr<Structure>> o
         }
     }
 
-    throw errors::MissingOverload(nullptr, "operatorCopy(" + obj->type.id + ") for `" + type.id + "`");
+    std::string argsProvided;
+    if(!objList.empty()) {
+        argsProvided = objList[0]->type.id;
+
+        for (auto itr = objList.begin() + 1; itr != objList.end(); itr++) {
+            argsProvided += ", " + (*itr)->type.id;
+        }
+    }
+    throw errors::MissingOverload(nullptr, "operatorCopy(" + argsProvided + ") for `" + type.id + "`");
 
 }
 
