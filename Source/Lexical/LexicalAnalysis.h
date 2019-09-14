@@ -24,6 +24,7 @@ namespace ACC {
         std::vector<size_t> indentList;
         int depth = 0;
         bool stringMode = false;
+        bool charMode = false;
 
         void postProcessDocument();
 

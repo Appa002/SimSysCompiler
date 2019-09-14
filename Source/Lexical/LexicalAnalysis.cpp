@@ -203,6 +203,22 @@ void ACC::LexicalAnalysis::checkIndent(LineCountingPosition &idx) {
 bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, LineCountingPosition idx,
                                         const std::vector<std::string> &lines) {
 
+    if(stringMode || charMode){
+        if(stringMode && buffer == "\""){
+            tokens.push_back(new DoubleQuoteToken(idx.lineNum));
+            stringMode = false;
+        }
+
+        else if (charMode && buffer == "'") {
+            tokens.push_back(new QuoteToken(idx.lineNum));
+            charMode = false;
+        }
+        else
+            return false;
+
+        return true;
+    }
+
     if (buffer == "!=")
         tokens.push_back(new ComparisionToken(ComparisionTokenKind::NotEqual, idx.lineNum));
 
@@ -247,11 +263,13 @@ bool ACC::LexicalAnalysis::checkSpecial(const std::string &buffer, LineCountingP
 
     else if (buffer == "\"") {
         tokens.push_back(new DoubleQuoteToken(idx.lineNum));
-        stringMode = !stringMode;
+        if(!charMode)
+            stringMode = !stringMode;
     }
     else if (buffer == "'") {
         tokens.push_back(new QuoteToken(idx.lineNum));
-        stringMode = !stringMode;
+        if(!stringMode)
+            charMode = !charMode;
     }
 
     else if (buffer == ",")
@@ -345,9 +363,9 @@ std::string ACC::LexicalAnalysis::loadBuffer(LineCountingPosition &idx) {
     const std::vector<std::string> specialTokens = {"\"", ";", "\n", "\r", "(", ")", "+", "-", "*", "/", ",", "=",
                                                     "<", ">", "!", ":", "\'", "\"", "%", ",", "{", "}", ".", " "};
 
-
     std::string buffer;
-    if(stringMode && !contains(document[idx], {"'", "\""})){
+
+   if((stringMode || charMode) && !contains(document[idx], {"'", "\""})){
         while (idx < document.size() && !contains(document[idx], {"'", "\""})) {
             if (document[idx] == '\\') {
 
