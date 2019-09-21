@@ -19,6 +19,9 @@ namespace ACC {
         std::shared_ptr<Structure> operatorLessEqual(std::shared_ptr<Structure> other, Code &code) override;
         std::shared_ptr<Structure> operatorGreaterEqual(std::shared_ptr<Structure> other, Code &code) override;
 
+        std::shared_ptr<Structure> operatorNot(Code &code) override;
+
+
         std::shared_ptr<Structure> operatorOr(std::shared_ptr<Structure> other, Code &code) override;
         std::shared_ptr<Structure> operatorAnd(std::shared_ptr<Structure> other, Code &code) override;
     };

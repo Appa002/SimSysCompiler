@@ -440,6 +440,18 @@ ACC::ParseNode *ACC::ParseTree::expr(size_t &pos) {
             OPTIONAL_NONE_TERMINAL(expr)
     END_PRODUCTION()
 
+    logable.loadProduction(Symbol::expr, {Symbol::TRUE, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(TRUE)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
+    logable.loadProduction(Symbol::expr, {Symbol::FALSE, Symbol::expr});
+    START_PRODUCTION()
+            TERMINAL(FALSE)
+            OPTIONAL_NONE_TERMINAL(expr)
+    END_PRODUCTION()
+
     logable.loadProduction(Symbol::expr, {Symbol::OR, Symbol::expr});
     START_PRODUCTION()
             TERMINAL(OR)

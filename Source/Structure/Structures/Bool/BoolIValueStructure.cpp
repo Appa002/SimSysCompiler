@@ -20,7 +20,7 @@ BoolStructure(ValueCategory::ivalue) {
 
 void ACC::BoolIValueStructure::loadToRegister(ACC::Register reg, ACC::Code &code) {
     auto& fn = code.getFnSymbol();
-    fn.writeLine("mov " + registerToString(8, reg) + ", " + std::to_string(value));
+    fn.writeLine("mov " + registerToString(8, reg) + ", " + (value ? "0" : "1"));
 }
 
 std::shared_ptr<ACC::Structure> ACC::BoolIValueStructure::operatorChar(ACC::Code &code) {

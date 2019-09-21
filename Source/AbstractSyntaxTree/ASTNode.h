@@ -28,6 +28,7 @@ namespace ACC {
     /*! A enum which contains all operations a `ASTNode` can do.
      * */
     enum class AstOperator {
+        BOOLEAN_LITERAL,
         INITIALIZER_LIST,
         AND,
         OR,

@@ -136,6 +136,10 @@ std::string ACC::data::symbolToString(::ACC::Symbol s) {
             return "AND";
         case Symbol::OR:
             return "OR";
+        case Symbol::TRUE:
+            return "TRUE";
+        case Symbol::FALSE:
+            return "FALSE";
     }
     throw std::runtime_error("Symbol not known.");
 }
@@ -270,6 +274,10 @@ std::string ACC::data::symbolToStringForErrReporting(ACC::Symbol s) {
             return "&&";
         case Symbol::OR:
             return "||";
+        case Symbol::TRUE:
+            return "true";
+        case Symbol::FALSE:
+            return "false";
     }
     throw std::runtime_error("Symbol not known.");
 }

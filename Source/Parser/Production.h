@@ -12,6 +12,8 @@ namespace ACC {
         empty = -1,
         VAR = 0,
         DECL,
+        TRUE,
+        FALSE,
         AND,
         OR,
         TYPE,

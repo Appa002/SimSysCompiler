@@ -167,3 +167,14 @@ std::shared_ptr<ACC::Structure> ACC::BoolStructure::operatorAnd(std::shared_ptr<
     code.freeRegister(rhs);
     return std::make_shared<BoolRValueStructure>(lhs);
 }
+
+std::shared_ptr<ACC::Structure> ACC::BoolStructure::operatorNot(ACC::Code &code) {
+    auto& fn = code.getFnSymbol();
+    Register lhs = code.getFreeRegister();
+
+    this->loadToRegister(lhs, code);
+
+    fn.writeLine("xor " + registerToString(1, lhs) + ", 1");
+
+    return std::make_shared<BoolRValueStructure>(lhs);
+}
