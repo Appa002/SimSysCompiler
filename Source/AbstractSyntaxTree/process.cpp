@@ -12,6 +12,12 @@ ACC::ASTNode *ACC::process(const ACC::ParseNode *node, ACC::ASTNode *carry) {
         n->lineContent = node->children[0]->token->lineContent;
         n->lineNum = node->children[0]->token->lineNum;
     }
+
+    if(node->children[0]->token && carry) {
+        carry->lineContent = node->children[0]->token->lineContent;
+        carry->lineNum = node->children[0]->token->lineNum;
+    }
+
     return n;
 }
 
