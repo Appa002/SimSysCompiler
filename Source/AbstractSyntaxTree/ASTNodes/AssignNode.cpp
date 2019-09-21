@@ -25,7 +25,7 @@ std::shared_ptr<ACC::Structure> ACC::AssignNode::generate(ACC::Code &code) {
     else
         code.emplaceVarSymbol(id, handleCommon(code));
 
-    return nullptr;
+    return code.getVarSymbol(id);
 }
 
 ACC::AssignNode::AssignNode(ACC::AstOperator op, std::vector<ACC::ASTNode *> children) : ASTNode(op, std::move(children)) {

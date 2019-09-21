@@ -205,11 +205,30 @@ std::vector<ACC::Rule> ACC::data::getRules() {
 
         }},
 
-        {{Symbol::for_construct, {Symbol::FOR, Symbol::TEXT, Symbol::ARROW, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
+        {{Symbol::for_construct, {Symbol::FOR, Symbol::expr, Symbol::ARROW, Symbol::expr, Symbol::COLON, Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
             std::vector<ASTNode*> vec = {
-                    new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[1]->token)->data),
+                    process(children[1], nullptr),
                     process(children[3], nullptr),
                     process(children[6], nullptr)};
+            return new ForNode(AstOperator::FOR, vec);
+
+        }},
+
+
+            {{Symbol::for_construct, {Symbol::FOR, Symbol::CMP, Symbol::type, Symbol::CMP, Symbol::TEXT,
+                                      Symbol::ASSIGN, Symbol::expr, Symbol::ARROW, Symbol::expr, Symbol::COLON,
+                                      Symbol::INDENT, Symbol::start, Symbol::EXTENT}}, [](auto children, auto carry){
+
+                std::vector<ASTNode*> assignVec = {
+                        new IdNode(AstOperator::ID, dynamic_cast<TextToken*>(children[4]->token)->data),
+                        process(children[2]),
+                        process(children[6], nullptr)};
+                auto ass = new AssignNode(AstOperator::ASSIGN, assignVec);
+
+                std::vector<ASTNode*> vec = {
+                    ass,
+                    process(children[8], nullptr),
+                    process(children[11], nullptr)};
             return new ForNode(AstOperator::FOR, vec);
 
         }},

@@ -9,10 +9,14 @@ std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
     auto top = code.getUUID();
     auto rest = code.getUUID();
 
-    fn.writeLine("." + top + ":");
+
+    code.pushScope();
 
     auto index = children[0]->generate(code);
     auto limit = children[1]->generate(code);
+
+    fn.writeLine("." + top + ":");
+
 
     try {
         index->operatorForDone(limit, code);
@@ -26,9 +30,8 @@ std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
     // At this point rflags has been set according to the comparison of index and limit
 
     fn.writeLine("jne ." + rest);
-    code.pushScope();
     children[2]->generate(code);
-    code.popScope();
+
 
     // Iterating
     try {
@@ -38,6 +41,8 @@ std::shared_ptr<ACC::Structure> ACC::ForNode::generate(ACC::Code &code) {
         err.lineContent = this->lineContent;
         throw;
     }
+    code.popScope();
+
     // Looping back up / seting up rest..
     fn.writeLine("jmp ." + top);
     fn.writeLine("."+rest+":");

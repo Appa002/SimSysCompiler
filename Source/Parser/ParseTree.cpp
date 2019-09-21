@@ -14,6 +14,7 @@
 #include <Lexical/Tokens/IndentToken.h>
 #include <Logger/LogableProduction.h>
 #include <Error/SyntaxError.h>
+#include <Lexical/Tokens/ComparisionToken.h>
 
 #define START_PRODUCTION() \
     logable.echoProduction(); \
@@ -107,6 +108,28 @@
     }\
 
 
+#define EXITING_OPTIONAL_TERMINAL_WITH_PROPERTY(name, type, property, value) \
+    if (other = match(pos, Symbol::name), other != nullptr && dynamic_cast<type *>(document[pos]) && dynamic_cast<type *>(document[pos])->property == value) {\
+        logable.green();\
+        atleast++;\
+        pos++;\
+        node->children.push_back(other);\
+    } else {\
+        logable.blue();\
+        return true;\
+    }
+
+#define TERMINAL_WITH_PROPERTY(name, type, property, value) \
+    if (other = match(pos, Symbol::name), other != nullptr && dynamic_cast<type *>(document[pos]) && dynamic_cast<type *>(document[pos])->property == value) {\
+        logable.green();\
+        atleast++;\
+        pos++;\
+        node->children.push_back(other);\
+    } else {\
+        logable.red();\
+        return false;\
+    }
+
 ACC::ParseTree::ParseTree(const ACC::LexicalAnalysis &in) {
     generate(in);
 }
@@ -151,7 +174,7 @@ ACC::ParseTree::~ParseTree() {
     root = nullptr;
 }
 
-ACC::ParseNode *ACC::ParseTree::match(size_t &pos, ACC::Symbol what) {
+ACC::ParseNode *ACC::ParseTree::match(size_t &pos, ACC::Symbol what){
     if (pos >= document.size())
         return nullptr;
 
@@ -731,11 +754,11 @@ ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
     size_t oldPos = pos;
     ParseNode *other;
 
-    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::TEXT, Symbol::ARROW, Symbol::expr, Symbol::COLON,
+    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::expr, Symbol::ARROW, Symbol::expr, Symbol::COLON,
                                                    Symbol::INDENT, Symbol::start, Symbol::EXTENT});
     START_PRODUCTION()
             TERMINAL(FOR)
-            TERMINAL(TEXT)
+            NONE_TERMINAL(expr)
             TERMINAL(ARROW)
             NONE_TERMINAL(expr)
             TERMINAL(COLON)
@@ -743,6 +766,28 @@ ACC::ParseNode *ACC::ParseTree::forConstruct(size_t &pos) {
             NONE_TERMINAL(start)
             TERMINAL(EXTENT)
     END_PRODUCTION()
+
+    // for<TYPE> TEXT = expr ->
+
+    logable.loadProduction(Symbol::for_construct, {Symbol::FOR, Symbol::CMP, Symbol::type, Symbol::CMP,
+                                                   Symbol::TEXT, Symbol::ASSIGN, Symbol::expr, Symbol::ARROW, Symbol::expr, Symbol::COLON,
+                                                   Symbol::INDENT, Symbol::start, Symbol::EXTENT});
+    START_PRODUCTION()
+            TERMINAL(FOR)
+            TERMINAL_WITH_PROPERTY(CMP, ComparisionToken, kind, ComparisionTokenKind::Less)
+            NONE_TERMINAL(type)
+            TERMINAL_WITH_PROPERTY(CMP, ComparisionToken, kind, ComparisionTokenKind::Greater)
+            TERMINAL(TEXT)
+            TERMINAL(ASSIGN)
+            NONE_TERMINAL(expr)
+            TERMINAL(ARROW)
+            NONE_TERMINAL(expr)
+            TERMINAL(COLON)
+            TERMINAL(INDENT)
+            NONE_TERMINAL(start)
+            TERMINAL(EXTENT)
+    END_PRODUCTION()
+
 
     LOG() << Log::Colour::Magenta << "..done\n";
 
@@ -765,9 +810,10 @@ ACC::ParseNode *ACC::ParseTree::type(size_t &pos) {
     logable.loadProduction(Symbol::type, {Symbol::TEXT, Symbol::CMP, Symbol::TEXT, Symbol::CMP});
     START_PRODUCTION()
             TERMINAL(TEXT)
-            EXITING_OPTIONAL_TERMINAL(CMP)
+            EXITING_OPTIONAL_TERMINAL_WITH_PROPERTY(CMP, ComparisionToken, kind, ComparisionTokenKind::Less)
             TERMINAL(TEXT)
-            TERMINAL(CMP)
+            TERMINAL_WITH_PROPERTY(CMP, ComparisionToken, kind, ComparisionTokenKind::Greater)
+
     END_PRODUCTION()
 
     LOG() << Log::Colour::Magenta << "..done\n";
@@ -848,9 +894,9 @@ ACC::ParseNode *ACC::ParseTree::trait(size_t &pos) {
                                               Symbol::CLOSED_BRACKET, Symbol::ARROW,  Symbol::type, Symbol::COLON, Symbol::INDENT, Symbol::start});
     START_PRODUCTION()
             TERMINAL(TRAIT)
-            TERMINAL(CMP)
+            TERMINAL_WITH_PROPERTY(CMP, ComparisionToken, kind, ComparisionTokenKind::Less)
             TERMINAL(TEXT)
-            TERMINAL(CMP)
+            TERMINAL_WITH_PROPERTY(CMP, ComparisionToken, kind, ComparisionTokenKind::Greater)
             TERMINAL(TEXT)
             TERMINAL(OPEN_BRACKET)
             OPTIONAL_NONE_TERMINAL(paramDecl)
