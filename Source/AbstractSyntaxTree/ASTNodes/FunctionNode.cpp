@@ -108,47 +108,47 @@ std::vector<ACC::Type> ACC::FunctionNode::getArgumentTypes() {
 
 void ACC::FunctionNode::checkIfReserved(std::string const &name) {
     if (name == "fn")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "else")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "elif")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "exit")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "for")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "if")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "import")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "return")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "salloc")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "syscall")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "var")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "while")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "type")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "trait")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 
     else if (name == "this")
-        throw errors::ReservedNameError(this, name);
+        throw errors::ReservedName(this, name);
 }

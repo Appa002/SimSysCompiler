@@ -22,7 +22,17 @@ std::shared_ptr<ACC::Structure> ACC::SallocNode::generate(ACC::Code &code) {
 
 
     auto id = dynamic_cast<IdNode*>(children[1])->sym;
-    auto var = code.getVarSymbol(id);
+
+    std::shared_ptr<ACC::Structure> var;
+
+    try {
+        var = code.getVarSymbol(id);
+    }catch (errors::ASTError& err){
+        err.lineNum = this->lineNum;
+        err.lineContent = this->lineContent;
+        throw;
+    }
+
     auto ptr = std::make_shared<PtrRValueStructure>(reg, Type(var->type));
 
     try {

@@ -90,9 +90,20 @@ namespace ACC::errors {
 
     };
 
-    struct ReservedNameError : public ASTError {
-        explicit ReservedNameError(const ASTNode *node, std::string const & name) :
+    struct ReservedName : public ASTError {
+        explicit ReservedName(const ASTNode *node, std::string const & name) :
                 ASTError("Name `"+name+"` is reserved and can't be used.") {
+            if (node != nullptr) {
+                lineNum = node->lineNum;
+                lineContent = node->lineContent;
+            }
+        };
+
+    };
+
+    struct UnknownVariable : public ASTError {
+        explicit UnknownVariable(const ASTNode *node, std::string const & name) :
+                ASTError("Unknown variable: `"+name+"`") {
             if (node != nullptr) {
                 lineNum = node->lineNum;
                 lineContent = node->lineContent;

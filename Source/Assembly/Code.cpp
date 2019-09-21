@@ -33,7 +33,7 @@ ACC::Code::Code() {
 
 std::shared_ptr<ACC::Structure> ACC::Code::getVarSymbol(std::string sym) {
     if (!curScope->isSymbol(sym))
-        throw std::runtime_error("Unknown variable: " + sym);
+        throw errors::UnknownVariable(nullptr, sym);
     else
         return curScope->getSymbol(sym);
 }
