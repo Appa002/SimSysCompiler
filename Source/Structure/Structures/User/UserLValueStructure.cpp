@@ -171,6 +171,42 @@ bool ACC::UserLValueStructure::haveSameTypes(std::vector<Type> a,
     return true;
 }
 
+std::shared_ptr<ACC::Structure>
+ACC::UserLValueStructure::operatorForDone(std::shared_ptr<Structure> limit, ACC::Code &code) {
+    generalBinaryOperator(limit, "operatorForDone", code);
+    auto& fn = code.getFnSymbol();
+
+    fn.writeLine("cmp "+registerToString(1, Register::rA)+" , 1");
+    return nullptr;
+}
+
+std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorForNext(ACC::Code &code) {
+    std::vector<Fn> overloads;
+    try {
+        overloads = code.getFnOverloads("?" + type.id + ".operatorForNext");
+    }
+    catch (errors::MissingOverload &) {
+        throw errors::UnimplementedFunction(nullptr, type.id, "operatorForNext()");
+    }
+
+    auto &fn = code.getFnSymbol();
+
+    for (auto const &overload : overloads) {
+        if (overload.argsType.size() == 1 && overload.argsType[0] == Type::createPtr(this->type)) {
+            Register r = code.getFreeRegister();
+            fn.writeLine("sub rsp, 8");
+            fn.writeLine("lea "+registerToString(8, r)+", [" + access + "]");
+            fn.writeLine("mov [rsp], " + registerToString(8, r));
+            code.freeRegister(r);
+
+            fn.writeLine("call " + overload.mangledName());
+            return nullptr;
+        }
+    }
+
+    throw errors::MissingOverload(nullptr, std::string("operatorForNext()") + " for `" + type.id + "`");
+}
+
 std::shared_ptr<ACC::Structure> ACC::UserLValueStructure::operatorAdd(std::shared_ptr<Structure> obj, ACC::Code &code) {
     generalBinaryOperator(obj, "operatorAdd", code);
     return std::make_shared<NumRValueStructure>(Register::rA);
@@ -285,7 +321,7 @@ ACC::UserLValueStructure::generalBinaryOperator(const std::shared_ptr<Structure>
 
             Register r = code.getFreeRegister();
             fn.writeLine("sub rsp, 8");
-            fn.writeLine("lea "+registerToString(8, r)+", [" + access + "]");
+            fn.writeLine("lea " + registerToString(8, r) + ", [" + access + "]");
             fn.writeLine("mov [rsp], " + registerToString(8, r));
             code.freeRegister(r);
 

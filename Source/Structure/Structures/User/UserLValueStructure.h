@@ -13,6 +13,9 @@ namespace ACC {
     protected:
         std::string access;
     public:
+        std::shared_ptr<Structure> operatorForDone(std::shared_ptr<Structure> limit, Code &code) override;
+        std::shared_ptr<Structure> operatorForNext(Code &code) override;
+
         explicit UserLValueStructure(std::string  access, const Type& type);
 
         std::shared_ptr<Structure> operatorCopy(std::vector<std::shared_ptr<Structure>> objList, Code &) override;
