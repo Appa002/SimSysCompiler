@@ -9,6 +9,4 @@ file(GLOB_RECURSE Classes "./Source/*")
 file(GLOB Standalones "./Data/*")
 
 
-# Add test cpp file
 add_executable(SimSysCompiler main.cpp ${Classes} ${Standalones})
-add_subdirectory(./tests)
