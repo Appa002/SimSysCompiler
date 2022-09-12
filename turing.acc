@@ -68,18 +68,24 @@ fn enter_input_tape (tape : ptr<char>)->num:
     var index : num = 0;
     var i : num = 0;
     while i < count:
-        *(tape + index) = *(input + i);
+        var it : char = *(input + i);
+        if it == '\n':
+            it = '_';
+
+        *(tape + index) = it;
         index = index + 1;
         i = i + 2;
 
     return index;
 
 fn print_input_tape (tapeRhs : ptr<char>, tapeLhs : ptr<char>, count : num)->num:
-    var i : num = 0;
+    var i : num = 1;
     var buffer : ptr<char> = 0;
     salloc 1, buffer;
     for i -> count:
-        var c : char = *(tapeLhs + i);
+        var location: ptr<char> = tapeLhs + count;
+        location = location - i;
+        var c : char = *location;
         if c == 0:
             c = '_';
         *buffer = c;
@@ -163,7 +169,7 @@ while cur_state != 'A':
         cur_sym = input_rhs_tape + head;
     else:
         cur_sym = input_lhs_tape + head;
-    
+
     var instruction : ptr<char> = find_instruction(cur_state, *cur_sym, instructionCount, program_tape);
 
     if instruction == 0:
