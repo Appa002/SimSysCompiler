@@ -49,8 +49,6 @@
 #include <Lexical/Tokens/TraitToken.h>
 #include <Lexical/Tokens/AndToken.h>
 #include <Lexical/Tokens/OrToken.h>
-#include <Lexical/Tokens/TrueToken.h>
-#include <Lexical/Tokens/FalseToken.h>
 
 bool contains(const std::string &str, std::vector<std::string> options) {
     for (auto const &option : options) {
@@ -361,11 +359,6 @@ bool ACC::LexicalAnalysis::checkKeyword(std::string const &buffer, LineCountingP
     else if (buffer == "trait")
         tokens.push_back(new TraitToken(idx.lineNum));
 
-    else if (buffer == "true")
-        tokens.push_back(new TrueToken(idx.lineNum));
-
-    else if (buffer == "false")
-        tokens.push_back(new FalseToken(idx.lineNum));
 
     else
         return false;

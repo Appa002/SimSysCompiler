@@ -45,7 +45,6 @@
 #include <AbstractSyntaxTree/ASTNodes/InitializerListNode.h>
 #include <AbstractSyntaxTree/ASTNodes/AndNode.h>
 #include <AbstractSyntaxTree/ASTNodes/OrNode.h>
-#include <AbstractSyntaxTree/ASTNodes/BooleanLiteralNode.h>
 
 std::vector<ACC::Rule> ACC::data::getRules() {
     return { // vector
@@ -604,21 +603,6 @@ std::vector<ACC::Rule> ACC::data::getRules() {
              return new DereferenceNode(AstOperator::DEREFERENCE, {process(children[1], nullptr)});
          }},
 
-        {{Symbol::expr, {Symbol::TRUE, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-            return process(children[1], new BooleanLiteralNode(AstOperator::BOOLEAN_LITERAL, true));
-        }},
-
-        {{Symbol::expr, {Symbol::FALSE, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-            return process(children[1], new BooleanLiteralNode(AstOperator::BOOLEAN_LITERAL, false));
-        }},
-
-        {{Symbol::expr, {Symbol::TRUE}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-            return new BooleanLiteralNode(AstOperator::BOOLEAN_LITERAL, true);
-        }},
-
-        {{Symbol::expr, {Symbol::FALSE}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
-            return new BooleanLiteralNode(AstOperator::BOOLEAN_LITERAL, false);
-        }},
 
         {{Symbol::expr, {Symbol::AND, Symbol::expr}}, [](std::vector < ACC::ParseNode * > children, auto carry) -> ASTNode*{
             auto vec = {carry, process(children[1], nullptr)};

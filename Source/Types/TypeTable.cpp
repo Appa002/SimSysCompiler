@@ -5,6 +5,7 @@
 #include "TypeTable.h"
 
 #include <utility>
+#include <stdexcept>
 
 ACC::TypeTable::TypeTable() {
     // Builtin Types;
