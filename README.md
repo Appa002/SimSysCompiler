@@ -1,6 +1,6 @@
 # Simple System Compiler
 A small compiler project that emits x86 64bit assembly for a basic language defined below. The project has only been tested under Linux. 
-(Last significant changes in 2019)
+(Last changes in 2019 / This is a hobby High School project)
 
 ## Dependencies
 * C++17 Standard Library
